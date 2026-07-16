@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1080" viewBox="0 0 1800 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Automated trading lifecycle</title>
+  <desc id="desc">A flow diagram from market data through strategy, backtesting, paper trading, risk, execution, reconciliation, and monitoring.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#475569"/></marker>
+    <style>
+      .title { font: 700 38px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 20px Arial, sans-serif; fill: #475569; }
+      .box { stroke: #94a3b8; stroke-width: 2; rx: 16; }
+      .core { fill: #eff6ff; stroke: #2563eb; }
+      .safe { fill: #f0fdf4; stroke: #16a34a; }
+      .venue { fill: #fff7ed; stroke: #ea580c; }
+      .observe { fill: #faf5ff; stroke: #9333ea; }
+      .label { font: 700 23px Arial, sans-serif; fill: #0f172a; text-anchor: middle; }
+      .small { font: 18px Arial, sans-serif; fill: #334155; text-anchor: middle; }
+      .arrow { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .loop { stroke: #7c3aed; stroke-width: 3; fill: none; stroke-dasharray: 9 7; marker-end: url(#arrow); }
+      .gate { fill: #fefce8; stroke: #ca8a04; stroke-width: 2; }
+      .gate-text { font: 700 18px Arial, sans-serif; fill: #713f12; text-anchor: middle; }
+      .note { font: 17px Arial, sans-serif; fill: #64748b; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1080" fill="#f8fafc"/>
+  <text x="900" y="70" class="title" text-anchor="middle">Automated Trading: Complete Lifecycle</text>
+  <text x="900" y="105" class="subtitle" text-anchor="middle">Build once, test realistically, then promote through paper and tightly controlled live execution.</text>
+
+  <g transform="translate(70 185)">
+    <rect class="box core" width="260" height="120"/>
+    <text x="130" y="48" class="label">1. Data</text>
+    <text x="130" y="78" class="small">Prices, candles, funding,</text><text x="130" y="102" class="small">account &amp; contract data</text>
+  </g>
+  <g transform="translate(400 185)">
+    <rect class="box core" width="260" height="120"/>
+    <text x="130" y="48" class="label">2. Strategy</text>
+    <text x="130" y="78" class="small">Entry, exit, timeframe,</text><text x="130" y="102" class="small">sizing &amp; leverage rules</text>
+  </g>
+  <g transform="translate(730 185)">
+    <rect class="box core" width="300" height="120"/>
+    <text x="150" y="48" class="label">3. Backtest</text>
+    <text x="150" y="78" class="small">Fees, spread, slippage, funding,</text><text x="150" y="102" class="small">margin &amp; liquidation model</text>
+  </g>
+  <g transform="translate(1100 185)">
+    <rect class="box safe" width="290" height="120"/>
+    <text x="145" y="48" class="label">4. Paper / Shadow</text>
+    <text x="145" y="78" class="small">Live data; no capital at risk;</text><text x="145" y="102" class="small">compare predicted vs actual</text>
+  </g>
+  <g transform="translate(1460 185)">
+    <rect class="box safe" width="270" height="120"/>
+    <text x="135" y="48" class="label">5. Risk Gate</text>
+    <text x="135" y="78" class="small">Limits, sizing, stops,</text><text x="135" y="102" class="small">kill switch &amp; approvals</text>
+  </g>
+
+  <path class="arrow" d="M330 245 H390"/><path class="arrow" d="M660 245 H720"/><path class="arrow" d="M1030 245 H1090"/><path class="arrow" d="M1390 245 H1450"/>
+
+  <g transform="translate(1460 430)">
+    <rect class="box venue" width="270" height="140"/>
+    <text x="135" y="49" class="label">6. Execution</text>
+    <text x="135" y="80" class="small">Validate, submit, amend,</text><text x="135" y="105" class="small">cancel &amp; track orders</text>
+    <text x="135" y="130" class="small">idempotently</text>
+  </g>
+  <path class="arrow" d="M1595 305 V420"/>
+
+  <g transform="translate(1090 670)">
+    <rect class="box venue" width="290" height="120"/>
+    <text x="145" y="48" class="label">7. Broker / Exchange</text>
+    <text x="145" y="78" class="small">IBKR or MEXC</text><text x="145" y="102" class="small">order acknowledgements &amp; fills</text>
+  </g>
+  <path class="arrow" d="M1595 570 V620 Q1595 670 1545 670 H1390"/>
+
+  <g transform="translate(710 670)">
+    <rect class="box observe" width="310" height="120"/>
+    <text x="155" y="48" class="label">8. Reconcile State</text>
+    <text x="155" y="78" class="small">Positions, fills, cash, P&amp;L,</text><text x="155" y="102" class="small">open orders &amp; restart recovery</text>
+  </g>
+  <path class="arrow" d="M1090 730 H1030"/>
+
+  <g transform="translate(280 670)">
+    <rect class="box observe" width="360" height="120"/>
+    <text x="180" y="48" class="label">9. Monitor &amp; Audit</text>
+    <text x="180" y="78" class="small">Alerts, logs, health checks,</text><text x="180" y="102" class="small">daily-loss and data-staleness alarms</text>
+  </g>
+  <path class="arrow" d="M710 730 H650"/>
+
+  <path class="loop" d="M280 730 H165 Q90 730 90 655 V400 Q90 355 145 355 H530 Q610 355 610 315"/>
+  <text x="135" y="525" class="note">Measure results and refine</text>
+
+  <g transform="translate(350 885)">
+    <rect class="gate" width="1100" height="105" rx="16"/>
+    <text x="550" y="38" class="gate-text">Promotion rule: strategy → backtest → shadow → paper → tiny live allocation → expanded live allocation</text>
+    <text x="550" y="72" class="small">Never permit a strategy to call a broker directly. It must pass through the risk and execution layers.</text>
+  </g>
+
+  <text x="72" y="1035" class="note">Current project: account sync and history analytics are in place. Strategy, risk gateway, backtester, order execution, and monitoring remain to be built.</text>
+</svg>

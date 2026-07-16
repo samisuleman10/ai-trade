@@ -3,8 +3,37 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+.mypy_cache/
+.ruff_cache/
+htmlcov/
 dist/
 build/
 *.egg-info/
 .env
+.env.*
+!.env.example
+
+# JavaScript dependencies and package-manager logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Generated reports and local databases
+outputs/
+*.sqlite
+*.db
+
+# Reproducible local backtest evidence (market-data and run snapshots)
+docs/baselines/
+docs/strategy_01/**/pipeline_archives/
+docs/strategy_01/**/locked_baseline_*/
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
 data/portfolio/
+data/mexc/
+data/market_data/
