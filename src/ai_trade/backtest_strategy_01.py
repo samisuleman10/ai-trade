@@ -13,7 +13,7 @@ from typing import Iterable, Literal
 from zoneinfo import ZoneInfo
 
 from ai_trade.market_data import OHLCVBar
-from ai_trade.strategy_01 import candidate_signals, load_ohlcv_csv
+from ai_trade.strategy_01 import candidate_signals, candidate_signals_v4, candidate_signals_v5, load_ohlcv_csv
 
 
 SizingMode = Literal["fixed", "rrms"]
@@ -40,6 +40,7 @@ class BacktestConfig:
     entry_window_start: tuple[int, int] | None = None
     entry_window_end: tuple[int, int] | None = None
     friday_close_time: tuple[int, int] = (16, 0)
+    rrms_reset_after_max_tier: bool = False
 
 
 @dataclass(frozen=True)
@@ -162,7 +163,7 @@ def run_backtest(
         jaw = float(signal["jaw"])
         raw_entry = bars[entry_index].open
         entry = _fill(raw_entry, side, "entry", config.slippage_bps_per_side)
-        stop = jaw
+        stop = float(signal.get("stop_reference", jaw))
         price_risk = entry - stop if side == "long" else stop - entry
         risk_per_unit = price_risk * config.contract_multiplier
         if risk_per_unit <= 0:
@@ -216,7 +217,10 @@ def run_backtest(
         if sizing_mode == "rrms":
             if exit_reason == "stop":
                 if rrms_tier == len(RRMS_TIERS) - 1:
-                    blocked = True
+                    if config.rrms_reset_after_max_tier:
+                        rrms_tier = 0
+                    else:
+                        blocked = True
                 else:
                     rrms_tier += 1
             elif net_pnl > 0:
@@ -266,23 +270,32 @@ def write_results(trades: Iterable[Trade], summary: dict[str, object], mode: Siz
 def main() -> int:
     parser = argparse.ArgumentParser(description="Backtest Strategy 01 from local, read-only SPY bars.")
     parser.add_argument("--fifteen-minute", type=Path, default=Path("data/market_data/ibkr/SPY/spy_15m.csv"))
+    parser.add_argument("--five-minute", type=Path, default=Path("data/market_data/ibkr/SPY/spy_5m.csv"))
     parser.add_argument("--one-hour", type=Path, default=Path("data/market_data/ibkr/SPY/spy_1h.csv"))
     parser.add_argument("--output", type=Path, default=Path("outputs/strategy_01_backtest"))
     parser.add_argument("--four-hour", type=Path, default=Path("data/market_data/ibkr/SPY/spy_4h.csv"))
-    parser.add_argument("--profile", choices=("v1", "v2", "v3", "v3-weekend", "v3-mgc"), default="v1", help="Versioned historical test profile")
+    parser.add_argument("--profile", choices=("v1", "v2", "v3", "v3-weekend", "v3-mgc", "v4", "v5"), default="v1", help="Versioned historical test profile")
     args = parser.parse_args()
     is_v3 = args.profile in {"v3", "v3-weekend", "v3-mgc"}
     is_mgc = args.profile == "v3-mgc"
+    is_v4 = args.profile in {"v4", "v5"}
+    is_v5 = args.profile == "v5"
     bars = load_ohlcv_csv(args.one_hour if is_v3 else args.fifteen_minute)
     trend_bars = load_ohlcv_csv(args.four_hour if is_v3 else args.one_hour)
-    signals = candidate_signals(
-        bars,
-        trend_bars,
-        entry_interval_minutes=60 if is_v3 else 15,
-        trend_interval_minutes=240 if is_v3 else 60,
-        minimum_decision_close_time=None if is_v3 else (10, 45),
-        infer_trend_close_from_session_boundaries=is_v3 and not is_mgc,
-        infer_shortened_trend_bars=is_mgc,
+    signals = (
+        candidate_signals_v5(bars, trend_bars, load_ohlcv_csv(args.five_minute))
+        if is_v5
+        else candidate_signals_v4(bars, trend_bars, load_ohlcv_csv(args.five_minute))
+        if is_v4
+        else candidate_signals(
+            bars,
+            trend_bars,
+            entry_interval_minutes=60 if is_v3 else 15,
+            trend_interval_minutes=240 if is_v3 else 60,
+            minimum_decision_close_time=None if is_v3 else (10, 45),
+            infer_trend_close_from_session_boundaries=is_v3 and not is_mgc,
+            infer_shortened_trend_bars=is_mgc,
+        )
     )
     config = (
         BacktestConfig(
@@ -298,6 +311,16 @@ def main() -> int:
             friday_close_time=(17, 0),
         )
         if is_mgc
+        else
+        BacktestConfig(
+            allowed_direction="both",
+            block_opening_hour_entries=True,
+            block_final_hour_entries=True,
+            block_friday_entries=True,
+            entry_interval_minutes=15,
+            rrms_reset_after_max_tier=is_v5,
+        )
+        if is_v4
         else
         BacktestConfig(
             allowed_direction="long",
@@ -320,6 +343,11 @@ def main() -> int:
             "strategy_01_v3_mgc_bill_williams_alligator_rrms"
             if is_mgc
             else
+            "strategy_01_v4_multi_timeframe_alligator"
+            if args.profile == "v4"
+            else "strategy_01_v5_dynamic_atr_jaw_buffer"
+            if is_v5
+            else
             "strategy_01_v3_weekend_bill_williams_alligator_rrms"
             if args.profile == "v3-weekend"
             else
@@ -333,11 +361,12 @@ def main() -> int:
         "mode": "historical_backtest_only",
         "assumptions": {
             **asdict(config),
-            "macro_filter": "manual bullish regime: long entries only" if args.profile in {"v2", "v3", "v3-weekend", "v3-mgc"} else "allowed (placeholder; no live macro data applied)",
+            "macro_filter": "not yet integrated: both directions are tested without a macro filter" if is_v4 else "manual bullish regime: long entries only" if args.profile in {"v2", "v3", "v3-weekend", "v3-mgc"} else "allowed (placeholder; no live macro data applied)",
             "entry": f"next {'1-hour' if is_v3 else '15-minute'} bar open after a completed signal bar",
-            "timeframes": "4-hour confirmation / 1-hour entry" if is_v3 else "1-hour confirmation / 15-minute entry",
+            "timeframes": "1-hour confirmation / 15-minute entry / 5-minute momentum" if is_v4 else "4-hour confirmation / 1-hour entry" if is_v3 else "1-hour confirmation / 15-minute entry",
+            "stop_buffer": "max($0.01 SPY tick, 0.10 x completed 15-minute ATR(14)) beyond Jaw" if is_v5 else "0.05% beyond completed 15-minute Jaw" if args.profile == "v4" else "strategy-specific",
             "session": "CME Globex 18:00-17:00 New York time; Sunday entry signals excluded" if is_mgc else "US regular trading hours",
-            "opening_hour": "no new entries 18:00-19:00 New York time" if is_mgc else "no entry before 10:30 New York time" if is_v3 else "no entry before the first 1-hour RTH bar completes",
+            "opening_hour": "no new entries 18:00-19:00 New York time" if is_mgc else "no entry before 10:30 New York time" if is_v3 or is_v4 else "no entry before the first 1-hour RTH bar completes",
             "final_hour": "no new entries 16:00-17:00 New York time" if is_mgc else "no new entries from 15:00 New York time" if config.block_final_hour_entries else "allowed",
             "friday_entries": "blocked" if config.block_friday_entries else "allowed",
             "weekend": (

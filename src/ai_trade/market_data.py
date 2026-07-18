@@ -60,15 +60,20 @@ class _HistoricalDataClient(EWrapper, EClient):
         self.complete.set()
 
 
-def spy_contract() -> Contract:
-    """Return the SMART-routed SPY ETF contract used for data and paper trading."""
+def us_etf_contract(symbol: str, primary_exchange: str) -> Contract:
+    """Return a SMART-routed US ETF contract for read-only market-data research."""
     contract = Contract()
-    contract.symbol = "SPY"
+    contract.symbol = symbol.upper()
     contract.secType = "STK"
     contract.exchange = "SMART"
-    contract.primaryExchange = "ARCA"
+    contract.primaryExchange = primary_exchange.upper()
     contract.currency = "USD"
     return contract
+
+
+def spy_contract() -> Contract:
+    """Return the SMART-routed SPY ETF contract used for data and paper trading."""
+    return us_etf_contract("SPY", "ARCA")
 
 
 def mgc_continuous_contract() -> Contract:
@@ -96,6 +101,7 @@ def fetch_historical_bars(
     client_id: int = 31,
     use_rth: bool = True,
     timeout: float = 30.0,
+    end_date_time: str = "",
 ) -> list[OHLCVBar]:
     """Fetch completed historical trade bars and disconnect.
 
@@ -114,7 +120,7 @@ def fetch_historical_bars(
         app.reqHistoricalData(
             1,
             contract,
-            "",
+            end_date_time,
             duration,
             bar_size,
             "TRADES",

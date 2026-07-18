@@ -1,4 +1,4 @@
-from ai_trade.backtest_strategy_01 import BacktestConfig, run_backtest
+from ai_trade.backtest_strategy_01 import BacktestConfig, _entry_allowed, run_backtest
 from ai_trade.market_data import OHLCVBar
 
 
@@ -93,3 +93,27 @@ def test_contract_multiplier_uses_whole_contract_risk_and_pnl() -> None:
 
     assert trades[0].quantity == 1  # $15 risk budget / ($1 * 10) risk per MGC contract.
     assert trades[0].gross_pnl == -10  # Conservative same-bar collision selects the $1 stop first.
+
+
+def test_mgc_globex_entry_window_excludes_first_and_last_session_hours() -> None:
+    config = BacktestConfig(entry_window_start=(19, 0), entry_window_end=(16, 0), block_friday_entries=True)
+
+    assert not _entry_allowed("2026-01-05T23:00:00Z", "long", config)  # Monday 18:00 ET.
+    assert _entry_allowed("2026-01-06T00:00:00Z", "long", config)  # Monday 19:00 ET.
+    assert not _entry_allowed("2026-01-06T21:00:00Z", "long", config)  # Tuesday 16:00 ET.
+
+
+def test_rrms_can_reset_after_its_maximum_tier() -> None:
+    bars = [make_bar(f"2026-01-0{day}T15:45:00Z", 100, 101, 90, 95) for day in range(1, 7)]
+    signals = [
+        {"decision_timestamp": bar.timestamp, "entry_timestamp": bar.timestamp, "side": "long", "jaw": 99}
+        for bar in bars[:5]
+    ]
+    trades = run_backtest(
+        bars,
+        signals,
+        "rrms",
+        BacktestConfig(rrms_reset_after_max_tier=True, entry_interval_minutes=15),
+    )
+    assert len(trades) == 5
+    assert [trade.rrms_tier for trade in trades] == [0, 1, 2, 3, 0]

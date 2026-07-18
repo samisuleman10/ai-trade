@@ -19,3 +19,12 @@ draft -> specified -> backtest -> shadow -> paper -> limited_live -> retired
 
 A strategy may only move to the next status after its documented acceptance
 criteria are met. No strategy file authorizes live trading by itself.
+
+## Strategy 01 versions
+
+| Version | Specification |
+| --- | --- |
+| v1 | `strategy_01/v1/strategy.md` |
+| v2 | `strategy_01/v2/strategy.md` |
+| v3 | `strategy_01/v3/` (separate SPY, QQQ, DIA, and Gold research folders) |
+| v4 | `strategy_01/v4/strategy.md` |

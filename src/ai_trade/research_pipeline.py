@@ -63,6 +63,10 @@ def refresh_profile_data(profile: ResearchProfile, *, root: Path = ROOT, port: i
         command.extend(("--one-hour-duration", profile.one_hour_duration))
     if profile.four_hour_duration:
         command.extend(("--four-hour-duration", profile.four_hour_duration))
+    if profile.downloader_symbol:
+        command.extend(("--symbol", profile.downloader_symbol))
+    if profile.downloader_primary_exchange:
+        command.extend(("--primary-exchange", profile.downloader_primary_exchange))
     subprocess.run(command, cwd=root, check=True)
 
 

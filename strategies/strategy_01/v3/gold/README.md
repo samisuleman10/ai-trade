@@ -44,3 +44,27 @@ must add a verified IBKR commission schedule, margin/buying-power control,
 front-month selection, delivery avoidance, and roll rules.
 
 No paper or live trading is authorised.
+
+## Preliminary two-year result — 2026-07-16
+
+The cleaned continuous-MGC historical run covers 17 Jul 2024 through 16 Jul
+2026: 11,812 one-hour bars and 3,590 four-hour bars. It uses the same manual
+bullish long-only macro placeholder as SPY, plus the Gold-specific session and
+sizing rules above.
+
+| Metric | Fixed 0.15% risk | RRMS |
+| --- | ---: | ---: |
+| Completed trades | 18 | 26 |
+| Wins / losses | 6 / 12 | 12 / 14 |
+| Win rate | 33.3% | 46.2% |
+| Net P&L on USD 100,000 model equity | -$785.39 | +$1,246.10 |
+| Profit factor | 0.47 | 1.47 |
+| Average R | -0.382R | -0.134R |
+
+The **fixed-risk result is negative**. RRMS becomes positive only by changing
+the risk path after losses; it also allows more trades because whole-contract
+minimum sizing can reject setups at the fixed 0.15% tier. That is not evidence
+of a tradable Gold edge. Strategy 01 v3 Gold remains preliminary research only.
+
+The reproducible output, chart, exact data, and source snapshot are saved in
+`docs/strategy_01/v3/gold/pipeline_archives/two_year_clean_preliminary_2026-07-16/`.

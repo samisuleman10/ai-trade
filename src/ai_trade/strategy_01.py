@@ -73,6 +73,16 @@ def heikin_ashi(bars: Iterable[OHLCVBar]) -> list[tuple[float, float]]:
     return output
 
 
+def atr(bars: Iterable[OHLCVBar], period: int = 14) -> list[Optional[float]]:
+    """Return Wilder ATR values using only completed current/past OHLC bars."""
+    rows = list(bars)
+    ranges: list[float] = []
+    for index, bar in enumerate(rows):
+        previous_close = rows[index - 1].close if index else bar.close
+        ranges.append(max(bar.high - bar.low, abs(bar.high - previous_close), abs(bar.low - previous_close)))
+    return smma(ranges, period)
+
+
 def _displayed(raw: list[Optional[float]], offset: int) -> list[Optional[float]]:
     """Return values as displayed at each bar, using only earlier raw values."""
     return [None if index < offset else raw[index - offset] for index in range(len(raw))]
@@ -247,3 +257,97 @@ def candidate_signals(
                 )
         prior_long_ready, prior_short_ready = long_ready, short_ready
     return signals
+
+
+def candidate_signals_v4(
+    entry_bars: Iterable[OHLCVBar],
+    trend_bars: Iterable[OHLCVBar],
+    momentum_bars: Iterable[OHLCVBar],
+    params: Strategy01Parameters = Strategy01Parameters(),
+) -> list[dict[str, object]]:
+    """Return v4 signals from completed 1h, 15m, and 5m Alligator states.
+
+    The 15-minute series supplies the setup and the next-bar entry. The latest
+    completed 1-hour and 5-minute bars must agree, and a signal occurs only at
+    the transition into three-timeframe alignment.
+    """
+    entries, trends, momentum = list(entry_bars), list(trend_bars), list(momentum_bars)
+    entry_points = alligator_points(entries, params)
+    trend_points = alligator_points(trends, params)
+    momentum_points = alligator_points(momentum, params)
+
+    def start(value: str) -> datetime:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+    signals: list[dict[str, object]] = []
+    prior_long = prior_short = False
+    trend_closes = [start(point.timestamp) + timedelta(minutes=60) for point in trend_points]
+    momentum_closes = [start(point.timestamp) + timedelta(minutes=5) for point in momentum_points]
+    trend_index = momentum_index = -1
+    for index, (bar, point) in enumerate(zip(entries, entry_points)):
+        close = start(bar.timestamp) + timedelta(minutes=15)
+        while trend_index + 1 < len(trend_closes) and trend_closes[trend_index + 1] <= close:
+            trend_index += 1
+        while momentum_index + 1 < len(momentum_closes) and momentum_closes[momentum_index + 1] <= close:
+            momentum_index += 1
+        trend = trend_points[trend_index] if trend_index >= 0 else None
+        momentum_point = momentum_points[momentum_index] if momentum_index >= 0 else None
+        long_ready = bool(
+            trend and momentum_point and trend.bullish_open and point.bullish_open and momentum_point.bullish_open
+            and point.lips is not None and min(point.ha_open, point.ha_close) > point.lips
+        )
+        short_ready = bool(
+            trend and momentum_point and trend.bearish_open and point.bearish_open and momentum_point.bearish_open
+            and point.lips is not None and max(point.ha_open, point.ha_close) < point.lips
+        )
+        immediate_next = index + 1 < len(entries) and start(entries[index + 1].timestamp) == close
+        if immediate_next and point.jaw is not None:
+            next_bar = entries[index + 1]
+            if long_ready and not prior_long:
+                signals.append({
+                    "decision_timestamp": close.strftime("%Y-%m-%dT%H:%M:%SZ"), "entry_timestamp": next_bar.timestamp,
+                    "side": "long", "entry_reference": next_bar.open, "jaw": point.jaw,
+                    "stop_reference": point.jaw * (1 - 0.0005), "jaw_stop_buffer_percent": 0.0005,
+                    "trend_timestamp": trend.timestamp, "momentum_timestamp": momentum_point.timestamp,
+                })
+            if short_ready and not prior_short:
+                signals.append({
+                    "decision_timestamp": close.strftime("%Y-%m-%dT%H:%M:%SZ"), "entry_timestamp": next_bar.timestamp,
+                    "side": "short", "entry_reference": next_bar.open, "jaw": point.jaw,
+                    "stop_reference": point.jaw * (1 + 0.0005), "jaw_stop_buffer_percent": 0.0005,
+                    "trend_timestamp": trend.timestamp, "momentum_timestamp": momentum_point.timestamp,
+                })
+        prior_long, prior_short = long_ready, short_ready
+    return signals
+
+
+def candidate_signals_v5(
+    entry_bars: Iterable[OHLCVBar],
+    trend_bars: Iterable[OHLCVBar],
+    momentum_bars: Iterable[OHLCVBar],
+    params: Strategy01Parameters = Strategy01Parameters(),
+    *,
+    atr_period: int = 14,
+    atr_multiple: float = 0.10,
+    minimum_tick: float = 0.01,
+) -> list[dict[str, object]]:
+    """Return v4-aligned signals with a 15m ATR-based Jaw stop buffer."""
+    entries = list(entry_bars)
+    signals = candidate_signals_v4(entries, trend_bars, momentum_bars, params)
+    atr_values = atr(entries, atr_period)
+    index_by_timestamp = {bar.timestamp: index for index, bar in enumerate(entries)}
+    adjusted: list[dict[str, object]] = []
+    for signal in signals:
+        entry_index = index_by_timestamp[str(signal["entry_timestamp"])]
+        signal_index = entry_index - 1
+        value = atr_values[signal_index]
+        if value is None:
+            continue
+        buffer = max(minimum_tick, atr_multiple * value)
+        item = dict(signal)
+        item["stop_reference"] = float(signal["jaw"]) - buffer if signal["side"] == "long" else float(signal["jaw"]) + buffer
+        item["stop_buffer_atr_period"] = atr_period
+        item["stop_buffer_atr_multiple"] = atr_multiple
+        item["stop_buffer_dollars"] = buffer
+        adjusted.append(item)
+    return adjusted

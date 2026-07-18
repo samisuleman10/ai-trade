@@ -30,6 +30,8 @@ class ResearchProfile:
     download_timeframes: tuple[str, ...] = ()
     one_hour_duration: str | None = None
     four_hour_duration: str | None = None
+    downloader_symbol: str | None = None
+    downloader_primary_exchange: str | None = None
     unavailable_reason: str | None = None
 
     @property
@@ -56,6 +58,50 @@ PROFILES: Mapping[str, ResearchProfile] = {
         download_timeframes=("1h", "4h"),
         one_hour_duration="2 Y",
         four_hour_duration="2 Y",
+        downloader_symbol="SPY",
+        downloader_primary_exchange="ARCA",
+    ),
+    "strategy_01_v3_qqq": ResearchProfile(
+        profile_id="strategy_01_v3_qqq",
+        strategy_id="strategy_01",
+        strategy_version="v3",
+        market="Nasdaq-100 proxy / QQQ",
+        symbol="QQQ",
+        status="ready_for_historical_research",
+        backtest_profile="v3",
+        data_directory="data/market_data/ibkr/QQQ/v3_2y",
+        strategy_document="strategies/strategy_01/v3/qqq/strategy.md",
+        entry_filename="qqq_1h.csv",
+        trend_filename="qqq_4h.csv",
+        entry_timeframe="1h",
+        trend_timeframe="4h",
+        downloader_module="ai_trade.download_spy_history",
+        download_timeframes=("1h", "4h"),
+        one_hour_duration="2 Y",
+        four_hour_duration="2 Y",
+        downloader_symbol="QQQ",
+        downloader_primary_exchange="NASDAQ",
+    ),
+    "strategy_01_v3_dia": ResearchProfile(
+        profile_id="strategy_01_v3_dia",
+        strategy_id="strategy_01",
+        strategy_version="v3",
+        market="Dow 30 proxy / DIA",
+        symbol="DIA",
+        status="ready_for_historical_research",
+        backtest_profile="v3",
+        data_directory="data/market_data/ibkr/DIA/v3_2y",
+        strategy_document="strategies/strategy_01/v3/dia/strategy.md",
+        entry_filename="dia_1h.csv",
+        trend_filename="dia_4h.csv",
+        entry_timeframe="1h",
+        trend_timeframe="4h",
+        downloader_module="ai_trade.download_spy_history",
+        download_timeframes=("1h", "4h"),
+        one_hour_duration="2 Y",
+        four_hour_duration="2 Y",
+        downloader_symbol="DIA",
+        downloader_primary_exchange="ARCA",
     ),
     "strategy_01_v3_mgc": ResearchProfile(
         profile_id="strategy_01_v3_mgc",

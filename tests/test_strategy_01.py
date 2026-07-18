@@ -1,5 +1,5 @@
 from ai_trade.market_data import OHLCVBar, validate_bars
-from ai_trade.strategy_01 import Strategy01Parameters, alligator_points, heikin_ashi, smma
+from ai_trade.strategy_01 import Strategy01Parameters, alligator_points, atr, candidate_signals_v4, heikin_ashi, smma
 
 
 def bar(index: int, price: float) -> OHLCVBar:
@@ -28,6 +28,14 @@ def test_heikin_ashi_uses_previous_heikin_values() -> None:
     assert result[1][0] == 10.1875
 
 
+def test_atr_uses_wilder_smoothing_after_seed_window() -> None:
+    rows = [bar(index, 100 + index) for index in range(4)]
+    values = atr(rows, period=3)
+    assert values[:2] == [None, None]
+    assert values[2] == 2
+    assert values[3] == 2
+
+
 def test_alligator_display_offsets_do_not_read_future_bars() -> None:
     rows = [bar(index, 100 + index) for index in range(30)]
     points = alligator_points(rows, Strategy01Parameters(slope_lookback_bars=1))
@@ -42,3 +50,10 @@ def test_validation_rejects_duplicate_timestamps() -> None:
 
     assert report["valid"] is False
     assert report["duplicate_timestamps"] == 1
+
+
+def test_v4_handles_independent_timeframe_streams_without_a_signal() -> None:
+    entries = [bar(index, 100 + index) for index in range(20)]
+    trends = [bar(index, 100 + index) for index in range(20)]
+    momentum = [bar(index, 100 + index) for index in range(20)]
+    assert candidate_signals_v4(entries, trends, momentum) == []

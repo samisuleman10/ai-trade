@@ -100,3 +100,63 @@ separate futures-aware historical model: a 10-ounce multiplier, whole-contract
 risk sizing, a Globex session window, and a fee-recovery floor. It remains
 research-only because verified broker commissions, front-month rollover, margin,
 and delivery controls are still required before paper or live trading.
+
+Run its preliminary historical test with:
+
+```powershell
+python -m ai_trade.research_pipeline --profile strategy_01_v3_mgc --run-id two_year_clean_preliminary_2026-07-16 --archive docs/strategy_01/v3/gold/pipeline_archives/two_year_clean_preliminary_2026-07-16
+```
+
+The Nasdaq-100 test uses QQQ as its liquid, tradeable proxy while keeping the
+locked SPY v3 rules unchanged:
+
+```powershell
+python -m ai_trade.research_pipeline --profile strategy_01_v3_qqq --run-id two_year_preliminary_2026-07-16 --refresh-data --port 7496 --archive docs/strategy_01/v3/qqq/pipeline_archives/two_year_preliminary_2026-07-16
+```
+
+The Dow 30 test uses DIA as its ETF proxy:
+
+```powershell
+python -m ai_trade.research_pipeline --profile strategy_01_v3_dia --run-id two_year_preliminary_2026-07-16 --refresh-data --port 7496 --archive docs/strategy_01/v3/dia/pipeline_archives/two_year_preliminary_2026-07-16
+```
+
+## Strategy 01 v3 shadow trading
+
+The next development stage is a forward **shadow-trading** loop for SPY. It
+will create and monitor simulated trade intents only; it has no broker-order
+authority. The rules, data records, safety gateway, and requirements before
+paper trading are defined in
+[`docs/strategy_01/v3/shadow_trading_specification.md`](docs/strategy_01/v3/shadow_trading_specification.md).
+
+The first implementation is a deterministic local replay cycle. It reads saved
+bars, writes an auditable signal/no-signal or trade-intent record, and has no
+broker imports or order functions:
+
+```powershell
+python -m ai_trade.shadow_trading --one-hour data/market_data/ibkr/SPY/v3_2y/spy_1h.csv --four-hour data/market_data/ibkr/SPY/v3_2y/spy_4h.csv --decision-timestamp 2026-07-16T14:30:00Z
+```
+
+To begin a manual forward shadow run, leave TWS/IB Gateway open with its local
+API socket on `7496`, then run `./scripts/start_shadow_runner.ps1`. It refreshes
+only the required read-only SPY bars in the five allowed Monday–Thursday New
+York-time windows. It does not place or transmit orders.
+
+Accepted shadow intents are monitored against later completed 1-hour bars. The
+runner writes closed results to `shadow_trades.jsonl`; only one SPY shadow
+position may be open at a time. Use `--force-weekend-close` in the separate
+Friday monitoring cycle to apply the documented weekend-close rule.
+
+## Strategy 01 v4: multi-timeframe confirmation
+
+Strategy 01 v4 is a separate, specified-but-not-yet-implemented hypothesis:
+completed 1-hour, 15-minute, and 5-minute Alligator states must agree before a
+15-minute entry is allowed. The versioned specification is in
+[`strategies/strategy_01/v4/strategy.md`](strategies/strategy_01/v4/strategy.md).
+
+Its multi-timeframe cache is resumable: existing bars are retained and only
+missing older chunks are requested. To extend the saved SPY cache to a target
+date, run:
+
+```powershell
+python -m ai_trade.download_v4_history --output data/market_data/ibkr/SPY/v4_2y --target-start 2024-07-17 --port 7496
+```

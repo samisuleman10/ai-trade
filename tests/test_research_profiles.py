@@ -6,8 +6,15 @@ from ai_trade.research_pipeline import validate_profile_data
 from ai_trade.research_profiles import get_profile
 
 
-def test_spy_and_gold_profiles_are_ready_for_historical_research() -> None:
+def test_spy_qqq_dia_and_gold_profiles_are_ready_for_historical_research() -> None:
     assert get_profile("strategy_01_v3_spy").is_runnable
+    qqq = get_profile("strategy_01_v3_qqq")
+    assert qqq.is_runnable
+    assert qqq.backtest_profile == "v3"
+    assert qqq.downloader_primary_exchange == "NASDAQ"
+    dia = get_profile("strategy_01_v3_dia")
+    assert dia.is_runnable
+    assert dia.downloader_primary_exchange == "ARCA"
     gold = get_profile("strategy_01_v3_mgc")
     assert gold.is_runnable
     assert gold.backtest_profile == "v3-mgc"
