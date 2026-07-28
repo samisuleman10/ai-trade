@@ -13,7 +13,7 @@ import {
   Scale,
   TrendingUp,
 } from 'lucide-react';
-import { generateMockBars, MOCK_TRADES_S4 } from './mockData';
+import { STRATEGY_04_FIXTURE } from './strategy04Fixture';
 import {
   STRATEGY_04_RESULTS,
   STRATEGY_04_SPECS,
@@ -23,13 +23,14 @@ import type {
   PerformanceMetrics,
   Strategy04Asset,
   Strategy04Result,
-  Strategy04Timeframe,
   Strategy04Version,
 } from './strategy04Data';
-import { Strategy04PriceChart } from './components/Strategy04PriceChart';
-import { TradeTable } from './components/TradeTable';
+import { AssetComparison } from './components/AssetComparison';
+import { AuditedTradeList } from './components/AuditedTradeList';
+import { TradeSetupChart } from './components/TradeSetupChart';
+import { TradeExecutionChart } from './components/TradeExecutionChart';
 
-type View = 'performance' | 'rules' | 'chart';
+type View = 'performance' | 'comparison' | 'rules' | 'chart';
 
 const money = (value: number) =>
   new Intl.NumberFormat('en-US', {
@@ -352,12 +353,19 @@ export default function Strategy04Dashboard() {
   const [version, setVersion] = useState<Strategy04Version>('v1_1');
   const [asset, setAsset] = useState<Strategy04Asset>('SPY');
   const [view, setView] = useState<View>('performance');
-  const [timeframe, setTimeframe] = useState<Strategy04Timeframe>('1h');
   const [apiReachable, setApiReachable] = useState(false);
   const [checkingApi, setCheckingApi] = useState(false);
-  const bars = useMemo(() => generateMockBars(), []);
   const result = STRATEGY_04_RESULTS[version][asset];
-  const trades = asset === 'SPY' ? MOCK_TRADES_S4 : [];
+  const auditedTrades = useMemo(
+    () =>
+      asset === 'SPY' && version === 'v1_1' ? STRATEGY_04_FIXTURE.trades : [],
+    [asset, version],
+  );
+  const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
+  const selectedTrade = useMemo(
+    () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
+    [auditedTrades, selectedTradeId],
+  );
 
   const checkApi = async () => {
     setCheckingApi(true);
@@ -508,6 +516,7 @@ export default function Strategy04Dashboard() {
         <nav className="s4-tabs mt-6" aria-label="Strategy 04 sections">
           {[
             { id: 'performance' as const, label: 'Performance', icon: TrendingUp },
+            { id: 'comparison' as const, label: 'Compare assets', icon: BarChart3 },
             { id: 'rules' as const, label: 'Rules', icon: BookOpen },
             { id: 'chart' as const, label: 'Chart & trades', icon: Activity },
           ].map(({ id, label, icon: Icon }) => (
@@ -526,23 +535,43 @@ export default function Strategy04Dashboard() {
 
         <div className="mt-5">
           {view === 'performance' && <PerformanceOverview result={result} />}
+          {view === 'comparison' && (
+            <AssetComparison
+              version={version}
+              selectedAsset={asset}
+              onSelectAsset={(nextAsset) => {
+                setAsset(nextAsset);
+                setView('performance');
+              }}
+            />
+          )}
           {view === 'rules' && <RulesView version={version} />}
           {view === 'chart' && (
             <div className="space-y-5">
-              <Strategy04PriceChart
-                bars={bars}
-                timeframe={timeframe}
-                onTimeframeChange={setTimeframe}
-              />
-              {trades.length > 0 ? (
-                <TradeTable trades={trades} onFocusTrade={() => undefined} />
-              ) : (
+              {auditedTrades.length === 0 ? (
                 <section className="s4-panel p-8 text-center">
-                  <div className="text-sm font-semibold text-slate-900">Trade ledger not connected for {asset}</div>
+                  <div className="text-sm font-semibold text-slate-900">
+                    Audit fixture not generated for {asset} {version}
+                  </div>
                   <p className="mt-2 text-xs text-slate-500">
-                    Performance metrics are from the saved Strategy 04 report; detailed trade rows will appear when the versioned ledger endpoint is connected.
+                    Run <code>python -m ai_trade.build_strategy_04_fixture</code> for this
+                    symbol and version to populate the trade audit.
                   </p>
                 </section>
+              ) : (
+                <>
+                  <AuditedTradeList
+                    trades={auditedTrades}
+                    selectedTradeId={selectedTrade ? selectedTrade.trade_id : null}
+                    onSelect={setSelectedTradeId}
+                  />
+                  {selectedTrade && (
+                    <>
+                      <TradeSetupChart trade={selectedTrade} />
+                      <TradeExecutionChart trade={selectedTrade} />
+                    </>
+                  )}
+                </>
               )}
             </div>
           )}
