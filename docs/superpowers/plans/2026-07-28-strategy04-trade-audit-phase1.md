@@ -1091,58 +1091,73 @@ git commit -m "feat: add audited trade list with per-trade check results"
 
 ---
 
-### Task 5: One-hour setup chart
+### Task 5: Shared trade-chart hook
 
 **Files:**
-- Create: `dashboard/src/components/TradeSetupChart.tsx`
+- Create: `dashboard/src/components/useTradeChart.ts`
 
 **Interfaces:**
-- Consumes: `AuditedTrade`, `toChartBars`, `toEpochSeconds` from Task 3.
-- Produces: `<TradeSetupChart trade />`.
+- Consumes: `FixtureBar`, `toChartBars` from Task 3.
+- Produces: `useTradeChart(bars, decorate) -> RefObject<HTMLDivElement>`, and the `TradeChartHandles` type carrying `chart`, `candles`, `span`, `drawLevel`, and `setMarkers`.
 
-Zone bands are drawn as two `LineSeries` at the zone's lower and upper prices, because lightweight-charts 5 has no native rectangle primitive. The selected zone uses solid lines; competing zones use dotted lines.
+Tasks 6 and 7 both need identical chart construction, price-level drawing, and resize handling. That logic lives here once. Only the decoration differs between the two charts.
 
-- [ ] **Step 1: Write the component**
+- [ ] **Step 1: Write the hook**
 
-Create `dashboard/src/components/TradeSetupChart.tsx`:
+Create `dashboard/src/components/useTradeChart.ts`:
 
 ```typescript
 import { useEffect, useRef } from 'react';
 import { CandlestickSeries, LineSeries, createChart } from 'lightweight-charts';
-import type { IChartApi, Time } from 'lightweight-charts';
-import type { AuditedTrade } from '../strategy04Fixture';
-import { toChartBars, toEpochSeconds } from '../strategy04Fixture';
+import type { IChartApi, ISeriesApi, SeriesMarker, Time } from 'lightweight-charts';
+import type { FixtureBar } from '../strategy04Fixture';
+import { toChartBars } from '../strategy04Fixture';
 
-interface Props {
-  trade: AuditedTrade;
+export interface TradeChartHandles {
+  chart: IChartApi;
+  candles: ISeriesApi<'Candlestick'>;
+  span: Time[];
+  drawLevel: (price: number, color: string, dotted: boolean, title: string) => void;
+  setMarkers: (markers: SeriesMarker<Time>[]) => void;
 }
 
-export function TradeSetupChart({ trade }: Props) {
+const CHART_OPTIONS = {
+  layout: { background: { color: '#ffffff' }, textColor: '#64748b', fontSize: 11 },
+  grid: { vertLines: { color: '#eef2f7' }, horzLines: { color: '#eef2f7' } },
+  rightPriceScale: { borderColor: '#dbe3ee', scaleMargins: { top: 0.12, bottom: 0.12 } },
+  timeScale: { borderColor: '#dbe3ee', timeVisible: true, secondsVisible: false },
+};
+
+const CANDLE_OPTIONS = {
+  upColor: '#0f9f74',
+  downColor: '#e24c63',
+  borderUpColor: '#0f9f74',
+  borderDownColor: '#e24c63',
+  wickUpColor: '#0f9f74',
+  wickDownColor: '#e24c63',
+};
+
+/**
+ * Build a candlestick chart from fixture bars and hand the caller the pieces
+ * it needs to draw price levels and markers on top.
+ */
+export function useTradeChart(
+  bars: FixtureBar[],
+  lineWidth: 1 | 2,
+  decorate: (handles: TradeChartHandles) => void,
+) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<IChartApi | null>(null);
+  const decorateRef = useRef(decorate);
+  decorateRef.current = decorate;
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const chart = createChart(containerRef.current, {
-      layout: { background: { color: '#ffffff' }, textColor: '#64748b', fontSize: 11 },
-      grid: { vertLines: { color: '#eef2f7' }, horzLines: { color: '#eef2f7' } },
-      rightPriceScale: { borderColor: '#dbe3ee', scaleMargins: { top: 0.12, bottom: 0.12 } },
-      timeScale: { borderColor: '#dbe3ee', timeVisible: true, secondsVisible: false },
-    });
-    chartRef.current = chart;
-
-    const bars = toChartBars(trade.bars.one_hour);
-    const candles = chart.addSeries(CandlestickSeries, {
-      upColor: '#0f9f74',
-      downColor: '#e24c63',
-      borderUpColor: '#0f9f74',
-      borderDownColor: '#e24c63',
-      wickUpColor: '#0f9f74',
-      wickDownColor: '#e24c63',
-    });
+    const chart = createChart(containerRef.current, CHART_OPTIONS);
+    const chartBars = toChartBars(bars);
+    const candles = chart.addSeries(CandlestickSeries, CANDLE_OPTIONS);
     candles.setData(
-      bars.map((bar) => ({
+      chartBars.map((bar) => ({
         time: bar.time as Time,
         open: bar.open,
         high: bar.high,
@@ -1151,11 +1166,11 @@ export function TradeSetupChart({ trade }: Props) {
       })),
     );
 
-    const span = bars.map((bar) => bar.time as Time);
+    const span = chartBars.map((bar) => bar.time as Time);
     const drawLevel = (price: number, color: string, dotted: boolean, title: string) => {
       const series = chart.addSeries(LineSeries, {
         color,
-        lineWidth: 1,
+        lineWidth,
         lineStyle: dotted ? 2 : 0,
         priceLineVisible: false,
         lastValueVisible: true,
@@ -1164,31 +1179,13 @@ export function TradeSetupChart({ trade }: Props) {
       series.setData(span.map((time) => ({ time, value: price })));
     };
 
-    drawLevel(trade.zones.selected.lower, '#0f9f74', false, `zone ${trade.zones.selected.lower.toFixed(2)}`);
-    drawLevel(trade.zones.selected.upper, '#0f9f74', false, `score ${trade.zones.selected.score}`);
-    trade.zones.competing.forEach((zone) => {
-      drawLevel(zone.lower, '#94a3b8', true, `#${zone.zone_id} score ${zone.score}`);
-      drawLevel(zone.upper, '#94a3b8', true, '');
+    decorateRef.current({
+      chart,
+      candles,
+      span,
+      drawLevel,
+      setMarkers: (markers) => candles.setMarkers(markers),
     });
-
-    const markers: Array<{ time: Time; position: 'aboveBar' | 'belowBar'; color: string; shape: 'arrowDown' | 'arrowUp'; text: string }> = [];
-    if (trade.zones.selected.qualified_timestamp) {
-      markers.push({
-        time: toEpochSeconds(trade.zones.selected.qualified_timestamp) as Time,
-        position: 'aboveBar',
-        color: '#185fa5',
-        shape: 'arrowDown',
-        text: 'zone qualified',
-      });
-    }
-    markers.push({
-      time: toEpochSeconds(trade.trigger_timestamp) as Time,
-      position: 'belowBar',
-      color: '#ba7517',
-      shape: 'arrowUp',
-      text: 'trigger',
-    });
-    candles.setMarkers(markers);
 
     chart.timeScale().fitContent();
 
@@ -1206,7 +1203,88 @@ export function TradeSetupChart({ trade }: Props) {
       window.removeEventListener('resize', resize);
       chart.remove();
     };
-  }, [trade]);
+  }, [bars, lineWidth]);
+
+  return containerRef;
+}
+```
+
+- [ ] **Step 2: Verify the markers API against the installed library**
+
+lightweight-charts 5 moved markers to a plugin in some builds. Run:
+
+`node -e "console.log(require('./dashboard/node_modules/lightweight-charts/package.json').version)"`
+
+If Step 3's build errors with `setMarkers is not a function` or `SeriesMarker` is not exported, replace the `setMarkers` implementation with the v5 plugin API: `import { createSeriesMarkers } from 'lightweight-charts'` and `setMarkers: (markers) => { createSeriesMarkers(candles, markers); }`, typing `markers` as the plugin's marker type. Make the change here only — both consuming charts go through this hook.
+
+- [ ] **Step 3: Verify it compiles**
+
+Run: `cd dashboard && npm run build`
+Expected: build succeeds.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add dashboard/src/components/useTradeChart.ts
+git commit -m "feat: add shared trade-chart hook for the audit charts"
+```
+
+---
+
+### Task 6: One-hour setup chart
+
+**Files:**
+- Create: `dashboard/src/components/TradeSetupChart.tsx`
+
+**Interfaces:**
+- Consumes: `AuditedTrade`, `toEpochSeconds` from Task 3; `useTradeChart` from Task 5.
+- Produces: `<TradeSetupChart trade />`.
+
+Zone bands are drawn as two lines at the zone's lower and upper prices, because lightweight-charts 5 has no native rectangle primitive. The selected zone uses solid lines; competing zones use dotted lines.
+
+- [ ] **Step 1: Write the component**
+
+Create `dashboard/src/components/TradeSetupChart.tsx`:
+
+```typescript
+import type { SeriesMarker, Time } from 'lightweight-charts';
+import type { AuditedTrade } from '../strategy04Fixture';
+import { toEpochSeconds } from '../strategy04Fixture';
+import { useTradeChart } from './useTradeChart';
+
+interface Props {
+  trade: AuditedTrade;
+}
+
+export function TradeSetupChart({ trade }: Props) {
+  const containerRef = useTradeChart(trade.bars.one_hour, 1, ({ drawLevel, setMarkers }) => {
+    const zone = trade.zones.selected;
+    drawLevel(zone.lower, '#0f9f74', false, `zone ${zone.lower.toFixed(2)}`);
+    drawLevel(zone.upper, '#0f9f74', false, `score ${zone.score}`);
+    trade.zones.competing.forEach((competitor) => {
+      drawLevel(competitor.lower, '#94a3b8', true, `#${competitor.zone_id} score ${competitor.score}`);
+      drawLevel(competitor.upper, '#94a3b8', true, '');
+    });
+
+    const markers: SeriesMarker<Time>[] = [];
+    if (zone.qualified_timestamp) {
+      markers.push({
+        time: toEpochSeconds(zone.qualified_timestamp) as Time,
+        position: 'aboveBar',
+        color: '#185fa5',
+        shape: 'arrowDown',
+        text: 'zone qualified',
+      });
+    }
+    markers.push({
+      time: toEpochSeconds(trade.trigger_timestamp) as Time,
+      position: 'belowBar',
+      color: '#ba7517',
+      shape: 'arrowUp',
+      text: 'trigger',
+    });
+    setMarkers(markers);
+  });
 
   return (
     <section className="s4-panel overflow-hidden">
@@ -1227,20 +1305,12 @@ export function TradeSetupChart({ trade }: Props) {
 }
 ```
 
-- [ ] **Step 2: Verify marker and line-style APIs against the installed library**
-
-lightweight-charts 5 moved markers to a plugin in some builds. Run:
-
-`node -e "const m=require('./dashboard/node_modules/lightweight-charts/package.json');console.log(m.version)"`
-
-Then confirm `setMarkers` exists on the series object at runtime in Step 3. If the build errors with `setMarkers is not a function`, replace the marker block with `import { createSeriesMarkers } from 'lightweight-charts'` and `createSeriesMarkers(candles, markers)`, which is the v5 API.
-
-- [ ] **Step 3: Verify it compiles**
+- [ ] **Step 2: Verify it compiles**
 
 Run: `cd dashboard && npm run build`
 Expected: build succeeds.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add dashboard/src/components/TradeSetupChart.tsx
@@ -1249,13 +1319,13 @@ git commit -m "feat: add 1h setup chart with zone bands and causality markers"
 
 ---
 
-### Task 6: Fifteen-minute execution chart
+### Task 7: Fifteen-minute execution chart
 
 **Files:**
 - Create: `dashboard/src/components/TradeExecutionChart.tsx`
 
 **Interfaces:**
-- Consumes: `AuditedTrade`, `toChartBars`, `toEpochSeconds` from Task 3.
+- Consumes: `AuditedTrade`, `toEpochSeconds` from Task 3; `useTradeChart` from Task 5.
 - Produces: `<TradeExecutionChart trade />`.
 
 - [ ] **Step 1: Write the component**
@@ -1263,68 +1333,22 @@ git commit -m "feat: add 1h setup chart with zone bands and causality markers"
 Create `dashboard/src/components/TradeExecutionChart.tsx`:
 
 ```typescript
-import { useEffect, useRef } from 'react';
-import { CandlestickSeries, LineSeries, createChart } from 'lightweight-charts';
-import type { IChartApi, Time } from 'lightweight-charts';
+import type { SeriesMarker, Time } from 'lightweight-charts';
 import type { AuditedTrade } from '../strategy04Fixture';
-import { toChartBars, toEpochSeconds } from '../strategy04Fixture';
+import { toEpochSeconds } from '../strategy04Fixture';
+import { useTradeChart } from './useTradeChart';
 
 interface Props {
   trade: AuditedTrade;
 }
 
 export function TradeExecutionChart({ trade }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<IChartApi | null>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const chart = createChart(containerRef.current, {
-      layout: { background: { color: '#ffffff' }, textColor: '#64748b', fontSize: 11 },
-      grid: { vertLines: { color: '#eef2f7' }, horzLines: { color: '#eef2f7' } },
-      rightPriceScale: { borderColor: '#dbe3ee', scaleMargins: { top: 0.12, bottom: 0.12 } },
-      timeScale: { borderColor: '#dbe3ee', timeVisible: true, secondsVisible: false },
-    });
-    chartRef.current = chart;
-
-    const bars = toChartBars(trade.bars.fifteen_minute);
-    const candles = chart.addSeries(CandlestickSeries, {
-      upColor: '#0f9f74',
-      downColor: '#e24c63',
-      borderUpColor: '#0f9f74',
-      borderDownColor: '#e24c63',
-      wickUpColor: '#0f9f74',
-      wickDownColor: '#e24c63',
-    });
-    candles.setData(
-      bars.map((bar) => ({
-        time: bar.time as Time,
-        open: bar.open,
-        high: bar.high,
-        low: bar.low,
-        close: bar.close,
-      })),
-    );
-
-    const span = bars.map((bar) => bar.time as Time);
-    const drawLevel = (price: number, color: string, dotted: boolean, title: string) => {
-      const series = chart.addSeries(LineSeries, {
-        color,
-        lineWidth: 2,
-        lineStyle: dotted ? 2 : 0,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title,
-      });
-      series.setData(span.map((time) => ({ time, value: price })));
-    };
-
+  const containerRef = useTradeChart(trade.bars.fifteen_minute, 2, ({ drawLevel, setMarkers }) => {
     drawLevel(trade.target_price, '#1d9e75', true, `target ${trade.target_price.toFixed(2)}`);
     drawLevel(trade.entry_price, '#378add', false, `entry ${trade.entry_price.toFixed(2)}`);
     drawLevel(trade.stop_price, '#e24b4a', true, `stop ${trade.stop_price.toFixed(2)}`);
 
-    candles.setMarkers([
+    const markers: SeriesMarker<Time>[] = [
       {
         time: toEpochSeconds(trade.trigger_timestamp) as Time,
         position: 'belowBar',
@@ -1346,25 +1370,9 @@ export function TradeExecutionChart({ trade }: Props) {
         shape: 'arrowDown',
         text: `${trade.exit_reason} ${trade.result_r >= 0 ? '+' : ''}${trade.result_r.toFixed(2)}R`,
       },
-    ]);
-
-    chart.timeScale().fitContent();
-
-    const resize = () => {
-      if (!containerRef.current) return;
-      chart.applyOptions({
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight,
-      });
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      chart.remove();
-    };
-  }, [trade]);
+    ];
+    setMarkers(markers);
+  });
 
   return (
     <section className="s4-panel overflow-hidden">
@@ -1398,14 +1406,14 @@ git commit -m "feat: add 15m execution chart with entry, stop, target and exit"
 
 ---
 
-### Task 7: Wire the audit view into the dashboard and delete the mocks
+### Task 8: Wire the audit view into the dashboard and delete the mocks
 
 **Files:**
 - Modify: `dashboard/src/Strategy04Dashboard.tsx:16` (import), `:359-361` (mock data), `:541-556` (chart view)
 - Modify: `dashboard/src/mockData.ts`
 
 **Interfaces:**
-- Consumes: `AuditedTradeList` (Task 4), `TradeSetupChart` (Task 5), `TradeExecutionChart` (Task 6), `STRATEGY_04_FIXTURE` (Task 3).
+- Consumes: `AuditedTradeList` (Task 4), `TradeSetupChart` (Task 6), `TradeExecutionChart` (Task 7), `STRATEGY_04_FIXTURE` (Task 3).
 - Produces: nothing consumed by later tasks.
 
 - [ ] **Step 1: Replace the mock data wiring**
@@ -1536,16 +1544,24 @@ git commit -m "feat: replace Strategy 04 mock chart with real audited trade view
 
 Phase 2 is out of scope for this plan. It replaces the fixture import in
 `dashboard/src/strategy04Fixture.ts` with a fetch against `/api/runs`, with no
-changes to Tasks 4-6 components.
+changes to the Task 4, 5, 6, and 7 components.
 
 ## Known deviations from the spec
 
 Spec sections 6.2 and 6.3 describe the trigger window and trigger candle as
 "highlighted". lightweight-charts 5 has no background-shading primitive on the
-candlestick series, so Tasks 5 and 6 mark the trigger with a labelled arrow
+candlestick series, so Tasks 6 and 7 mark the trigger with a labelled arrow
 marker instead of a shaded region. This preserves the information — you can
 still see exactly which bar triggered — with less implementation risk than a
 custom series plugin. If shading turns out to matter after seeing it on screen,
 it needs a custom pane primitive and should be its own task.
 
 Zone bands are drawn as paired boundary lines for the same reason.
+
+The dashboard has no JavaScript test runner installed — `dashboard/package.json`
+carries no vitest, jest, or testing-library dependency. Tasks 4, 6, 7, and 8
+therefore verify by TypeScript compilation plus the manual checks in Task 8
+Step 6, rather than by automated component tests. This was ratified as a
+deliberate scope decision: the correctness logic under audit lives in Python
+and is fully unit-tested there. Adding a frontend test stack is a separate
+decision, not part of this plan.
