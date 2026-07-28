@@ -1,0 +1,346 @@
+{
+  "strategy_id": "strategy_04_v1_1h_zones_15m_reaction",
+  "mode": "historical_backtest_only",
+  "symbol": "SPY",
+  "data": {
+    "fifteen_minute_file": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_15m.csv",
+    "fifteen_minute_bar_count": 34200,
+    "fifteen_minute_first": "2021-04-14T13:30:00Z",
+    "fifteen_minute_last": "2026-07-16T19:45:00Z",
+    "one_hour_file": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_1h.csv",
+    "one_hour_bar_count": 9189,
+    "one_hour_first": "2021-04-19T13:30:00Z",
+    "one_hour_last": "2026-07-16T19:00:00Z"
+  },
+  "indicator_version": "0.3",
+  "indicator_parameters": {
+    "atr_period": 14,
+    "pivot_left_bars": 5,
+    "pivot_right_bars": 3,
+    "pivot_min_width_atr": 0.12,
+    "pivot_max_width_atr": 0.55,
+    "structure_lookback_bars": 10,
+    "order_block_lookback_bars": 6,
+    "displacement_atr": 1.2,
+    "merge_distance_atr": 0.25,
+    "max_merged_width_atr": 0.5,
+    "volume_profile_bins": 24,
+    "volume_value_area": 0.7,
+    "volume_reference_distance_atr": 0.0,
+    "volume_reference_max_age_bars": 8,
+    "volume_scoring_kinds": [
+      "POC"
+    ],
+    "minimum_confluence_score": 2,
+    "invalidation_buffer_atr": 0.05,
+    "max_zone_age_bars": 240,
+    "broken_retest_window_bars": 40,
+    "max_live_zones": 20,
+    "freeze_qualified_geometry": true,
+    "minimum_pivot_separation_bars": 6,
+    "require_repeated_pivot_for_qualification": true,
+    "staged_rejection": true,
+    "rejection_confirmation_window_bars": 3,
+    "rejection_body_atr": 0.15,
+    "rejection_cooldown_bars": 5
+  },
+  "indicator_summary": {
+    "bar_count": 9189,
+    "first_timestamp": "2021-04-19T13:30:00Z",
+    "last_timestamp": "2026-07-16T19:00:00Z",
+    "raw_zone_count": 1271,
+    "qualified_zone_count": 177,
+    "qualified_demand_count": 77,
+    "qualified_supply_count": 100,
+    "status_counts": {
+      "active": 2,
+      "expired": 174,
+      "touched": 1
+    },
+    "score_counts": {
+      "2": 28,
+      "3": 79,
+      "4": 61,
+      "5": 9
+    },
+    "current_score_counts": {
+      "2": 28,
+      "3": 79,
+      "4": 61,
+      "5": 9
+    },
+    "qualification_score_counts": {
+      "2": 73,
+      "3": 75,
+      "4": 27,
+      "5": 2
+    },
+    "event_counts": {
+      "age_expired": 80,
+      "broken": 586,
+      "broken_zone_expired": 94,
+      "created": 177,
+      "evidence_upgrade": 49,
+      "merged": 244,
+      "qualified": 177,
+      "rejection": 252,
+      "role_flip_retest": 492,
+      "touch": 415,
+      "volume_confluence": 71
+    },
+    "volume_reference_count": 3951,
+    "non_repainting_violation_zone_ids": [],
+    "qualified_geometry_freeze_violation_zone_ids": [],
+    "non_repainting_check_passed": true,
+    "trading_signals_generated": 0,
+    "orders_generated": 0
+  },
+  "execution_parameters": {
+    "entry_interval_minutes": 15,
+    "one_hour_interval_minutes": 60,
+    "one_hour_atr_period": 14,
+    "stop_buffer_one_hour_atr": 0.05,
+    "require_directional_body": true,
+    "require_valid_side_approach": true,
+    "one_signal_per_zone": true
+  },
+  "backtest_configuration": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 15,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "rrms_tiers": [
+      0.0015,
+      0.0035,
+      0.007,
+      0.015,
+      0.015
+    ],
+    "rrms_reset": "after profit or after the fifth consecutive negative exit"
+  },
+  "rules": {
+    "zone_availability": "qualified before the 15-minute trigger bar opens",
+    "long_trigger": "valid-side approach, demand-zone intersection, bullish close above zone",
+    "short_trigger": "valid-side approach, supply-zone intersection, bearish close below zone",
+    "entry": "next immediately following 15-minute bar open",
+    "stop": "outside one-hour zone by 0.05 x latest completed one-hour ATR(14)",
+    "target": "1.0R",
+    "overlap": "stop assumed before target",
+    "zone_reuse": "one signal per zone; overlapping zones consumed together",
+    "opening_hour": "blocked before 10:30 America/New_York",
+    "final_hour": "blocked from 15:00 America/New_York",
+    "friday_entries": "blocked",
+    "weekend": "force close final Friday 15-minute bar ending at 16:00 America/New_York"
+  },
+  "candidate_signal_count": 101,
+  "session_eligible_signal_count": 44,
+  "results": {
+    "fixed": {
+      "trade_count": 42,
+      "wins": 23,
+      "losses": 19,
+      "win_rate": 0.5476190476190477,
+      "net_pnl": 308.9716437781156,
+      "ending_equity": 100308.9716437781,
+      "profit_factor": 1.1047253486979576,
+      "average_r": 0.049810603413220786,
+      "max_drawdown": 934.0834098445193,
+      "long_trades": 23,
+      "short_trades": 19,
+      "exit_reasons": {
+        "stop": 19,
+        "target": 23
+      },
+      "details": {
+        "trades": 42,
+        "wins": 23,
+        "losses": 19,
+        "breakeven": 0,
+        "win_rate": 0.5476190476190477,
+        "net_pnl": 308.9716437781156,
+        "average_r": 0.049810603413220786,
+        "long": {
+          "trades": 23,
+          "wins": 8,
+          "losses": 15,
+          "breakeven": 0,
+          "win_rate": 0.34782608695652173,
+          "net_pnl": -1176.4445261698284,
+          "average_r": -0.34316834100024346
+        },
+        "short": {
+          "trades": 19,
+          "wins": 15,
+          "losses": 4,
+          "breakeven": 0,
+          "win_rate": 0.7894736842105263,
+          "net_pnl": 1485.4161699479441,
+          "average_r": 0.5255219571768881
+        },
+        "exit_reasons": {
+          "stop": {
+            "trades": 19,
+            "wins": 0,
+            "losses": 19,
+            "breakeven": 0,
+            "win_rate": 0.0,
+            "net_pnl": -2950.304273220734,
+            "average_r": -1.0391001224433378
+          },
+          "target": {
+            "trades": 23,
+            "wins": 23,
+            "losses": 0,
+            "breakeven": 0,
+            "win_rate": 1.0,
+            "net_pnl": 3259.27591699885,
+            "average_r": 0.9493455508599432
+          }
+        },
+        "weekend_close": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "breakeven": 0,
+          "win_rate": null,
+          "net_pnl": 0,
+          "average_r": null
+        },
+        "stop": {
+          "trades": 19,
+          "wins": 0,
+          "losses": 19,
+          "breakeven": 0,
+          "win_rate": 0.0,
+          "net_pnl": -2950.304273220734,
+          "average_r": -1.0391001224433378
+        },
+        "target": {
+          "trades": 23,
+          "wins": 23,
+          "losses": 0,
+          "breakeven": 0,
+          "win_rate": 1.0,
+          "net_pnl": 3259.27591699885,
+          "average_r": 0.9493455508599432
+        },
+        "maximum_consecutive_losses": 4,
+        "average_holding_hours": 3.9285714285714284,
+        "total_costs": 46.13,
+        "maximum_rrms_tier": 0
+      }
+    },
+    "rrms": {
+      "trade_count": 42,
+      "wins": 23,
+      "losses": 19,
+      "win_rate": 0.5476190476190477,
+      "net_pnl": 1842.470422575746,
+      "ending_equity": 101842.47042257573,
+      "profit_factor": 1.2601096493349255,
+      "average_r": 0.04981060341322078,
+      "max_drawdown": 2789.794753401802,
+      "long_trades": 23,
+      "short_trades": 19,
+      "exit_reasons": {
+        "stop": 19,
+        "target": 23
+      },
+      "details": {
+        "trades": 42,
+        "wins": 23,
+        "losses": 19,
+        "breakeven": 0,
+        "win_rate": 0.5476190476190477,
+        "net_pnl": 1842.470422575746,
+        "average_r": 0.04981060341322078,
+        "long": {
+          "trades": 23,
+          "wins": 8,
+          "losses": 15,
+          "breakeven": 0,
+          "win_rate": 0.34782608695652173,
+          "net_pnl": -2769.0590130201854,
+          "average_r": -0.34316834100024346
+        },
+        "short": {
+          "trades": 19,
+          "wins": 15,
+          "losses": 4,
+          "breakeven": 0,
+          "win_rate": 0.7894736842105263,
+          "net_pnl": 4611.529435595931,
+          "average_r": 0.525521957176888
+        },
+        "exit_reasons": {
+          "stop": {
+            "trades": 19,
+            "wins": 0,
+            "losses": 19,
+            "breakeven": 0,
+            "win_rate": 0.0,
+            "net_pnl": -7083.437416823092,
+            "average_r": -1.0391001224433378
+          },
+          "target": {
+            "trades": 23,
+            "wins": 23,
+            "losses": 0,
+            "breakeven": 0,
+            "win_rate": 1.0,
+            "net_pnl": 8925.907839398837,
+            "average_r": 0.9493455508599432
+          }
+        },
+        "weekend_close": {
+          "trades": 0,
+          "wins": 0,
+          "losses": 0,
+          "breakeven": 0,
+          "win_rate": null,
+          "net_pnl": 0,
+          "average_r": null
+        },
+        "stop": {
+          "trades": 19,
+          "wins": 0,
+          "losses": 19,
+          "breakeven": 0,
+          "win_rate": 0.0,
+          "net_pnl": -7083.437416823092,
+          "average_r": -1.0391001224433378
+        },
+        "target": {
+          "trades": 23,
+          "wins": 23,
+          "losses": 0,
+          "breakeven": 0,
+          "win_rate": 1.0,
+          "net_pnl": 8925.907839398837,
+          "average_r": 0.9493455508599432
+        },
+        "maximum_consecutive_losses": 4,
+        "average_holding_hours": 3.9285714285714284,
+        "total_costs": 110.84,
+        "maximum_rrms_tier": 4
+      }
+    }
+  },
+  "warning": "Historical research only. No macro regime filter, live order permission, market-impact model, or out-of-sample validation is included."
+}

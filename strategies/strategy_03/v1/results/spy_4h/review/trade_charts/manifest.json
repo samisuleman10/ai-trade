@@ -1,0 +1,28 @@
+{
+  "ledger": "strategies\\strategy_03\\v1\\results\\spy_4h\\fixed_trades.csv",
+  "total_trades": 73,
+  "selected_trade_numbers": [
+    1,
+    9,
+    17,
+    25,
+    33,
+    41,
+    49,
+    57,
+    65,
+    73
+  ],
+  "files": [
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_001.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_009.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_017.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_025.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_033.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_041.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_049.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_057.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_065.svg",
+    "strategies\\strategy_03\\v1\\results\\spy_4h\\review\\trade_charts\\trade_073.svg"
+  ]
+}

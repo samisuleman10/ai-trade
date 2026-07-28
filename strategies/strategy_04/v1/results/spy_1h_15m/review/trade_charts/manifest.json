@@ -1,0 +1,30 @@
+{
+  "bars": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_15m.csv",
+  "signals": "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\candidate_signals.csv",
+  "ledger": "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\fixed_trades.csv",
+  "total_trades": 42,
+  "selected_trade_numbers": [
+    1,
+    6,
+    10,
+    15,
+    19,
+    24,
+    28,
+    33,
+    37,
+    42
+  ],
+  "files": [
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_001.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_006.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_010.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_015.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_019.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_024.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_028.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_033.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_037.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\trade_charts\\trade_042.svg"
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "strategy_id": "strategy_02_v1_5_multi_timeframe_alligator_zigzag",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "SPY",
+    "source": "locally cached IBKR historical bars",
+    "fifteen_minute_range": [
+      "2024-05-28T13:30:00Z",
+      "2026-07-23T19:45:00Z"
+    ],
+    "one_hour_range": [
+      "2024-07-17T13:30:00Z",
+      "2026-07-16T18:00:00Z"
+    ],
+    "fifteen_minute_bar_count": 13968,
+    "one_hour_bar_count": 3491
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 15,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "confirmation": "completed 1-hour Heikin-Ashi body crosses the 1-hour Jaw while the 1-hour Alligator remains open in the pre-reversal direction",
+    "alignment": "latest completed 15-minute Alligator agrees with the intended direction",
+    "structure": "completed 15-minute ZigZag-style Heikin-Ashi support/resistance, Depth 18 / Deviation 5 ticks / Backstep 3",
+    "entry": "next 15-minute bar open after the completed 1-hour confirmation",
+    "target": "one times realised entry-to-stop distance (1:1)",
+    "stop": "structure dot plus max($0.01, 0.10 \u00d7 completed 15-minute ATR(14)) buffer",
+    "session": "US regular trading hours only; no opening hour, final hour, or Friday entries",
+    "weekend": "force-close in the final Friday 15-minute bar containing 16:00 New York time",
+    "costs": "1 basis point adverse slippage per side plus $0.005 per share per side",
+    "intrabar_collision": "stop assumed before target when both occur inside one 15-minute bar",
+    "macro_filter": "not integrated; long and short candidates are both included"
+  },
+  "candidate_signal_count": 28,
+  "eligible_signal_count": 23,
+  "results": {
+    "fixed": {
+      "trade_count": 18,
+      "wins": 9,
+      "losses": 9,
+      "win_rate": 0.5,
+      "net_pnl": -2.0153650846368407,
+      "ending_equity": 99997.98463491537,
+      "profit_factor": 0.9980887748567803,
+      "average_r": 0.00018963225279560828,
+      "max_drawdown": 555.3437981491879,
+      "long_trades": 9,
+      "short_trades": 9,
+      "exit_reasons": {
+        "stop": 6,
+        "target": 6,
+        "weekend_close": 6
+      }
+    },
+    "rrms": {
+      "trade_count": 18,
+      "wins": 9,
+      "losses": 9,
+      "win_rate": 0.5,
+      "net_pnl": 567.8481079599571,
+      "ending_equity": 100567.84810795999,
+      "profit_factor": 1.311050011144137,
+      "average_r": 0.0001896322527955836,
+      "max_drawdown": 1217.6129088460875,
+      "long_trades": 9,
+      "short_trades": 9,
+      "exit_reasons": {
+        "stop": 6,
+        "target": 6,
+        "weekend_close": 6
+      }
+    }
+  },
+  "warning": "Preliminary research only. This is not a live or paper-trading authorization and excludes market impact, tax, borrow constraints, and a live macro filter."
+}

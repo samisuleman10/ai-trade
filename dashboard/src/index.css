@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #f1f5f9;       /* Lighter, softer Light Grey Main Background (Slate 100) */
+    --bg-panel: #f8fafc;      /* Soft Light Grey Panel (Slate 50) */
+    --bg-card: #ffffff;       /* Clean Card Accent */
+    --bg-hover: #e2e8f0;      /* Hover Accent */
+    --border-subtle: #e2e8f0;  /* Subtle Border */
+    --border-bright: #cbd5e1;  /* Active Border */
+    
+    --text-primary: #0f172a;   /* Dark Slate Text */
+    --text-secondary: #334155; /* Slate Text */
+    --text-muted: #64748b;     /* Muted Slate Text */
+
+    --accent-indigo: #4f46e5;
+    --accent-emerald: #047857;
+    --accent-rose: #be123c;
+    --accent-sky: #0284c7;
+    --accent-amber: #b45309;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+  }
+}
+
+/* Light Grey Terminal Panels & Cards */
+.terminal-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+}
+
+.terminal-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  transition: all 0.15s ease-in-out;
+}
+
+.terminal-card:hover {
+  border-color: var(--border-bright);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom Scrollbars for Light Grey Theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

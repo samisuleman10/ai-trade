@@ -1,0 +1,82 @@
+{
+  "strategy_id": "strategy_03_v1_4h_weekly_reset_rrms",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "SPY",
+    "timeframe": "4h",
+    "range": [
+      "2020-07-23T13:30:00Z",
+      "2026-07-23T16:00:00Z"
+    ]
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 240,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "rrms_tiers": [
+      0.0015,
+      0.0035,
+      0.007,
+      0.015
+    ],
+    "weekly_reset": "every new ISO trading week and every Friday forced close resets tier to 0",
+    "maximum_tier_stop": "blocks only the remainder of the current week"
+  },
+  "candidate_signal_count": 125,
+  "results": {
+    "fixed": {
+      "trade_count": 73,
+      "wins": 39,
+      "losses": 34,
+      "win_rate": 0.5342465753424658,
+      "net_pnl": -1117.8933221113762,
+      "ending_equity": 98882.10667788862,
+      "profit_factor": 0.7208403153633256,
+      "average_r": -0.10050219766665348,
+      "max_drawdown": 1215.5895151740406,
+      "long_trades": 42,
+      "short_trades": 31,
+      "exit_reasons": {
+        "stop": 23,
+        "target": 9,
+        "weekend_close": 41
+      }
+    },
+    "rrms": {
+      "trade_count": 73,
+      "wins": 39,
+      "losses": 34,
+      "win_rate": 0.5342465753424658,
+      "net_pnl": -1596.385760540713,
+      "ending_equity": 98403.61423945926,
+      "profit_factor": 0.6439012851107946,
+      "average_r": -0.10050219766665348,
+      "max_drawdown": 1698.336346199023,
+      "long_trades": 42,
+      "short_trades": 31,
+      "exit_reasons": {
+        "stop": 23,
+        "target": 9,
+        "weekend_close": 41
+      }
+    }
+  },
+  "warning": "Historical research only; weekly-reset RRMS is not authorized for execution."
+}

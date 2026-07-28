@@ -1,0 +1,40 @@
+{
+  "bars": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_15m.csv",
+  "signals": "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\candidate_signals.csv",
+  "ledger": "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\long_loss_trades.csv",
+  "total_trades": 15,
+  "selected_trade_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "files": [
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_001.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_002.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_003.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_004.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_005.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_006.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_007.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_008.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_009.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_010.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_011.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_012.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_013.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_014.svg",
+    "strategies\\strategy_04\\v1\\results\\spy_1h_15m\\review\\long_losses\\charts\\trade_015.svg"
+  ]
+}

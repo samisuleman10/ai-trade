@@ -1,0 +1,16 @@
+{
+  "trade_count": 1,
+  "wins": 0,
+  "losses": 1,
+  "win_rate": 0.0,
+  "net_pnl": -148.9204112364596,
+  "ending_equity": 99851.07958876355,
+  "profit_factor": 0.0,
+  "average_r": -1.0112640717751653,
+  "max_drawdown": 148.92041123645322,
+  "long_trades": 0,
+  "short_trades": 1,
+  "exit_reasons": {
+    "stop": 1
+  }
+}

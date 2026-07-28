@@ -1,0 +1,81 @@
+{
+  "strategy_id": "strategy_03_v1_1h_alligator_open",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "DIA",
+    "source": "locally cached IBKR historical bars",
+    "timeframe": "1h",
+    "range": [
+      "2020-07-23T13:30:00Z",
+      "2026-07-23T19:00:00Z"
+    ]
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 60,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "entry": "first completed bar transitioning into bullish/bearish open Alligator; fill at next bar open",
+    "stop": "Jaw plus/minus max(minimum tick, 0.10 ATR)",
+    "target": "1:1 realised entry-to-stop distance",
+    "filters": "no VIX, macro, Heikin-Ashi, support/resistance, or higher-timeframe confirmation",
+    "intrabar_collision": "stop before target"
+  },
+  "candidate_signal_count": 586,
+  "eligible_signal_count": 360,
+  "results": {
+    "fixed": {
+      "trade_count": 318,
+      "wins": 164,
+      "losses": 154,
+      "win_rate": 0.5157232704402516,
+      "net_pnl": -1562.6125228015592,
+      "ending_equity": 98437.38747719863,
+      "profit_factor": 0.9228067378737087,
+      "average_r": -0.03243826794843073,
+      "max_drawdown": 3443.684553235813,
+      "long_trades": 173,
+      "short_trades": 145,
+      "exit_reasons": {
+        "stop": 119,
+        "target": 114,
+        "weekend_close": 85
+      }
+    },
+    "rrms": {
+      "trade_count": 17,
+      "wins": 7,
+      "losses": 10,
+      "win_rate": 0.4117647058823529,
+      "net_pnl": -3042.2612734519007,
+      "ending_equity": 96957.7387265481,
+      "profit_factor": 0.2321115265373188,
+      "average_r": -0.30941085916161365,
+      "max_drawdown": 3644.903910468711,
+      "long_trades": 11,
+      "short_trades": 6,
+      "exit_reasons": {
+        "stop": 8,
+        "target": 3,
+        "weekend_close": 6
+      }
+    }
+  },
+  "warning": "Historical research only; no paper or live order authorization."
+}

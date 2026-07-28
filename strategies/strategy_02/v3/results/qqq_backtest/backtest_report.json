@@ -1,0 +1,87 @@
+{
+  "strategy_id": "strategy_02_v3_4h_trend_1h_execution_vix_under_20",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "QQQ",
+    "source": "locally cached IBKR historical bars",
+    "one_hour_range": [
+      "2020-07-23T13:30:00Z",
+      "2026-07-23T19:00:00Z"
+    ],
+    "four_hour_range": [
+      "2020-07-23T13:30:00Z",
+      "2026-07-23T16:00:00Z"
+    ],
+    "vix_fifteen_minute_range": [
+      "2021-03-09T08:15:00Z",
+      "2026-07-23T20:45:00Z"
+    ]
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 60,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "higher_timeframe_filter": "completed 4-hour Alligator bullish for long / bearish for short",
+    "one_hour_trigger": "opposite open 1-hour Alligator plus HA body crossing its Jaw",
+    "structure": "causal 1-hour ZigZag support/resistance",
+    "vix_filter": "latest completed 15-minute VIX close strictly below 20.00",
+    "target": "1:1 realised entry-to-stop distance",
+    "intrabar_collision": "stop before target"
+  },
+  "candidate_signal_count": 12,
+  "eligible_signal_count": 7,
+  "results": {
+    "fixed": {
+      "trade_count": 6,
+      "wins": 3,
+      "losses": 3,
+      "win_rate": 0.5,
+      "net_pnl": -5.103782364982067,
+      "ending_equity": 99994.89621763503,
+      "profit_factor": 0.9883530932813774,
+      "average_r": -0.006652173543370961,
+      "max_drawdown": 292.2624965933792,
+      "long_trades": 5,
+      "short_trades": 1,
+      "exit_reasons": {
+        "stop": 3,
+        "target": 3
+      }
+    },
+    "rrms": {
+      "trade_count": 6,
+      "wins": 3,
+      "losses": 3,
+      "win_rate": 0.5,
+      "net_pnl": 533.8965250602157,
+      "ending_equity": 100533.89652506022,
+      "profit_factor": 1.8324137466106711,
+      "average_r": -0.006652173543370961,
+      "max_drawdown": 495.4368368897849,
+      "long_trades": 5,
+      "short_trades": 1,
+      "exit_reasons": {
+        "stop": 3,
+        "target": 3
+      }
+    }
+  },
+  "warning": "Preliminary historical research only; excludes spread and real execution constraints."
+}

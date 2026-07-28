@@ -1,0 +1,30 @@
+{
+  "bars": "data\\market_data\\ibkr\\QQQ\\v5_5y\\qqq_15m.csv",
+  "signals": "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\candidate_signals.csv",
+  "ledger": "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\fixed_trades.csv",
+  "total_trades": 59,
+  "selected_trade_numbers": [
+    1,
+    7,
+    14,
+    20,
+    27,
+    33,
+    40,
+    46,
+    53,
+    59
+  ],
+  "files": [
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_001.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_007.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_014.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_020.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_027.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_033.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_040.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_046.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_053.svg",
+    "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\review\\trade_charts\\trade_059.svg"
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "report": "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\backtest_report.json",
+  "bars": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_4h.csv",
+  "fixed_trades": "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\fixed_trades.csv",
+  "rrms_trades": "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\rrms_trades.csv",
+  "fixed_statistics": {
+    "trades": 73,
+    "wins": 39,
+    "losses": 34,
+    "breakeven": 0,
+    "win_rate": 0.5342465753424658,
+    "net_pnl": -1117.8933221113762,
+    "average_r": -0.10050219766665348,
+    "long": {
+      "trades": 42,
+      "wins": 24,
+      "losses": 18,
+      "breakeven": 0,
+      "win_rate": 0.5714285714285714,
+      "net_pnl": -105.95773655405965,
+      "average_r": -0.013883119083736522
+    },
+    "short": {
+      "trades": 31,
+      "wins": 15,
+      "losses": 16,
+      "breakeven": 0,
+      "win_rate": 0.4838709677419355,
+      "net_pnl": -1011.9355855573165,
+      "average_r": -0.2178570783273797
+    },
+    "exit_reasons": {
+      "stop": {
+        "trades": 23,
+        "wins": 0,
+        "losses": 23,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -3456.2747030791184,
+        "average_r": -1.0229556718500377
+      },
+      "target": {
+        "trades": 9,
+        "wins": 9,
+        "losses": 0,
+        "breakeven": 0,
+        "win_rate": 1.0,
+        "net_pnl": 1283.0289479677376,
+        "average_r": 0.9798402016068842
+      },
+      "weekend_close": {
+        "trades": 41,
+        "wins": 30,
+        "losses": 11,
+        "breakeven": 0,
+        "win_rate": 0.7317073170731707,
+        "net_pnl": 1055.3524330000048,
+        "average_r": 0.1798233709371513
+      }
+    },
+    "weekend_close": {
+      "trades": 41,
+      "wins": 30,
+      "losses": 11,
+      "breakeven": 0,
+      "win_rate": 0.7317073170731707,
+      "net_pnl": 1055.3524330000048,
+      "average_r": 0.1798233709371513
+    },
+    "stop": {
+      "trades": 23,
+      "wins": 0,
+      "losses": 23,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -3456.2747030791184,
+      "average_r": -1.0229556718500377
+    },
+    "target": {
+      "trades": 9,
+      "wins": 9,
+      "losses": 0,
+      "breakeven": 0,
+      "win_rate": 1.0,
+      "net_pnl": 1283.0289479677376,
+      "average_r": 0.9798402016068842
+    },
+    "maximum_consecutive_losses": 4,
+    "average_holding_hours": 54.8013698630137,
+    "total_costs": 22.130000000000003,
+    "maximum_rrms_tier": 0
+  },
+  "rrms_statistics": {
+    "trades": 73,
+    "wins": 39,
+    "losses": 34,
+    "breakeven": 0,
+    "win_rate": 0.5342465753424658,
+    "net_pnl": 2130.1503122296535,
+    "average_r": -0.10050219766665348,
+    "long": {
+      "trades": 42,
+      "wins": 24,
+      "losses": 18,
+      "breakeven": 0,
+      "win_rate": 0.5714285714285714,
+      "net_pnl": 2961.537698384068,
+      "average_r": -0.013883119083736512
+    },
+    "short": {
+      "trades": 31,
+      "wins": 15,
+      "losses": 16,
+      "breakeven": 0,
+      "win_rate": 0.4838709677419355,
+      "net_pnl": -831.3873861544146,
+      "average_r": -0.2178570783273797
+    },
+    "exit_reasons": {
+      "stop": {
+        "trades": 23,
+        "wins": 0,
+        "losses": 23,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -6060.263087337524,
+        "average_r": -1.0229556718500377
+      },
+      "target": {
+        "trades": 9,
+        "wins": 9,
+        "losses": 0,
+        "breakeven": 0,
+        "win_rate": 1.0,
+        "net_pnl": 5243.602124567154,
+        "average_r": 0.9798402016068843
+      },
+      "weekend_close": {
+        "trades": 41,
+        "wins": 30,
+        "losses": 11,
+        "breakeven": 0,
+        "win_rate": 0.7317073170731707,
+        "net_pnl": 2946.8112750000237,
+        "average_r": 0.1798233709371513
+      }
+    },
+    "weekend_close": {
+      "trades": 41,
+      "wins": 30,
+      "losses": 11,
+      "breakeven": 0,
+      "win_rate": 0.7317073170731707,
+      "net_pnl": 2946.8112750000237,
+      "average_r": 0.1798233709371513
+    },
+    "stop": {
+      "trades": 23,
+      "wins": 0,
+      "losses": 23,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -6060.263087337524,
+      "average_r": -1.0229556718500377
+    },
+    "target": {
+      "trades": 9,
+      "wins": 9,
+      "losses": 0,
+      "breakeven": 0,
+      "win_rate": 1.0,
+      "net_pnl": 5243.602124567154,
+      "average_r": 0.9798402016068843
+    },
+    "maximum_consecutive_losses": 4,
+    "average_holding_hours": 54.8013698630137,
+    "total_costs": 47.97,
+    "maximum_rrms_tier": 4
+  },
+  "trade_charts": {
+    "ledger": "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\fixed_trades.csv",
+    "total_trades": 73,
+    "selected_trade_numbers": [
+      1,
+      9,
+      17,
+      25,
+      33,
+      41,
+      49,
+      57,
+      65,
+      73
+    ],
+    "files": [
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_001.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_009.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_017.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_025.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_033.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_041.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_049.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_057.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_065.svg",
+      "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\trade_charts\\trade_073.svg"
+    ]
+  },
+  "fixed_interactive_review": "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\fixed_trade_review.html",
+  "rrms_interactive_review": "strategies\\strategy_03\\v1\\results\\spy_4h_five_loss_rrms\\review\\rrms_trade_review.html"
+}

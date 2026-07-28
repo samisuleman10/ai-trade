@@ -1,0 +1,96 @@
+{
+  "strategy_id": "strategy_02_v1_5_multi_timeframe_alligator_zigzag",
+  "frozen_at": "2026-07-23T20:36:32.789297+00:00",
+  "status": "locked_for_validation",
+  "strategy_parameters": {
+    "pivot_left": 5,
+    "pivot_right": 3,
+    "stop_atr_period": 14,
+    "stop_atr_multiple": 0.1,
+    "minimum_tick": 0.01,
+    "trigger_with_heikin_ashi": true,
+    "structure_offset_ticks": 1,
+    "zigzag_depth": 18,
+    "zigzag_deviation": 5,
+    "zigzag_backstep": 3
+  },
+  "alligator_parameters": {
+    "slope_lookback_bars": 3,
+    "minimum_line_separation_percent": 0.0002,
+    "require_widening_separation": true
+  },
+  "backtest_configuration": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 15,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false
+  },
+  "files": [
+    {
+      "path": "strategies/strategy_02/v1_5/strategy.md",
+      "bytes": 1269,
+      "sha256": "11ba4345104feedc56d96de10e67903408dc9f3cc090bdf6bf0681cfc366328d"
+    },
+    {
+      "path": "src/ai_trade/strategy_02_v1_5.py",
+      "bytes": 3901,
+      "sha256": "2db9742a6dfab273b23135d630c90c1242291eaaa68bda3412c28a50f55d8d2b"
+    },
+    {
+      "path": "src/ai_trade/strategy_02_v1_3.py",
+      "bytes": 7576,
+      "sha256": "449b169c429703357c6168815123ec1382625d71491e5a3b169a8860aecb9726"
+    },
+    {
+      "path": "src/ai_trade/strategy_02_v1_1.py",
+      "bytes": 5721,
+      "sha256": "e4e158597fb9602347c4a6dc065c2d5030da519bffc648364622593c7c741386"
+    },
+    {
+      "path": "src/ai_trade/strategy_02_v1.py",
+      "bytes": 7319,
+      "sha256": "534a4ca74025667d5ec9fa0c4ae40e71bbc9f3a1e81e933c12bc6f7bde9f7922"
+    },
+    {
+      "path": "src/ai_trade/strategy_01.py",
+      "bytes": 16262,
+      "sha256": "8cdcf0652299fb9586e4009246afd1488dfa4796dabda31febb8aee4683b4c01"
+    },
+    {
+      "path": "src/ai_trade/backtest_strategy_01.py",
+      "bytes": 17763,
+      "sha256": "153dff48ec648ac9b72662fec22932a5c92de61999d7a515a77eadc0317d0b91"
+    },
+    {
+      "path": "src/ai_trade/backtest_strategy_02.py",
+      "bytes": 4034,
+      "sha256": "a9453dc46f343873948067924afdba652104e44e755683a1e1aacc5b3f604ccb"
+    },
+    {
+      "path": "data/market_data/ibkr/SPY/v4_2y/spy_15m.csv",
+      "bytes": 1971576,
+      "sha256": "4feb4637291f0b1c99b8ec78d8a59bbe4411dac5fc47a87361e14a49a7dc1972"
+    },
+    {
+      "path": "data/market_data/ibkr/SPY/v4_2y/spy_1h.csv",
+      "bytes": 536136,
+      "sha256": "83fe0ab22da412304e6a09eea2fe5b7b79553418a81684d700f9736431aedf59"
+    }
+  ]
+}

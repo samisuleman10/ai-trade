@@ -1,0 +1,28 @@
+{
+  "ledger": "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\fixed_trades.csv",
+  "total_trades": 76,
+  "selected_trade_numbers": [
+    1,
+    9,
+    18,
+    26,
+    34,
+    43,
+    51,
+    59,
+    68,
+    76
+  ],
+  "files": [
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_001.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_009.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_018.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_026.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_034.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_043.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_051.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_059.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_068.svg",
+    "strategies\\strategy_03\\v1\\results\\us30_dia_4h_five_loss_rrms\\review\\trade_charts\\trade_076.svg"
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "report": "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\backtest_report.json",
+  "bars": "data\\market_data\\ibkr\\QQQ\\v5_5y\\qqq_4h.csv",
+  "fixed_trades": "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\fixed_trades.csv",
+  "rrms_trades": "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\rrms_trades.csv",
+  "fixed_statistics": {
+    "trades": 75,
+    "wins": 35,
+    "losses": 40,
+    "breakeven": 0,
+    "win_rate": 0.4666666666666667,
+    "net_pnl": -1022.0409328584291,
+    "average_r": -0.0977406688799353,
+    "long": {
+      "trades": 47,
+      "wins": 23,
+      "losses": 24,
+      "breakeven": 0,
+      "win_rate": 0.48936170212765956,
+      "net_pnl": -306.90539898867553,
+      "average_r": -0.04419695060895233
+    },
+    "short": {
+      "trades": 28,
+      "wins": 12,
+      "losses": 16,
+      "breakeven": 0,
+      "win_rate": 0.42857142857142855,
+      "net_pnl": -715.1355338697535,
+      "average_r": -0.18761762454908526
+    },
+    "exit_reasons": {
+      "stop": {
+        "trades": 17,
+        "wins": 0,
+        "losses": 17,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2480.152145560636,
+        "average_r": -1.0123472502844515
+      },
+      "target": {
+        "trades": 10,
+        "wins": 10,
+        "losses": 0,
+        "breakeven": 0,
+        "win_rate": 1.0,
+        "net_pnl": 1444.8210797022002,
+        "average_r": 0.9918572147912342
+      },
+      "weekend_close": {
+        "trades": 48,
+        "wins": 25,
+        "losses": 23,
+        "breakeven": 0,
+        "win_rate": 0.5208333333333334,
+        "net_pnl": 13.290133000006975,
+        "average_r": -0.0008170637306627835
+      }
+    },
+    "weekend_close": {
+      "trades": 48,
+      "wins": 25,
+      "losses": 23,
+      "breakeven": 0,
+      "win_rate": 0.5208333333333334,
+      "net_pnl": 13.290133000006975,
+      "average_r": -0.0008170637306627835
+    },
+    "stop": {
+      "trades": 17,
+      "wins": 0,
+      "losses": 17,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -2480.152145560636,
+      "average_r": -1.0123472502844515
+    },
+    "target": {
+      "trades": 10,
+      "wins": 10,
+      "losses": 0,
+      "breakeven": 0,
+      "win_rate": 1.0,
+      "net_pnl": 1444.8210797022002,
+      "average_r": 0.9918572147912342
+    },
+    "maximum_consecutive_losses": 6,
+    "average_holding_hours": 54.72,
+    "total_costs": 13.9,
+    "maximum_rrms_tier": 0
+  },
+  "rrms_statistics": {
+    "trades": 75,
+    "wins": 35,
+    "losses": 40,
+    "breakeven": 0,
+    "win_rate": 0.4666666666666667,
+    "net_pnl": -4623.5920679711535,
+    "average_r": -0.0977406688799353,
+    "long": {
+      "trades": 47,
+      "wins": 23,
+      "losses": 24,
+      "breakeven": 0,
+      "win_rate": 0.48936170212765956,
+      "net_pnl": -3209.5851015255357,
+      "average_r": -0.044196950608952325
+    },
+    "short": {
+      "trades": 28,
+      "wins": 12,
+      "losses": 16,
+      "breakeven": 0,
+      "win_rate": 0.42857142857142855,
+      "net_pnl": -1414.0069664456175,
+      "average_r": -0.18761762454908526
+    },
+    "exit_reasons": {
+      "stop": {
+        "trades": 17,
+        "wins": 0,
+        "losses": 17,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -7027.433978338982,
+        "average_r": -1.0123472502844515
+      },
+      "target": {
+        "trades": 10,
+        "wins": 10,
+        "losses": 0,
+        "breakeven": 0,
+        "win_rate": 1.0,
+        "net_pnl": 2501.9022423678134,
+        "average_r": 0.9918572147912342
+      },
+      "weekend_close": {
+        "trades": 48,
+        "wins": 25,
+        "losses": 23,
+        "breakeven": 0,
+        "win_rate": 0.5208333333333334,
+        "net_pnl": -98.06033199998484,
+        "average_r": -0.0008170637306627862
+      }
+    },
+    "weekend_close": {
+      "trades": 48,
+      "wins": 25,
+      "losses": 23,
+      "breakeven": 0,
+      "win_rate": 0.5208333333333334,
+      "net_pnl": -98.06033199998484,
+      "average_r": -0.0008170637306627862
+    },
+    "stop": {
+      "trades": 17,
+      "wins": 0,
+      "losses": 17,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -7027.433978338982,
+      "average_r": -1.0123472502844515
+    },
+    "target": {
+      "trades": 10,
+      "wins": 10,
+      "losses": 0,
+      "breakeven": 0,
+      "win_rate": 1.0,
+      "net_pnl": 2501.9022423678134,
+      "average_r": 0.9918572147912342
+    },
+    "maximum_consecutive_losses": 6,
+    "average_holding_hours": 54.72,
+    "total_costs": 35.03,
+    "maximum_rrms_tier": 4
+  },
+  "trade_charts": {
+    "ledger": "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\fixed_trades.csv",
+    "total_trades": 75,
+    "selected_trade_numbers": [
+      1,
+      9,
+      17,
+      26,
+      34,
+      42,
+      50,
+      59,
+      67,
+      75
+    ],
+    "files": [
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_001.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_009.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_017.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_026.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_034.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_042.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_050.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_059.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_067.svg",
+      "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\trade_charts\\trade_075.svg"
+    ]
+  },
+  "fixed_interactive_review": "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\fixed_trade_review.html",
+  "rrms_interactive_review": "strategies\\strategy_03\\v1\\results\\qqq_4h_five_loss_rrms\\review\\rrms_trade_review.html"
+}

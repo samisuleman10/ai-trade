@@ -1,0 +1,163 @@
+{
+  "baseline": "strategies\\strategy_04\\v1\\results\\qqq_1h_15m\\backtest_report.json",
+  "variant": "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\backtest_report.json",
+  "single_change": "long demand-zone penetration <= 25%",
+  "rows": [
+    {
+      "mode": "fixed",
+      "scope": "all",
+      "v1": {
+        "trades": 62,
+        "wins": 35,
+        "losses": 27,
+        "win_rate": 0.5645161290322581,
+        "net_pnl": 893.0165840950845,
+        "average_r": 0.09742996490675221
+      },
+      "v1_1": {
+        "trades": 59,
+        "wins": 31,
+        "losses": 28,
+        "win_rate": 0.5254237288135594,
+        "net_pnl": 163.05917709490507,
+        "average_r": 0.019032088930013263
+      },
+      "delta": {
+        "trades": -3,
+        "win_rate": -0.03909240021869875,
+        "net_pnl": -729.9574070001794,
+        "average_r": -0.07839787597673895
+      }
+    },
+    {
+      "mode": "fixed",
+      "scope": "long",
+      "v1": {
+        "trades": 30,
+        "wins": 18,
+        "losses": 12,
+        "win_rate": 0.6,
+        "net_pnl": 760.4526200432454,
+        "average_r": 0.17005889257791257
+      },
+      "v1_1": {
+        "trades": 24,
+        "wins": 13,
+        "losses": 11,
+        "win_rate": 0.5416666666666666,
+        "net_pnl": 190.50613733039498,
+        "average_r": 0.05273616122372116
+      },
+      "delta": {
+        "trades": -6,
+        "win_rate": -0.05833333333333335,
+        "net_pnl": -569.9464827128504,
+        "average_r": -0.11732273135419141
+      }
+    },
+    {
+      "mode": "fixed",
+      "scope": "short",
+      "v1": {
+        "trades": 32,
+        "wins": 17,
+        "losses": 15,
+        "win_rate": 0.53125,
+        "net_pnl": 132.56396405183904,
+        "average_r": 0.029340345215039376
+      },
+      "v1_1": {
+        "trades": 35,
+        "wins": 18,
+        "losses": 17,
+        "win_rate": 0.5142857142857142,
+        "net_pnl": -27.44696023548991,
+        "average_r": -0.004079274928529296
+      },
+      "delta": {
+        "trades": 3,
+        "win_rate": -0.016964285714285765,
+        "net_pnl": -160.01092428732895,
+        "average_r": -0.03341962014356867
+      }
+    },
+    {
+      "mode": "rrms",
+      "scope": "all",
+      "v1": {
+        "trades": 62,
+        "wins": 35,
+        "losses": 27,
+        "win_rate": 0.5645161290322581,
+        "net_pnl": 1320.5862715568371,
+        "average_r": 0.0974299649067522
+      },
+      "v1_1": {
+        "trades": 59,
+        "wins": 31,
+        "losses": 28,
+        "win_rate": 0.5254237288135594,
+        "net_pnl": -993.8259916064426,
+        "average_r": 0.019032088930013263
+      },
+      "delta": {
+        "trades": -3,
+        "win_rate": -0.03909240021869875,
+        "net_pnl": -2314.41226316328,
+        "average_r": -0.07839787597673893
+      }
+    },
+    {
+      "mode": "rrms",
+      "scope": "long",
+      "v1": {
+        "trades": 30,
+        "wins": 18,
+        "losses": 12,
+        "win_rate": 0.6,
+        "net_pnl": 2323.586184475912,
+        "average_r": 0.17005889257791257
+      },
+      "v1_1": {
+        "trades": 24,
+        "wins": 13,
+        "losses": 11,
+        "win_rate": 0.5416666666666666,
+        "net_pnl": -239.0196463312256,
+        "average_r": 0.05273616122372116
+      },
+      "delta": {
+        "trades": -6,
+        "win_rate": -0.05833333333333335,
+        "net_pnl": -2562.6058308071374,
+        "average_r": -0.11732273135419141
+      }
+    },
+    {
+      "mode": "rrms",
+      "scope": "short",
+      "v1": {
+        "trades": 32,
+        "wins": 17,
+        "losses": 15,
+        "win_rate": 0.53125,
+        "net_pnl": -1002.9999129190747,
+        "average_r": 0.029340345215039344
+      },
+      "v1_1": {
+        "trades": 35,
+        "wins": 18,
+        "losses": 17,
+        "win_rate": 0.5142857142857142,
+        "net_pnl": -754.8063452752169,
+        "average_r": -0.004079274928529296
+      },
+      "delta": {
+        "trades": 3,
+        "win_rate": -0.016964285714285765,
+        "net_pnl": 248.19356764385782,
+        "average_r": -0.03341962014356864
+      }
+    }
+  ]
+}

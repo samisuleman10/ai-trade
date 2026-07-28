@@ -1,0 +1,88 @@
+{
+  "strategy_id": "strategy_02_v2_vix_under_20",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "QQQ",
+    "source": "locally cached IBKR historical bars",
+    "fifteen_minute_range": [
+      "2024-05-28T13:30:00Z",
+      "2026-07-23T19:45:00Z"
+    ],
+    "one_hour_range": [
+      "2024-07-17T13:30:00Z",
+      "2026-07-16T18:00:00Z"
+    ],
+    "vix_fifteen_minute_range": [
+      "2024-05-28T07:15:00Z",
+      "2026-07-23T20:45:00Z"
+    ]
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 15,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "base_strategy": "Strategy 02 v1.5",
+    "vix_filter": "latest completed 15-minute VIX close strictly below 20.00",
+    "macro_filter": "not integrated",
+    "target": "1:1 realised entry-to-stop distance",
+    "intrabar_collision": "stop before target"
+  },
+  "candidate_signal_count": 23,
+  "eligible_signal_count": 20,
+  "results": {
+    "fixed": {
+      "trade_count": 16,
+      "wins": 8,
+      "losses": 8,
+      "win_rate": 0.5,
+      "net_pnl": -58.96014807555507,
+      "ending_equity": 99941.03985192445,
+      "profit_factor": 0.9388496160619534,
+      "average_r": -0.023443439445235525,
+      "max_drawdown": 653.5971590995032,
+      "long_trades": 9,
+      "short_trades": 7,
+      "exit_reasons": {
+        "stop": 6,
+        "target": 5,
+        "weekend_close": 5
+      }
+    },
+    "rrms": {
+      "trade_count": 16,
+      "wins": 8,
+      "losses": 8,
+      "win_rate": 0.5,
+      "net_pnl": 386.5442828470707,
+      "ending_equity": 100386.5442828471,
+      "profit_factor": 1.2224717895404746,
+      "average_r": -0.023443439445235553,
+      "max_drawdown": 1219.832070587203,
+      "long_trades": 9,
+      "short_trades": 7,
+      "exit_reasons": {
+        "stop": 6,
+        "target": 5,
+        "weekend_close": 5
+      }
+    }
+  },
+  "warning": "Preliminary historical research only; no live or paper order authorization."
+}

@@ -1,0 +1,91 @@
+{
+  "strategy_id": "strategy_04_phase_1_confluence_reaction_zones",
+  "version": "0.2",
+  "mode": "one_hour_indicator_analysis_only",
+  "symbol": "SPY",
+  "timeframe": "1h",
+  "data_file": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_1h.csv",
+  "parameters": {
+    "atr_period": 14,
+    "pivot_left_bars": 5,
+    "pivot_right_bars": 3,
+    "pivot_min_width_atr": 0.12,
+    "pivot_max_width_atr": 0.55,
+    "structure_lookback_bars": 10,
+    "order_block_lookback_bars": 6,
+    "displacement_atr": 1.2,
+    "merge_distance_atr": 0.25,
+    "max_merged_width_atr": 1.0,
+    "volume_profile_bins": 24,
+    "volume_value_area": 0.7,
+    "volume_reference_distance_atr": 0.0,
+    "volume_reference_max_age_bars": 8,
+    "volume_scoring_kinds": [
+      "POC"
+    ],
+    "minimum_confluence_score": 2,
+    "invalidation_buffer_atr": 0.05,
+    "max_zone_age_bars": 240,
+    "broken_retest_window_bars": 40,
+    "max_live_zones": 20,
+    "freeze_qualified_geometry": true
+  },
+  "summary": {
+    "bar_count": 9189,
+    "first_timestamp": "2021-04-19T13:30:00Z",
+    "last_timestamp": "2026-07-16T19:00:00Z",
+    "raw_zone_count": 786,
+    "qualified_zone_count": 485,
+    "qualified_demand_count": 215,
+    "qualified_supply_count": 270,
+    "status_counts": {
+      "active": 1,
+      "broken": 1,
+      "expired": 477,
+      "rejected": 4,
+      "touched": 1,
+      "verified": 1
+    },
+    "score_counts": {
+      "2": 80,
+      "3": 205,
+      "4": 146,
+      "5": 54
+    },
+    "current_score_counts": {
+      "2": 80,
+      "3": 205,
+      "4": 146,
+      "5": 54
+    },
+    "qualification_score_counts": {
+      "2": 285,
+      "3": 200
+    },
+    "event_counts": {
+      "age_expired": 190,
+      "broken": 1434,
+      "broken_zone_expired": 287,
+      "created": 485,
+      "evidence_upgrade": 291,
+      "merged": 797,
+      "qualified": 485,
+      "rejection": 1592,
+      "role_flip_retest": 1146,
+      "touch": 1552,
+      "volume_confluence": 296
+    },
+    "volume_reference_count": 3951,
+    "non_repainting_violation_zone_ids": [],
+    "qualified_geometry_freeze_violation_zone_ids": [],
+    "non_repainting_check_passed": true,
+    "trading_signals_generated": 0,
+    "orders_generated": 0
+  },
+  "execution": {
+    "fifteen_minute_logic_enabled": false,
+    "trade_signals_enabled": false,
+    "order_submission_enabled": false
+  },
+  "warning": "Research prototype. Volume-at-price is a documented hourly-bar approximation, not tick-level exchange volume."
+}

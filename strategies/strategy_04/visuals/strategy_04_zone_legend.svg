@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title description">
+  <title id="title">Strategy 04 zone legend</title>
+  <desc id="description">Legend explaining demand and supply zones, qualification and current scores, confluence points, and zone lifecycle states.</desc>
+  <defs>
+    <style>
+      .bg { fill: #0f1117; }
+      .panel { fill: #171a22; stroke: #303745; stroke-width: 2; }
+      .title { fill: #f5f7fb; font: 700 42px Inter, Segoe UI, Arial, sans-serif; }
+      .subtitle { fill: #9da7b7; font: 400 22px Inter, Segoe UI, Arial, sans-serif; }
+      .heading { fill: #f5f7fb; font: 700 25px Inter, Segoe UI, Arial, sans-serif; }
+      .label { fill: #f5f7fb; font: 700 23px Inter, Segoe UI, Arial, sans-serif; }
+      .body { fill: #d6dbe5; font: 400 20px Inter, Segoe UI, Arial, sans-serif; }
+      .small { fill: #aab3c2; font: 400 18px Inter, Segoe UI, Arial, sans-serif; }
+      .demand-text { fill: #40d49b; font: 700 23px Inter, Segoe UI, Arial, sans-serif; }
+      .supply-text { fill: #ff7280; font: 700 23px Inter, Segoe UI, Arial, sans-serif; }
+      .score { fill: #ffd166; font: 700 23px Inter, Segoe UI, Arial, sans-serif; }
+      .divider { stroke: #303745; stroke-width: 2; }
+      .flow { stroke: #657084; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#657084"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1000"/>
+  <text class="title" x="70" y="76">Strategy 04 · Zone Legend</text>
+  <text class="subtitle" x="70" y="112">One-hour confluence and reaction zones · indicator v0.3</text>
+
+  <rect class="panel" x="60" y="148" width="700" height="280" rx="18"/>
+  <text class="heading" x="92" y="194">How to read a chart label</text>
+
+  <rect x="94" y="224" width="270" height="72" rx="8" fill="#40d49b" fill-opacity="0.14" stroke="#40d49b" stroke-width="2"/>
+  <text class="demand-text" x="116" y="268">D Q2/C2 rejected</text>
+  <text class="body" x="398" y="250">Demand zone</text>
+  <text class="small" x="398" y="280">Price was pushed upward</text>
+
+  <rect x="94" y="322" width="270" height="72" rx="8" fill="#ff7280" fill-opacity="0.14" stroke="#ff7280" stroke-width="2"/>
+  <text class="supply-text" x="116" y="366">S Q3/C3 rejected</text>
+  <text class="body" x="398" y="348">Supply zone</text>
+  <text class="small" x="398" y="378">Price was pushed downward</text>
+
+  <rect class="panel" x="790" y="148" width="750" height="280" rx="18"/>
+  <text class="heading" x="822" y="194">Symbol breakdown</text>
+  <text class="demand-text" x="826" y="244">D</text>
+  <text class="body" x="874" y="244">Demand · potential support / long location</text>
+  <text class="supply-text" x="826" y="286">S</text>
+  <text class="body" x="874" y="286">Supply · potential resistance / short location</text>
+  <text class="score" x="826" y="328">Q3</text>
+  <text class="body" x="900" y="328">Score when the zone first qualified</text>
+  <text class="score" x="826" y="370">C3</text>
+  <text class="body" x="900" y="370">Current score after later valid evidence</text>
+  <text class="small" x="826" y="404">Q2/C3 = qualified at 2, later increased to 3.</text>
+
+  <rect class="panel" x="60" y="458" width="700" height="414" rx="18"/>
+  <text class="heading" x="92" y="504">Confluence score · one point each</text>
+  <line class="divider" x1="92" y1="526" x2="728" y2="526"/>
+  <text class="score" x="100" y="572">+1</text>
+  <text class="body" x="164" y="572">Confirmed pivot structure</text>
+  <text class="score" x="100" y="624">+1</text>
+  <text class="body" x="164" y="624">Repeated pivot in the same zone</text>
+  <text class="score" x="100" y="676">+1</text>
+  <text class="body" x="164" y="676">Order-block overlap</text>
+  <text class="score" x="100" y="728">+1</text>
+  <text class="body" x="164" y="728">Prior-session volume overlap</text>
+  <text class="score" x="100" y="780">+1</text>
+  <text class="body" x="164" y="780">Confirmed support/resistance role flip</text>
+  <line class="divider" x1="92" y1="806" x2="728" y2="806"/>
+  <text class="small" x="100" y="842">Q2 is the minimum repeated-pivot structure.</text>
+  <text class="small" x="100" y="868">Score is evidence count—not win probability.</text>
+
+  <rect class="panel" x="790" y="458" width="750" height="414" rx="18"/>
+  <text class="heading" x="822" y="504">Zone lifecycle</text>
+
+  <rect x="824" y="542" width="130" height="50" rx="25" fill="#657084" fill-opacity="0.24"/>
+  <text class="body" x="854" y="575">Active</text>
+  <path class="flow" d="M960 567 L1002 567"/>
+  <rect x="1010" y="542" width="140" height="50" rx="25" fill="#ffd166" fill-opacity="0.18"/>
+  <text class="body" x="1038" y="575">Touched</text>
+  <path class="flow" d="M1156 567 L1198 567"/>
+  <rect x="1206" y="542" width="156" height="50" rx="25" fill="#40d49b" fill-opacity="0.18"/>
+  <text class="body" x="1234" y="575">Rejected</text>
+
+  <text class="small" x="826" y="622">Active: qualified and waiting for a valid approach.</text>
+  <text class="small" x="826" y="654">Touched: price entered the zone from the valid side.</text>
+  <text class="small" x="826" y="686">Rejected: successful directional reaction—this is good.</text>
+
+  <line class="divider" x1="822" y1="716" x2="1508" y2="716"/>
+  <text class="supply-text" x="826" y="758">Broken</text>
+  <text class="small" x="954" y="758">Price closed decisively through the invalid side.</text>
+  <text class="demand-text" x="826" y="798">Verified</text>
+  <text class="small" x="954" y="798">Broken zone retested and confirmed as a role flip.</text>
+  <text class="label" x="826" y="838">Expired</text>
+  <text class="small" x="954" y="838">Zone exceeded its age or retest window.</text>
+
+  <text class="subtitle" x="70" y="934">Labels describe one-hour zone state only. The future 15-minute layer decides entry, stop and target.</text>
+</svg>

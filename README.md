@@ -160,3 +160,9 @@ date, run:
 ```powershell
 python -m ai_trade.download_v4_history --output data/market_data/ibkr/SPY/v4_2y --target-start 2024-07-17 --port 7496
 ```
+
+## Trading-tools watchlist
+
+Tools discovered during research are recorded separately from approved project
+components in [`docs/notes/trading_tools_watchlist.md`](docs/notes/trading_tools_watchlist.md).
+Listing a tool is not approval to install it, connect credentials, or trade.

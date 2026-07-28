@@ -1,0 +1,110 @@
+[
+  {
+    "symbol": "SPY",
+    "data": {
+      "fifteen_minute_file": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_15m.csv",
+      "fifteen_minute_bar_count": 34200,
+      "fifteen_minute_first": "2021-04-14T13:30:00Z",
+      "fifteen_minute_last": "2026-07-16T19:45:00Z",
+      "one_hour_file": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_1h.csv",
+      "one_hour_bar_count": 9189,
+      "one_hour_first": "2021-04-19T13:30:00Z",
+      "one_hour_last": "2026-07-16T19:00:00Z"
+    },
+    "candidate_signals": 93,
+    "eligible_signals": 39,
+    "fixed": {
+      "trades": 38,
+      "wins": 24,
+      "losses": 14,
+      "win_rate": 0.631578947368421,
+      "net_pnl": 1244.9155426660293,
+      "profit_factor": 1.5701826562662817,
+      "average_r": 0.21836272265930692,
+      "max_drawdown": 633.4369154963788
+    },
+    "rrms": {
+      "trades": 38,
+      "wins": 24,
+      "losses": 14,
+      "win_rate": 0.631578947368421,
+      "net_pnl": 3626.2867236664683,
+      "profit_factor": 2.0655072281741202,
+      "average_r": 0.21836272265930692,
+      "max_drawdown": 1231.0266519585857
+    },
+    "report": "strategies\\strategy_04\\v1_1\\results\\spy_1h_15m\\backtest_report.json"
+  },
+  {
+    "symbol": "QQQ",
+    "data": {
+      "fifteen_minute_file": "data\\market_data\\ibkr\\QQQ\\v5_5y\\qqq_15m.csv",
+      "fifteen_minute_bar_count": 34980,
+      "fifteen_minute_first": "2021-03-09T14:30:00Z",
+      "fifteen_minute_last": "2026-07-23T19:45:00Z",
+      "one_hour_file": "data\\market_data\\ibkr\\QQQ\\v5_5y\\qqq_1h.csv",
+      "one_hour_bar_count": 10513,
+      "one_hour_first": "2020-07-23T13:30:00Z",
+      "one_hour_last": "2026-07-23T19:00:00Z"
+    },
+    "candidate_signals": 113,
+    "eligible_signals": 60,
+    "fixed": {
+      "trades": 59,
+      "wins": 31,
+      "losses": 28,
+      "win_rate": 0.5254237288135594,
+      "net_pnl": 163.05917709490507,
+      "profit_factor": 1.0377268127921215,
+      "average_r": 0.019032088930013263,
+      "max_drawdown": 1387.6591878293693
+    },
+    "rrms": {
+      "trades": 59,
+      "wins": 31,
+      "losses": 28,
+      "win_rate": 0.5254237288135594,
+      "net_pnl": -993.8259916064426,
+      "profit_factor": 0.9158653822876809,
+      "average_r": 0.019032088930013263,
+      "max_drawdown": 7234.136005033666
+    },
+    "report": "strategies\\strategy_04\\v1_1\\results\\qqq_1h_15m\\backtest_report.json"
+  },
+  {
+    "symbol": "DIA",
+    "data": {
+      "fifteen_minute_file": "data\\market_data\\ibkr\\US30_DIA\\v5_5y\\dia_15m.csv",
+      "fifteen_minute_bar_count": 34980,
+      "fifteen_minute_first": "2021-03-09T14:30:00Z",
+      "fifteen_minute_last": "2026-07-23T19:45:00Z",
+      "one_hour_file": "data\\market_data\\ibkr\\US30_DIA\\v5_5y\\dia_1h.csv",
+      "one_hour_bar_count": 10513,
+      "one_hour_first": "2020-07-23T13:30:00Z",
+      "one_hour_last": "2026-07-23T19:00:00Z"
+    },
+    "candidate_signals": 95,
+    "eligible_signals": 49,
+    "fixed": {
+      "trades": 49,
+      "wins": 30,
+      "losses": 19,
+      "win_rate": 0.6122448979591837,
+      "net_pnl": 1295.2251842197006,
+      "profit_factor": 1.4296447570916522,
+      "average_r": 0.176997840467742,
+      "max_drawdown": 528.885228170926
+    },
+    "rrms": {
+      "trades": 49,
+      "wins": 30,
+      "losses": 19,
+      "win_rate": 0.6122448979591837,
+      "net_pnl": 4468.490863651767,
+      "profit_factor": 1.841995896789062,
+      "average_r": 0.17699784046774197,
+      "max_drawdown": 1292.7873141580203
+    },
+    "report": "strategies\\strategy_04\\v1_1\\results\\dia_1h_15m\\backtest_report.json"
+  }
+]

@@ -1,0 +1,200 @@
+{
+  "strategy_id": "strategy_02_v1_5_multi_timeframe_alligator_zigzag",
+  "freeze_manifest": "freeze_manifest.json",
+  "out_of_sample": {
+    "method": "strict chronological holdout",
+    "split_timestamp": "2025-07-17T13:30:00Z",
+    "training_range": [
+      "2021-04-14T13:30:00Z",
+      "2025-07-16T19:45:00Z"
+    ],
+    "out_of_sample_range": [
+      "2025-07-17T13:30:00Z",
+      "2026-07-16T19:45:00Z"
+    ],
+    "training_bar_count": 27698,
+    "out_of_sample_bar_count": 6502,
+    "training_candidate_count": 43,
+    "out_of_sample_candidate_count": 13,
+    "results": {
+      "fixed": {
+        "training": {
+          "trade_count": 29,
+          "wins": 18,
+          "losses": 11,
+          "win_rate": 0.6206896551724138,
+          "net_pnl": 1304.0502631019451,
+          "ending_equity": 101304.05026310195,
+          "profit_factor": 2.1514686049225786,
+          "average_r": 0.3008978724515317,
+          "max_drawdown": 296.7384207708383,
+          "long_trades": 13,
+          "short_trades": 16,
+          "exit_reasons": {
+            "stop": 5,
+            "target": 15,
+            "weekend_close": 9
+          }
+        },
+        "out_of_sample": {
+          "trade_count": 9,
+          "wins": 4,
+          "losses": 5,
+          "win_rate": 0.4444444444444444,
+          "net_pnl": -164.608366976597,
+          "ending_equity": 99835.3916330234,
+          "profit_factor": 0.6880572602765337,
+          "average_r": -0.11982299223512848,
+          "max_drawdown": 320.36398850841215,
+          "long_trades": 6,
+          "short_trades": 3,
+          "exit_reasons": {
+            "stop": 3,
+            "target": 1,
+            "weekend_close": 5
+          }
+        }
+      },
+      "rrms": {
+        "training": {
+          "trade_count": 29,
+          "wins": 18,
+          "losses": 11,
+          "win_rate": 0.6206896551724138,
+          "net_pnl": 2016.8008305552391,
+          "ending_equity": 102016.80083055524,
+          "profit_factor": 2.6654541149563666,
+          "average_r": 0.3008978724515317,
+          "max_drawdown": 360.3992617873446,
+          "long_trades": 13,
+          "short_trades": 16,
+          "exit_reasons": {
+            "stop": 5,
+            "target": 15,
+            "weekend_close": 9
+          }
+        },
+        "out_of_sample": {
+          "trade_count": 9,
+          "wins": 4,
+          "losses": 5,
+          "win_rate": 0.4444444444444444,
+          "net_pnl": 33.45183265624564,
+          "ending_equity": 100033.45183265624,
+          "profit_factor": 1.0415155026624363,
+          "average_r": -0.11982299223512848,
+          "max_drawdown": 520.7275778755575,
+          "long_trades": 6,
+          "short_trades": 3,
+          "exit_reasons": {
+            "stop": 3,
+            "target": 1,
+            "weekend_close": 5
+          }
+        }
+      }
+    }
+  },
+  "base_parameter_result": {
+    "zigzag_depth": 18,
+    "zigzag_deviation": 5,
+    "zigzag_backstep": 3,
+    "candidate_count": 56,
+    "trade_count": 38,
+    "wins": 22,
+    "losses": 16,
+    "win_rate": 0.5789473684210527,
+    "net_pnl": 1140.276178210102,
+    "ending_equity": 101140.27617821012,
+    "profit_factor": 1.6838778092902462,
+    "average_r": 0.20125345713100692,
+    "max_drawdown": 555.0521047280636,
+    "long_trades": 19,
+    "short_trades": 19,
+    "exit_reasons": {
+      "stop": 8,
+      "target": 16,
+      "weekend_close": 14
+    }
+  },
+  "parameter_sensitivity": {
+    "runs": 27,
+    "profitable_runs": 27,
+    "minimum_net_pnl": 1140.276178210102,
+    "maximum_net_pnl": 1140.276178210102
+  },
+  "cost_slippage_stress": {
+    "runs": 16,
+    "profitable_runs": 16,
+    "worst_case": {
+      "slippage_bps_per_side": 5.0,
+      "commission_per_share_per_side": 0.02,
+      "trade_count": 38,
+      "wins": 21,
+      "losses": 17,
+      "win_rate": 0.5526315789473685,
+      "net_pnl": 738.912186338217,
+      "ending_equity": 100738.9121863382,
+      "profit_factor": 1.4156343031428058,
+      "average_r": 0.13267531869363916,
+      "max_drawdown": 671.211860904732,
+      "long_trades": 19,
+      "short_trades": 19,
+      "exit_reasons": {
+        "stop": 8,
+        "target": 15,
+        "weekend_close": 15
+      }
+    }
+  },
+  "monte_carlo": {
+    "method": "seeded bootstrap of observed fixed-risk trade R outcomes",
+    "seed": 20260723,
+    "simulations": 10000,
+    "trades_per_simulation": 38,
+    "ending_equity": {
+      "p05": 99897.57997537374,
+      "median": 101159.17686104806,
+      "p95": 102416.62647985757,
+      "probability_below_start": 0.0654
+    },
+    "maximum_drawdown": {
+      "median": 462.35154509927816,
+      "p95": 959.140067728343,
+      "p99": 1271.2123135068744
+    },
+    "maximum_losing_streak": {
+      "median": 4.0,
+      "p95": 6.0
+    },
+    "limitation": "Bootstrap reuses the small observed sample and does not model regime shifts or serial dependence."
+  },
+  "trade_audit": {
+    "trade_count": 38,
+    "trades_passing_all_automated_checks": 38,
+    "failed_trade_numbers": [],
+    "checks": [
+      "signal_found",
+      "decision_equals_entry_open",
+      "structure_confirmed_before_decision",
+      "pivot_before_confirmation",
+      "entry_uses_next_bar_open_plus_slippage",
+      "exit_not_before_entry",
+      "stop_geometry_valid",
+      "target_geometry_valid"
+    ]
+  },
+  "trade_review_files": [
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_01_04.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_05_08.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_09_12.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_13_16.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_17_20.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_21_24.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_25_28.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_29_32.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_33_36.svg",
+    "strategies/strategy_02/v1_5/results/validation/trade_review/trades_37_38.svg"
+  ],
+  "warning": "Historical research only; no shadow, paper, or live authorization."
+}

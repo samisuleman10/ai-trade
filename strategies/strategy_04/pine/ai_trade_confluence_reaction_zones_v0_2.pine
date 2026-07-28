@@ -1,0 +1,405 @@
+//@version=6
+indicator("AI Trade Confluence Reaction Zones v0.2", overlay = true, max_boxes_count = 300, max_labels_count = 500)
+
+// Phase 1 only: one-hour zones. No trade entries or orders.
+
+groupCore = "Core"
+atrLength = input.int(14, "ATR period", minval = 2, group = groupCore)
+pivotLeft = input.int(5, "Pivot left bars", minval = 1, group = groupCore)
+pivotRight = input.int(3, "Pivot confirmation bars", minval = 1, group = groupCore)
+minScore = input.int(2, "Minimum confluence score", minval = 1, maxval = 5, group = groupCore)
+maxZones = input.int(20, "Maximum displayed live zones", minval = 2, maxval = 100, group = groupCore)
+
+groupWidths = "ATR-normalized widths"
+pivotMinAtr = input.float(0.12, "Pivot minimum width", minval = 0.01, step = 0.01, group = groupWidths)
+pivotMaxAtr = input.float(0.55, "Pivot maximum width", minval = 0.05, step = 0.05, group = groupWidths)
+mergeDistanceAtr = input.float(0.25, "Merge distance", minval = 0.0, step = 0.05, group = groupWidths)
+maxMergedWidthAtr = input.float(1.00, "Maximum merged width", minval = 0.10, step = 0.10, group = groupWidths)
+invalidationAtr = input.float(0.05, "Invalidation buffer", minval = 0.0, step = 0.01, group = groupWidths)
+
+groupOb = "Order blocks"
+structureLookback = input.int(10, "Structure lookback", minval = 3, group = groupOb)
+orderBlockLookback = input.int(6, "Opposing-candle search", minval = 1, group = groupOb)
+displacementAtr = input.float(1.20, "Displacement body", minval = 0.20, step = 0.10, group = groupOb)
+showRawOrderBlocks = input.bool(false, "Show score-one order blocks", group = groupOb)
+
+groupVolume = "Session volume approximation"
+sessionInput = input.session("0930-1600", "Session", group = groupVolume)
+profileRows = input.int(24, "Profile rows", minval = 8, maxval = 60, group = groupVolume)
+valueAreaPercent = input.float(70.0, "Value area %", minval = 50, maxval = 95, group = groupVolume)
+volumeDistanceAtr = input.float(0.0, "POC scoring distance", minval = 0.0, step = 0.05, group = groupVolume)
+showVolumeReferences = input.bool(false, "Show prior-session POC / VAH / VAL", group = groupVolume)
+
+groupLife = "Lifecycle"
+maxZoneAge = input.int(240, "Maximum zone age (bars)", minval = 20, group = groupLife)
+brokenRetestWindow = input.int(40, "Broken-zone retest window", minval = 5, group = groupLife)
+showTags = input.bool(true, "Show qualification tags", group = groupLife)
+
+groupDisplay = "Display"
+displayMode = input.string("Clean", "Display mode", options = ["Clean", "Audit"], group = groupDisplay)
+cleanDistanceAtr = input.float(2.0, "Clean-mode distance (ATR)", minval = 0.25, step = 0.25, group = groupDisplay)
+cleanHistoryBars = input.int(80, "Clean-mode history (bars)", minval = 10, maxval = 240, group = groupDisplay)
+cleanZonesPerSide = input.int(2, "Nearest zones per side", minval = 1, maxval = 5, group = groupDisplay)
+showEventMarkers = input.bool(true, "Show lifecycle event markers", group = groupDisplay)
+showVolumeInClean = input.bool(false, "Show session volume lines in Clean mode", group = groupDisplay)
+
+if timeframe.in_seconds() != 3600
+    runtime.error("Strategy 04 v0.2 must be used on a 1-hour chart.")
+
+type Zone
+    int id
+    string originSide
+    string side
+    float lower
+    float upper
+    int originIndex
+    int availableIndex
+    int qualifiedIndex
+    int qualifiedScore
+    bool hasPivot
+    bool hasRepeatedPivot
+    bool hasOrderBlock
+    bool hasVolume
+    bool hasRoleFlip
+    int pivotCount
+    int touches
+    int retests
+    bool inContact
+    string state
+    int breakIndex
+    int endIndex
+    box drawing
+    label statusDrawing
+
+f_score(Zone zone) =>
+    (zone.hasPivot ? 1 : 0) +
+     (zone.hasRepeatedPivot ? 1 : 0) +
+     (zone.hasOrderBlock ? 1 : 0) +
+     (zone.hasVolume ? 1 : 0) +
+     (zone.hasRoleFlip ? 1 : 0)
+
+f_distance(float lower1, float upper1, float lower2, float upper2) =>
+    lower1 <= upper2 and lower2 <= upper1 ? 0.0 : math.min(math.abs(lower1 - upper2), math.abs(lower2 - upper1))
+
+f_level_distance(float lower, float upper, float price) =>
+    price >= lower and price <= upper ? 0.0 : math.min(math.abs(price - lower), math.abs(price - upper))
+
+f_zone_color(Zone zone) =>
+    zone.side == "demand" ? color.rgb(45, 183, 132) : color.rgb(220, 91, 105)
+
+f_qualified_score(Zone zone) =>
+    zone.qualifiedScore >= 0 ? zone.qualifiedScore : f_score(zone)
+
+f_box_text(Zone zone) =>
+    string prefix = zone.side == "demand" ? "D" : "S"
+    prefix + " Q" + str.tostring(f_qualified_score(zone))
+
+f_status_text(Zone zone) =>
+    string prefix = zone.side == "demand" ? "D" : "S"
+    prefix + " Q" + str.tostring(f_qualified_score(zone)) + "/C" + str.tostring(f_score(zone)) + " " + zone.state
+
+f_mark_event(Zone zone, string code, color markerColor) =>
+    if showEventMarkers and zone.qualifiedIndex >= 0
+        label.new(bar_index, zone.side == "demand" ? zone.lower : zone.upper,
+             text = code, style = label.style_label_center,
+             color = color.new(markerColor, 10), textcolor = color.white, size = size.tiny)
+
+f_ensure_drawing(Zone zone) =>
+    int score = f_score(zone)
+    if score >= minScore and zone.qualifiedIndex < 0
+        zone.qualifiedIndex := bar_index
+        zone.qualifiedScore := score
+        zone.state := "active"
+        zone.endIndex := -1
+        color zoneColor = f_zone_color(zone)
+        zone.drawing := box.new(left = bar_index, top = zone.upper, right = bar_index + 1, bottom = zone.lower,
+             border_color = zoneColor, bgcolor = color.new(zoneColor, 82), xloc = xloc.bar_index,
+             text = f_box_text(zone), text_color = zoneColor, text_size = size.tiny)
+        if showTags and displayMode == "Audit"
+            label.new(bar_index, zone.side == "demand" ? zone.lower : zone.upper,
+                 text = (zone.side == "demand" ? "D" : "S") + " Q" + str.tostring(score),
+                 style = zone.side == "demand" ? label.style_label_up : label.style_label_down,
+                 color = color.new(zoneColor, 10), textcolor = color.white, size = size.tiny)
+    zone
+
+f_refresh_drawing(Zone zone, float currentAtr, bool nearestForSide) =>
+    if not na(zone.drawing)
+        color zoneColor = f_zone_color(zone)
+        bool actionableState = zone.state == "active" or zone.state == "touched" or zone.state == "rejected" or zone.state == "broken" or zone.state == "verified"
+        bool nearPrice = not na(currentAtr) and f_level_distance(zone.lower, zone.upper, close) <= cleanDistanceAtr * currentAtr
+        bool visible = displayMode == "Audit" or (actionableState and nearPrice and nearestForSide)
+        int hiddenTransparency = 100
+        int drawingRight = zone.endIndex >= 0 ? zone.endIndex : bar_index
+        box.set_left(zone.drawing, displayMode == "Audit" ? zone.qualifiedIndex : math.max(zone.qualifiedIndex, drawingRight - cleanHistoryBars))
+        box.set_right(zone.drawing, drawingRight)
+        box.set_top(zone.drawing, zone.upper)
+        box.set_bottom(zone.drawing, zone.lower)
+        box.set_border_color(zone.drawing, visible ? zoneColor : color.new(zoneColor, hiddenTransparency))
+        box.set_bgcolor(zone.drawing, visible ? color.new(zoneColor, zone.state == "broken" ? 92 : 82) : color.new(zoneColor, hiddenTransparency))
+        box.set_text(zone.drawing, f_box_text(zone))
+        box.set_text_color(zone.drawing, visible ? zoneColor : color.new(zoneColor, hiddenTransparency))
+        if visible and zone.endIndex < 0
+            float statusY = zone.side == "demand" ? zone.lower : zone.upper
+            if na(zone.statusDrawing)
+                zone.statusDrawing := label.new(bar_index, statusY, text = f_status_text(zone), style = label.style_label_left,
+                     color = color.new(zoneColor, 100), textcolor = zoneColor, size = size.tiny)
+            label.set_x(zone.statusDrawing, bar_index)
+            label.set_y(zone.statusDrawing, statusY)
+            label.set_text(zone.statusDrawing, f_status_text(zone))
+            label.set_textcolor(zone.statusDrawing, zoneColor)
+        else if not na(zone.statusDrawing)
+            label.delete(zone.statusDrawing)
+            zone.statusDrawing := na
+    zone
+
+f_profile(array<float> lows, array<float> highs, array<float> volumes, int rows, float valueFraction) =>
+    float poc = na
+    float vah = na
+    float val = na
+    int count = array.size(lows)
+    if count > 0
+        float sessionLow = array.min(lows)
+        float sessionHigh = array.max(highs)
+        float rowSize = (sessionHigh - sessionLow) / rows
+        if rowSize > 0
+            array<float> histogram = array.new<float>(rows, 0.0)
+            for i = 0 to count - 1
+                float barLow = array.get(lows, i)
+                float barHigh = array.get(highs, i)
+                float barVolume = array.get(volumes, i)
+                int first = math.max(0, math.min(rows - 1, int(math.floor((barLow - sessionLow) / rowSize))))
+                int last = math.max(0, math.min(rows - 1, int(math.floor((barHigh - sessionLow) / rowSize))))
+                int touchedRows = math.max(last - first + 1, 1)
+                float allocation = barVolume / touchedRows
+                for row = first to last
+                    array.set(histogram, row, array.get(histogram, row) + allocation)
+            int pocIndex = 0
+            float greatest = array.get(histogram, 0)
+            for row = 1 to rows - 1
+                if array.get(histogram, row) > greatest
+                    greatest := array.get(histogram, row)
+                    pocIndex := row
+            float target = array.sum(histogram) * valueFraction
+            float accumulated = array.get(histogram, pocIndex)
+            int lowIndex = pocIndex
+            int highIndex = pocIndex
+            while accumulated < target and (lowIndex > 0 or highIndex < rows - 1)
+                float below = lowIndex > 0 ? array.get(histogram, lowIndex - 1) : -1.0
+                float above = highIndex < rows - 1 ? array.get(histogram, highIndex + 1) : -1.0
+                if above >= below and highIndex < rows - 1
+                    highIndex += 1
+                    accumulated += array.get(histogram, highIndex)
+                else if lowIndex > 0
+                    lowIndex -= 1
+                    accumulated += array.get(histogram, lowIndex)
+                else
+                    break
+            poc := sessionLow + (pocIndex + 0.5) * rowSize
+            vah := sessionLow + (highIndex + 0.5) * rowSize
+            val := sessionLow + (lowIndex + 0.5) * rowSize
+    [poc, vah, val]
+
+var array<Zone> zones = array.new<Zone>()
+var int nextZoneId = 1
+var array<float> sessionLows = array.new<float>()
+var array<float> sessionHighs = array.new<float>()
+var array<float> sessionVolumes = array.new<float>()
+var float priorPoc = na
+var float priorVah = na
+var float priorVal = na
+
+f_actionable_state(string state) =>
+    state == "active" or state == "touched" or state == "rejected" or state == "broken" or state == "verified"
+
+f_is_nearest(Zone zone) =>
+    float ownDistance = f_level_distance(zone.lower, zone.upper, close)
+    int rank = 1
+    int count = array.size(zones)
+    if count > 0
+        for i = 0 to count - 1
+            Zone other = array.get(zones, i)
+            if other.id != zone.id and other.qualifiedIndex >= 0 and f_actionable_state(other.state) and other.side == zone.side
+                float otherDistance = f_level_distance(other.lower, other.upper, close)
+                if otherDistance < ownDistance or (otherDistance == ownDistance and other.id < zone.id)
+                    rank += 1
+    rank <= cleanZonesPerSide
+
+f_add_candidate(string side, float lower, float upper, int originIndex, bool isPivot, bool isOrderBlock, float currentAtr) =>
+    int bestIndex = -1
+    float bestDistance = 1e10
+    int zoneCount = array.size(zones)
+    if zoneCount > 0
+        for i = 0 to zoneCount - 1
+            Zone existing = array.get(zones, i)
+            bool live = existing.state == "candidate" or existing.state == "active" or existing.state == "touched" or existing.state == "rejected" or existing.state == "verified"
+            float distance = f_distance(existing.lower, existing.upper, lower, upper)
+            float mergedWidth = math.max(existing.upper, upper) - math.min(existing.lower, lower)
+            if live and existing.side == side and distance <= mergeDistanceAtr * currentAtr and mergedWidth <= maxMergedWidthAtr * currentAtr and distance < bestDistance
+                bestIndex := i
+                bestDistance := distance
+    if bestIndex >= 0
+        Zone existing = array.get(zones, bestIndex)
+        bool geometryFrozen = existing.qualifiedIndex >= 0
+        int scoreBefore = f_score(existing)
+        if not geometryFrozen
+            existing.lower := math.min(existing.lower, lower)
+            existing.upper := math.max(existing.upper, upper)
+        if isPivot
+            existing.pivotCount += 1
+            existing.hasPivot := true
+            existing.hasRepeatedPivot := existing.pivotCount >= 2
+        if isOrderBlock
+            existing.hasOrderBlock := true
+        int scoreAfter = f_score(existing)
+        if geometryFrozen and scoreAfter > scoreBefore
+            f_mark_event(existing, "U", color.blue)
+        existing := f_ensure_drawing(existing)
+        existing := f_refresh_drawing(existing, currentAtr, f_is_nearest(existing))
+        array.set(zones, bestIndex, existing)
+    else
+        Zone created = Zone.new(nextZoneId, side, side, lower, upper, originIndex, bar_index, -1, -1,
+             isPivot, false, isOrderBlock, false, false, isPivot ? 1 : 0, 0, 0, false,
+             "candidate", -1, -1, na, na)
+        created := f_ensure_drawing(created)
+        array.push(zones, created)
+
+float atrValue = ta.atr(atrLength)
+float pivotHigh = ta.pivothigh(high, pivotLeft, pivotRight)
+float pivotLow = ta.pivotlow(low, pivotLeft, pivotRight)
+float priorHigh = ta.highest(high[1], structureLookback)
+float priorLow = ta.lowest(low[1], structureLookback)
+bool inSession = not na(time(timeframe.period, sessionInput))
+bool newExchangeDay = ta.change(time("D")) != 0
+
+if barstate.isconfirmed
+    if newExchangeDay and array.size(sessionLows) > 0
+        [calculatedPoc, calculatedVah, calculatedVal] = f_profile(
+             sessionLows, sessionHighs, sessionVolumes, profileRows, valueAreaPercent / 100.0)
+        priorPoc := calculatedPoc
+        priorVah := calculatedVah
+        priorVal := calculatedVal
+        array.clear(sessionLows)
+        array.clear(sessionHighs)
+        array.clear(sessionVolumes)
+    if inSession
+        array.push(sessionLows, low)
+        array.push(sessionHighs, high)
+        array.push(sessionVolumes, volume)
+
+    int existingCount = array.size(zones)
+    if existingCount > 0 and not na(atrValue)
+        for i = 0 to existingCount - 1
+            Zone zone = array.get(zones, i)
+            bool live = zone.state == "candidate" or zone.state == "active" or zone.state == "touched" or zone.state == "rejected" or zone.state == "verified"
+            if live and bar_index > zone.availableIndex
+                if bar_index - zone.availableIndex > maxZoneAge
+                    zone.state := "expired"
+                    zone.endIndex := bar_index
+                else
+                    float invalidation = invalidationAtr * atrValue
+                    bool brokenDemand = zone.side == "demand" and close < zone.lower - invalidation
+                    bool brokenSupply = zone.side == "supply" and close > zone.upper + invalidation
+                    if brokenDemand or brokenSupply
+                        zone.state := "broken"
+                        zone.breakIndex := bar_index
+                        zone.inContact := false
+                        f_mark_event(zone, "B", color.red)
+                    else
+                        bool contact = low <= zone.upper and high >= zone.lower
+                        bool newContact = contact and not zone.inContact
+                        if newContact
+                            zone.touches += 1
+                            zone.state := "touched"
+                            f_mark_event(zone, "T", color.orange)
+                        bool rejected = contact and ((zone.side == "demand" and close > zone.upper) or (zone.side == "supply" and close < zone.lower))
+                        if rejected and (newContact or zone.state != "rejected")
+                            zone.state := "rejected"
+                            f_mark_event(zone, "R", color.green)
+                        zone.inContact := contact
+            else if zone.state == "broken" and zone.breakIndex >= 0
+                if bar_index - zone.breakIndex > brokenRetestWindow
+                    zone.state := "expired"
+                    zone.endIndex := bar_index
+                else
+                    bool contact = low <= zone.upper and high >= zone.lower
+                    bool demandToSupply = zone.side == "demand" and contact and close < zone.lower
+                    bool supplyToDemand = zone.side == "supply" and contact and close > zone.upper
+                    if demandToSupply or supplyToDemand
+                        f_mark_event(zone, "F", color.purple)
+                        if not na(zone.drawing)
+                            box.set_right(zone.drawing, bar_index)
+                            box.set_text(zone.drawing, f_box_text(zone) + " broken")
+                        if not na(zone.statusDrawing)
+                            label.delete(zone.statusDrawing)
+                        zone.side := demandToSupply ? "supply" : "demand"
+                        zone.state := "verified"
+                        zone.retests += 1
+                        zone.hasRoleFlip := true
+                        zone.inContact := true
+                        zone.qualifiedIndex := bar_index
+                        zone.qualifiedScore := f_score(zone)
+                        zone.endIndex := -1
+                        zone.statusDrawing := na
+                        color flippedColor = f_zone_color(zone)
+                        zone.drawing := box.new(left = bar_index, top = zone.upper, right = bar_index + 1, bottom = zone.lower,
+                             border_color = flippedColor, bgcolor = color.new(flippedColor, 82), xloc = xloc.bar_index,
+                             text = f_box_text(zone), text_color = flippedColor, text_size = size.tiny)
+            bool volumeEligible = zone.state == "candidate" or zone.state == "active" or zone.state == "touched" or zone.state == "rejected" or zone.state == "verified"
+            if not na(priorPoc) and volumeEligible and not zone.hasVolume
+                float nearestVolume = f_level_distance(zone.lower, zone.upper, priorPoc)
+                if nearestVolume <= volumeDistanceAtr * atrValue
+                    int scoreBeforeVolume = f_score(zone)
+                    zone.hasVolume := true
+                    if zone.qualifiedIndex >= 0 and f_score(zone) > scoreBeforeVolume
+                        f_mark_event(zone, "U", color.blue)
+            zone := f_ensure_drawing(zone)
+            zone := f_refresh_drawing(zone, atrValue, f_is_nearest(zone))
+            array.set(zones, i, zone)
+
+    if not na(atrValue) and not na(pivotHigh)
+        float wickLower = math.max(open[pivotRight], close[pivotRight])
+        float width = math.min(math.max(pivotHigh - wickLower, pivotMinAtr * atrValue), pivotMaxAtr * atrValue)
+        f_add_candidate("supply", pivotHigh - width, pivotHigh, bar_index - pivotRight, true, false, atrValue)
+        nextZoneId += 1
+    if not na(atrValue) and not na(pivotLow)
+        float wickUpper = math.min(open[pivotRight], close[pivotRight])
+        float width = math.min(math.max(wickUpper - pivotLow, pivotMinAtr * atrValue), pivotMaxAtr * atrValue)
+        f_add_candidate("demand", pivotLow, pivotLow + width, bar_index - pivotRight, true, false, atrValue)
+        nextZoneId += 1
+
+    bool bullishBreak = not na(atrValue) and close > priorHigh and close > open and close - open >= displacementAtr * atrValue
+    bool bearishBreak = not na(atrValue) and close < priorLow and close < open and open - close >= displacementAtr * atrValue
+    if bullishBreak
+        int originOffset = na
+        for offset = 1 to orderBlockLookback
+            if na(originOffset) and close[offset] < open[offset]
+                originOffset := offset
+        if not na(originOffset)
+            float lower = low[originOffset]
+            float upper = math.min(math.max(open[originOffset], close[originOffset]), lower + maxMergedWidthAtr * atrValue)
+            f_add_candidate("demand", lower, upper, bar_index - originOffset, false, true, atrValue)
+            nextZoneId += 1
+    if bearishBreak
+        int originOffset = na
+        for offset = 1 to orderBlockLookback
+            if na(originOffset) and close[offset] > open[offset]
+                originOffset := offset
+        if not na(originOffset)
+            float upper = high[originOffset]
+            float lower = math.max(math.min(open[originOffset], close[originOffset]), upper - maxMergedWidthAtr * atrValue)
+            f_add_candidate("supply", lower, upper, bar_index - originOffset, false, true, atrValue)
+            nextZoneId += 1
+
+    while array.size(zones) > math.max(maxZones * 4, 40)
+        Zone removed = array.shift(zones)
+        if not na(removed.drawing)
+            box.delete(removed.drawing)
+        if not na(removed.statusDrawing)
+            label.delete(removed.statusDrawing)
+
+bool displayVolumeReferences = showVolumeReferences and (displayMode == "Audit" or showVolumeInClean)
+plot(displayVolumeReferences ? priorPoc : na, "Prior session POC", color = color.orange, linewidth = 2, style = plot.style_linebr)
+plot(displayVolumeReferences ? priorVah : na, "Prior session VAH", color = color.new(color.red, 20), linewidth = 1, style = plot.style_linebr)
+plot(displayVolumeReferences ? priorVal : na, "Prior session VAL", color = color.new(color.aqua, 20), linewidth = 1, style = plot.style_linebr)
+
+alertcondition(barstate.isconfirmed and array.size(zones) > 0, "Strategy 04 updated", "Strategy 04 one-hour zone state updated. No trade signal is generated.")

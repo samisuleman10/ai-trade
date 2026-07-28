@@ -1,0 +1,34 @@
+{
+  "bars": "data\\market_data\\ibkr\\SPY\\v4_2y\\spy_1h.csv",
+  "events": "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_events.csv",
+  "qualified_zone_count": 779,
+  "selected_zone_ids": [
+    1,
+    160,
+    296,
+    430,
+    582,
+    722,
+    845,
+    995,
+    1138,
+    1267,
+    1426,
+    1584
+  ],
+  "files": [
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0001.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0160.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0296.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0430.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0582.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0722.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0845.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_0995.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_1138.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_1267.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_1426.svg",
+    "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\zone_1584.svg"
+  ],
+  "index": "strategies\\strategy_04\\results\\spy_1h_v0_1\\zone_review\\index.html"
+}

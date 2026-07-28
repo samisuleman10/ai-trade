@@ -1,0 +1,2 @@
+decision_timestamp,entry_timestamp,exit_timestamp,side,rrms_tier,quantity,entry_price,stop_price,target_price,exit_price,exit_reason,gross_pnl,costs,net_pnl,result_r,equity_after
+2023-11-02T15:00:00Z,2023-11-02T15:00:00Z,2023-11-03T19:00:00Z,short,0,5,2305.0694700000004,2332.5240416827187,2277.614898317282,2313.1312900000003,weekend_close,-40.30909999999949,0.05,-40.359099999999486,-0.2940064078683413,99959.6409

@@ -1,0 +1,18 @@
+{
+  "trade_count": 26,
+  "wins": 14,
+  "losses": 12,
+  "win_rate": 0.5384615384615384,
+  "net_pnl": 1264.252758649393,
+  "ending_equity": 101264.2527586494,
+  "profit_factor": 1.7737602803409946,
+  "average_r": 0.14458541956479548,
+  "max_drawdown": 534.3609713832848,
+  "long_trades": 14,
+  "short_trades": 12,
+  "exit_reasons": {
+    "stop": 6,
+    "target": 11,
+    "weekend_close": 9
+  }
+}

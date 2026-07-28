@@ -1,0 +1,2 @@
+decision_timestamp,entry_timestamp,exit_timestamp,side,rrms_tier,quantity,entry_price,stop_price,target_price,exit_price,exit_reason,gross_pnl,costs,net_pnl,result_r,equity_after
+2026-07-20T15:00:00Z,2026-07-20T15:00:00Z,2026-07-21T02:30:00Z,short,0,4,4010.09895,4046.9143613729775,3973.2835386270226,4047.319052809115,stop,-148.88041123645962,0.04,-148.9204112364596,-1.0112640717751653,99851.07958876355

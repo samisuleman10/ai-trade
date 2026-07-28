@@ -1,0 +1,22 @@
+{
+  "method": "seeded bootstrap of observed fixed-risk trade R outcomes",
+  "seed": 20260723,
+  "simulations": 10000,
+  "trades_per_simulation": 38,
+  "ending_equity": {
+    "p05": 99897.57997537374,
+    "median": 101159.17686104806,
+    "p95": 102416.62647985757,
+    "probability_below_start": 0.0654
+  },
+  "maximum_drawdown": {
+    "median": 462.35154509927816,
+    "p95": 959.140067728343,
+    "p99": 1271.2123135068744
+  },
+  "maximum_losing_streak": {
+    "median": 4.0,
+    "p95": 6.0
+  },
+  "limitation": "Bootstrap reuses the small observed sample and does not model regime shifts or serial dependence."
+}
