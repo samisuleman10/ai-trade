@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Sequence
+from typing import Optional, Sequence
 from zoneinfo import ZoneInfo
 
 UTC_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
@@ -33,7 +33,7 @@ class SignalRecord:
     one_hour_atr: float
     one_hour_atr_timestamp: str
     stop_buffer: float
-    long_zone_penetration_fraction: float
+    long_zone_penetration_fraction: Optional[float]
     reward_to_risk: float
 
 
@@ -72,27 +72,40 @@ def _check(check_id: str, passed: bool, expected: object, actual: object) -> Che
 
 
 def check_causality_atr(signal: SignalRecord) -> CheckResult:
-    """The ATR used for the stop must come from a bar completed before the trigger."""
+    """The ATR must have been available by the time the decision was made.
 
-    passed = _parse(signal.one_hour_atr_timestamp) < _parse(signal.trigger_timestamp)
+    ``one_hour_atr_timestamp`` is the CLOSE time of the one-hour bar that
+    produced the ATR value (see ``_hourly_atr_timeline`` in
+    strategy_04_v1.py). The decision is made at the trigger bar's close,
+    which equals ``decision_timestamp``. Comparing the ATR close against the
+    trigger bar's OPEN time (``trigger_timestamp``) would mix two different
+    timestamp conventions, so this check compares against
+    ``decision_timestamp`` instead.
+    """
+
+    passed = _parse(signal.one_hour_atr_timestamp) <= _parse(signal.decision_timestamp)
     return _check(
         "causality_atr",
         passed,
-        "atr bar before " + signal.trigger_timestamp,
+        "atr bar at or before " + signal.decision_timestamp,
         signal.one_hour_atr_timestamp,
     )
 
 
 def check_causality_zone(signal: SignalRecord, zone_qualified_timestamp: str) -> CheckResult:
-    """The zone must have qualified before the trigger bar opened."""
+    """The zone must have qualified before the trigger bar opened.
+
+    A zone qualified exactly when the trigger bar opened was already known
+    at that instant, so the boundary is inclusive.
+    """
 
     if not zone_qualified_timestamp:
         return _check("causality_zone", False, "a qualification timestamp", "missing")
-    passed = _parse(zone_qualified_timestamp) < _parse(signal.trigger_timestamp)
+    passed = _parse(zone_qualified_timestamp) <= _parse(signal.trigger_timestamp)
     return _check(
         "causality_zone",
         passed,
-        "qualified before " + signal.trigger_timestamp,
+        "qualified at or before " + signal.trigger_timestamp,
         zone_qualified_timestamp,
     )
 
@@ -146,6 +159,8 @@ def check_penetration(signal: SignalRecord, max_long_penetration: float) -> Chec
 
     if signal.side != "long":
         return _check("penetration", True, "not applicable to shorts", signal.side)
+    if signal.long_zone_penetration_fraction is None:
+        return _check("penetration", False, "a recorded penetration fraction", "missing")
     passed = signal.long_zone_penetration_fraction <= max_long_penetration + TOLERANCE
     return _check(
         "penetration",
@@ -169,25 +184,55 @@ def check_session(trade: TradeRecord) -> CheckResult:
     )
 
 
-def check_outcome(trade: TradeRecord) -> CheckResult:
-    """The recorded exit price must agree with the recorded exit reason."""
+def check_outcome(trade: TradeRecord, slippage_bps: float) -> CheckResult:
+    """The recorded exit price must agree with the recorded exit reason.
+
+    The backtest applies ``slippage_bps`` of one-sided slippage to level
+    exits: the fill is allowed to be worse than the level by up to that
+    many basis points of the level price, plus the existing absolute
+    ``TOLERANCE``. That worse-side allowance applies to both target and
+    stop exits, since either can slip.
+
+    The two exit reasons stay asymmetric on the *better* side, matching
+    what each one means:
+
+    * A target is a favorable exit, so finishing even better than the
+      target (beyond it, in the trade's direction) is unbounded-acceptable
+      -- there's no such thing as "too good" for a target.
+    * A stop is an unfavorable exit. A fill materially better than the
+      stop price means the position was not actually stopped out, so that
+      stays rejected beyond ``TOLERANCE`` -- otherwise this check could
+      never catch an exit mislabeled as "stop".
+    """
 
     if trade.exit_reason == "target":
-        passed = (
-            trade.exit_price >= trade.target_price - TOLERANCE
-            if trade.side == "long"
-            else trade.exit_price <= trade.target_price + TOLERANCE
-        )
-        expected = "at or beyond target " + str(trade.target_price)
+        level = trade.target_price
     elif trade.exit_reason == "stop":
-        passed = (
-            trade.exit_price <= trade.stop_price + TOLERANCE
-            if trade.side == "long"
-            else trade.exit_price >= trade.stop_price - TOLERANCE
-        )
-        expected = "at or beyond stop " + str(trade.stop_price)
+        level = trade.stop_price
     else:
         return _check("outcome", True, "no level assertion", trade.exit_reason)
+
+    slippage_allowance = level * (slippage_bps / 10_000.0) + TOLERANCE
+    # "worse" is toward loss: lower price for a long, higher price for a short.
+    worse_is_lower = trade.side == "long"
+
+    if trade.exit_reason == "target":
+        if worse_is_lower:
+            passed = trade.exit_price >= level - slippage_allowance
+            expected = "at or above " + str(level - slippage_allowance) + " (target " + str(level) + " less slippage)"
+        else:
+            passed = trade.exit_price <= level + slippage_allowance
+            expected = "at or below " + str(level + slippage_allowance) + " (target " + str(level) + " plus slippage)"
+    else:
+        if worse_is_lower:
+            low = level - slippage_allowance
+            high = level + TOLERANCE
+            passed = low <= trade.exit_price <= high
+        else:
+            low = level - TOLERANCE
+            high = level + slippage_allowance
+            passed = low <= trade.exit_price <= high
+        expected = "between " + str(low) + " and " + str(high) + " (stop " + str(level) + ")"
     return _check("outcome", passed, expected, trade.exit_price)
 
 
@@ -204,6 +249,7 @@ def audit_trade(
     zone_qualified_timestamp: str,
     fifteen_minute_timestamps: Sequence[str],
     max_long_penetration: float,
+    slippage_bps: float,
 ) -> list[CheckResult]:
     """Run every check for one trade, in stable order."""
 
@@ -216,6 +262,6 @@ def audit_trade(
         check_target_price(signal, trade),
         check_penetration(signal, max_long_penetration),
         check_session(trade),
-        check_outcome(trade),
+        check_outcome(trade, slippage_bps),
         check_side_match(signal),
     ]
