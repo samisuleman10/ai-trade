@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from ai_trade.backfill_visualization_bundles import (
     backfill,
     bundle_id_for,
@@ -229,3 +231,128 @@ def test_capabilities_separate_the_ledger_audit_from_the_signal_audit(tmp_path):
     manifest = json.loads((tmp_path / "good" / "visualization" / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["capabilities"]["has_trade_audit"] is True
     assert manifest["capabilities"]["has_signal_audit"] is False
+
+
+# --- the checks must be falsifiable ---------------------------------------
+#
+# Every one of these mutations is a defect a backtest could really produce,
+# and each is applied to a ledger that is otherwise internally consistent
+# and passes cleanly. A check that never fires is worse than no check: it
+# reports "audited" over evidence it never examined.
+
+TWO_ROWS = (
+    "2021-06-21T18:15:00Z,2021-06-21T18:15:00Z,2021-06-22T14:15:00Z,short,0,227,"
+    "420.66,421.32,420.01,421.36,stop,-158.90,2.27,-161.17,-1.0758,99838.83\n"
+    "2021-06-23T14:00:00Z,2021-06-23T14:00:00Z,2021-06-23T19:00:00Z,long,0,100,"
+    "400.00,399.00,401.00,401.00,target,100.00,1.00,99.00,0.99,99937.83\n"
+)
+
+
+def _make_two_row_result(directory: Path, report: dict = None) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    _make_result(directory)
+    (directory / "fixed_trades.csv").write_text(
+        "decision_timestamp,entry_timestamp,exit_timestamp,side,rrms_tier,quantity,"
+        "entry_price,stop_price,target_price,exit_price,exit_reason,gross_pnl,costs,"
+        "net_pnl,result_r,equity_after\n" + TWO_ROWS,
+        encoding="utf-8",
+    )
+    summary = json.loads((directory / "fixed_summary.json").read_text(encoding="utf-8"))
+    summary.update({"trade_count": 2, "net_pnl": -62.17, "ending_equity": 99937.83})
+    (directory / "fixed_summary.json").write_text(json.dumps(summary), encoding="utf-8")
+    if report is not None:
+        (directory / "backtest_report.json").write_text(json.dumps(report), encoding="utf-8")
+
+
+def _mutate_cell(directory: Path, row: int, column: str, value: str) -> None:
+    lines = (directory / "fixed_trades.csv").read_text(encoding="utf-8").strip().split("\n")
+    header = lines[0].split(",")
+    cells = lines[row + 1].split(",")
+    cells[header.index(column)] = value
+    lines[row + 1] = ",".join(cells)
+    (directory / "fixed_trades.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _swap_cells(directory: Path, row: int, left: str, right: str) -> None:
+    lines = (directory / "fixed_trades.csv").read_text(encoding="utf-8").strip().split("\n")
+    header = lines[0].split(",")
+    cells = lines[row + 1].split(",")
+    i, j = header.index(left), header.index(right)
+    cells[i], cells[j] = cells[j], cells[i]
+    lines[row + 1] = ",".join(cells)
+    (directory / "fixed_trades.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _published_failures(result_dir: Path) -> set:
+    payload = _audit_payload(result_dir)
+    return {
+        check["check_id"]
+        for trade in payload["trades"]
+        for check in trade["checks"]
+        if not check["passed"]
+    }
+
+
+def test_the_two_row_ledger_the_mutations_start_from_passes_cleanly(tmp_path):
+    """Without this, every mutation below could be passing vacuously."""
+
+    _make_two_row_result(tmp_path / "clean")
+    backfill([tmp_path], dry_run=False)
+    assert _published_failures(tmp_path / "clean") == set()
+    assert _audit_payload(tmp_path / "clean")["summary"] == {"audit_passed": 2, "audit_failed": 0}
+
+
+@pytest.mark.parametrize(
+    "mutate,expected_check",
+    [
+        (lambda d: _mutate_cell(d, 0, "costs", "3.27"), "net_pnl"),
+        # Deliberately the FIRST row, not the last: the contract already
+        # reconciles the final equity against the summary's ending_equity,
+        # so a corrupted last row is caught before publication. A corrupted
+        # middle row lands on the same ending equity and is invisible to
+        # that reconciliation -- it is the gap equity_chain exists to close.
+        (lambda d: _mutate_cell(d, 0, "equity_after", "100088.83"), "equity_chain"),
+        (lambda d: _mutate_cell(d, 1, "result_r", "1.98"), "result_r"),
+        (lambda d: _swap_cells(d, 1, "entry_timestamp", "exit_timestamp"), "exit_after_entry"),
+        (lambda d: _mutate_cell(d, 1, "quantity", "0"), "quantity"),
+        (lambda d: _swap_cells(d, 1, "stop_price", "target_price"), "level_sides"),
+    ],
+    ids=["net_pnl", "equity_chain", "result_r", "exit_after_entry", "quantity", "level_sides"],
+)
+def test_a_corrupted_ledger_is_caught_by_the_check_that_owns_the_field(
+    tmp_path, mutate, expected_check
+):
+    _make_two_row_result(tmp_path / "mutated")
+    mutate(tmp_path / "mutated")
+    backfill([tmp_path], dry_run=False)
+    assert expected_check in _published_failures(tmp_path / "mutated")
+
+
+def test_swapping_a_stop_and_target_is_caught_by_nothing_else(tmp_path):
+    """R:R is 1.0, so the risk distance is unchanged and result_r still
+    reconciles. Only the level ordering shows the trade recorded its reward
+    as its risk -- which is why that check exists separately."""
+
+    _make_two_row_result(tmp_path / "swapped")
+    _swap_cells(tmp_path / "swapped", 1, "stop_price", "target_price")
+    backfill([tmp_path], dry_run=False)
+    assert _published_failures(tmp_path / "swapped") == {"level_sides"}
+
+
+def test_a_report_stating_two_different_multipliers_publishes_as_inconclusive(tmp_path):
+    """Preferring one location would be assuming the answer the check asks."""
+
+    _make_two_row_result(
+        tmp_path / "conflicted",
+        report={
+            "strategy_id": "strategy_09_demo",
+            "assumptions": {"contract_multiplier": 10.0},
+            "backtest_configuration": {"contract_multiplier": 1.0},
+        },
+    )
+    backfill([tmp_path], dry_run=False)
+    payload = _audit_payload(tmp_path / "conflicted")
+    assert payload["summary"]["audit_failed"] == 2
+    check = next(c for c in payload["trades"][0]["checks"] if c["check_id"] == "result_r")
+    assert check["passed"] is False
+    assert "inconclusive" in check["expected"]
