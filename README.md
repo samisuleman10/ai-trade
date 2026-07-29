@@ -1,6 +1,69 @@
 # AI Trade
 
-Foundation for an AI-assisted trading application.
+<!-- KEEP THIS SECTION FIRST. Do not delete it or move it further down the file. -->
+
+## Quick start: run the dashboard
+
+Two terminals. The virtual environment and npm packages are already installed —
+do **not** run `python -m venv .venv` again, and never run it while a venv is
+active (Windows locks the running `python.exe` and it fails with a permission
+error).
+
+Terminal 1 — the API:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m ai_trade.server --port 8080
+```
+
+Terminal 2 — the dashboard:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+npm run dev --prefix dashboard
+```
+
+Then open <http://localhost:5173>.
+
+Check the API is healthy:
+
+```powershell
+curl http://127.0.0.1:8080/health
+```
+
+Expect `{"status": "ok", "valid_bundles": 48, "invalid_bundles": 0}`.
+
+### Which tabs need the API
+
+| Tab | Needs the API |
+| --- | --- |
+| Performance, Compare assets, Rules | No |
+| Chart & trades (Strategy 04 trade audit) | No — the fixture is bundled |
+| All runs (every run, strategies 01–04) | **Yes** |
+
+### Adding a run
+
+Nothing manual. A backtest publishes its own visualization bundle and the run
+appears in **All runs** on refresh:
+
+```powershell
+python -m ai_trade.backtest_strategy_04_v1_1
+```
+
+To re-publish bundles for result directories created outside a backtest:
+
+```powershell
+python -m ai_trade.backfill_visualization_bundles --dry-run
+```
+
+Drop `--dry-run` to write. It only ever adds `visualization/` subdirectories;
+it never modifies existing result artifacts.
+
+### Tests
+
+```powershell
+python -m pytest -q
+```
 
 ## Project direction
 
