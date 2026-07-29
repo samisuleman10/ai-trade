@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Activity,
   ArrowRight,
@@ -8,8 +8,6 @@ import {
   ChevronRight,
   Database,
   FlaskConical,
-  Layers3,
-  RefreshCw,
   Scale,
   TrendingUp,
 } from 'lucide-react';
@@ -29,11 +27,8 @@ import { AssetComparison } from './components/AssetComparison';
 import { AuditedTradeList } from './components/AuditedTradeList';
 import { TradeSetupChart } from './components/TradeSetupChart';
 import { TradeExecutionChart } from './components/TradeExecutionChart';
-import { RunCatalog } from './components/RunCatalog';
-import { RunDetail } from './components/RunDetail';
-import type { CatalogEntry } from './catalog';
 
-type View = 'performance' | 'comparison' | 'rules' | 'chart' | 'runs';
+type View = 'performance' | 'comparison' | 'rules' | 'chart';
 
 const money = (value: number) =>
   new Intl.NumberFormat('en-US', {
@@ -352,254 +347,185 @@ function RulesView({ version }: { version: Strategy04Version }) {
   );
 }
 
+/**
+ * Strategy 04 deep dive: version/asset switchers, the S04 stat tiles, and
+ * the Performance / Compare assets / Rules / Chart & trades tabs. This
+ * used to be the whole dashboard (header, top-level nav and all); it is
+ * now mounted as one section inside `App`, which owns the shell chrome
+ * (header, cross-strategy top-level nav, footer) instead.
+ */
 export default function Strategy04Dashboard() {
   const [version, setVersion] = useState<Strategy04Version>('v1_1');
   const [asset, setAsset] = useState<Strategy04Asset>('SPY');
   const [view, setView] = useState<View>('performance');
-  const [apiReachable, setApiReachable] = useState(false);
-  const [checkingApi, setCheckingApi] = useState(false);
   const result = STRATEGY_04_RESULTS[version][asset];
   const auditedTrades = useMemo(
     () => getStrategy04Fixture(version, asset)?.trades ?? [],
     [asset, version],
   );
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
-  const [selectedRun, setSelectedRun] = useState<CatalogEntry | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
     [auditedTrades, selectedTradeId],
   );
 
-  const checkApi = async () => {
-    setCheckingApi(true);
-    try {
-      const response = await fetch('http://localhost:8080/api/strategies');
-      setApiReachable(response.ok);
-    } catch {
-      setApiReachable(false);
-    } finally {
-      setCheckingApi(false);
-    }
-  };
-
-  useEffect(() => {
-    void checkApi();
-  }, []);
-
   return (
-    <div className="s4-app min-h-screen">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-[1480px] flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <div className="flex items-center gap-4">
-            <div className="s4-brand-mark">
-              <Layers3 size={21} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="s4-eyebrow">AI Trade Research</span>
-                <span className="rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">Strategy 04 only</span>
-              </div>
-              <h1 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">
-                Supply & Demand Research Console
-              </h1>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div className={`s4-api-status ${apiReachable ? 'online' : 'offline'}`}>
-              <span />
-              {apiReachable ? 'API reachable' : 'Saved result snapshot'}
-            </div>
-            <button
-              type="button"
-              className="s4-icon-button"
-              aria-label="Check API connection"
-              onClick={() => void checkApi()}
-              disabled={checkingApi}
-            >
-              <RefreshCw size={15} className={checkingApi ? 'animate-spin' : ''} />
-            </button>
+    <>
+      <section className="s4-context-panel">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="s4-strategy-code">S4</div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold text-slate-950">Strategy 04</div>
+            <div className="truncate text-xs text-slate-500">Causal 1H zones · 15M reaction entries</div>
           </div>
         </div>
-      </header>
 
-      <main className="mx-auto max-w-[1480px] px-4 py-6 sm:px-6 lg:px-8">
-        <section className="s4-context-panel">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="s4-strategy-code">S4</div>
-            <div className="min-w-0">
-              <div className="truncate text-sm font-semibold text-slate-950">Strategy 04</div>
-              <div className="truncate text-xs text-slate-500">Causal 1H zones · 15M reaction entries</div>
-            </div>
-          </div>
+        <div className="s4-context-divider" />
 
-          <div className="s4-context-divider" />
-
-          <div>
-            <div className="s4-control-label">Version</div>
-            <div className="s4-segment mt-1.5">
-              {STRATEGY_04_VERSIONS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-pressed={version === item.id}
-                  onClick={() => setVersion(item.id)}
-                  className={version === item.id ? 'is-active' : ''}
-                  title={item.description}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <div className="s4-control-label">Asset</div>
-            <div className="s4-segment mt-1.5">
-              {(['SPY', 'QQQ', 'DIA'] as Strategy04Asset[]).map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  aria-pressed={asset === item}
-                  onClick={() => setAsset(item)}
-                  className={asset === item ? 'is-active' : ''}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="s4-context-divider hidden xl:block" />
-
-          <div className="s4-timeframe-flow">
-            <div>
-              <span>Setup</span>
-              <strong>1H zones</strong>
-            </div>
-            <ChevronRight size={17} />
-            <div>
-              <span>Trigger & entry</span>
-              <strong>15M reaction</strong>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="s4-context-stat">
-            <Database size={16} />
-            <div>
-              <span>Dataset window</span>
-              <strong>{dateLabel(result.dataRange.first)} — {dateLabel(result.dataRange.last)}</strong>
-            </div>
-          </div>
-          <div className="s4-context-stat">
-            <BarChart3 size={16} />
-            <div>
-              <span>Completed bars</span>
-              <strong>{result.barCounts.setup.toLocaleString()} 1H · {result.barCounts.execution.toLocaleString()} 15M</strong>
-            </div>
-          </div>
-          <div className="s4-context-stat">
-            <FlaskConical size={16} />
-            <div>
-              <span>Signal funnel</span>
-              <strong>{result.candidateSignals} candidates · {result.eligibleSignals} eligible</strong>
-            </div>
-          </div>
-          <div className="s4-context-stat">
-            <Scale size={16} />
-            <div>
-              <span>Sizing comparison</span>
-              <strong>Fixed 0.15% vs RRMS</strong>
-            </div>
-          </div>
-        </section>
-
-        <nav className="s4-tabs mt-6" aria-label="Strategy 04 sections">
-          {[
-            { id: 'performance' as const, label: 'Performance', icon: TrendingUp },
-            { id: 'comparison' as const, label: 'Compare assets', icon: BarChart3 },
-            { id: 'rules' as const, label: 'Rules', icon: BookOpen },
-            { id: 'chart' as const, label: 'Chart & trades', icon: Activity },
-            { id: 'runs' as const, label: 'All runs', icon: Database },
-          ].map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              aria-current={view === id ? 'page' : undefined}
-              onClick={() => setView(id)}
-              className={view === id ? 'is-active' : ''}
-            >
-              <Icon size={16} />
-              {label}
-            </button>
-          ))}
-        </nav>
-
-        <div className="mt-5">
-          {view === 'performance' && <PerformanceOverview result={result} />}
-          {view === 'comparison' && (
-            <AssetComparison
-              version={version}
-              selectedAsset={asset}
-              onSelectAsset={(nextAsset) => {
-                setAsset(nextAsset);
-                setView('performance');
-              }}
-            />
-          )}
-          {view === 'rules' && <RulesView version={version} />}
-          {view === 'chart' && (
-            <div className="space-y-5">
-              {auditedTrades.length === 0 ? (
-                <section className="s4-panel p-8 text-center">
-                  <div className="text-sm font-semibold text-slate-900">
-                    Audit fixture not generated for {asset} {version}
-                  </div>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Run <code>python -m ai_trade.build_strategy_04_fixture</code> for this
-                    symbol and version to populate the trade audit.
-                  </p>
-                </section>
-              ) : (
-                <>
-                  <AuditedTradeList
-                    trades={auditedTrades}
-                    selectedTradeId={selectedTrade ? selectedTrade.trade_id : null}
-                    onSelect={setSelectedTradeId}
-                  />
-                  {selectedTrade && (
-                    <>
-                      <TradeSetupChart trade={selectedTrade} />
-                      <TradeExecutionChart trade={selectedTrade} />
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-          {view === 'runs' &&
-            (selectedRun ? (
-              <RunDetail entry={selectedRun} onClose={() => setSelectedRun(null)} />
-            ) : (
-              <RunCatalog onSelectRun={setSelectedRun} />
+        <div>
+          <div className="s4-control-label">Version</div>
+          <div className="s4-segment mt-1.5">
+            {STRATEGY_04_VERSIONS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={version === item.id}
+                onClick={() => setVersion(item.id)}
+                className={version === item.id ? 'is-active' : ''}
+                title={item.description}
+              >
+                {item.label}
+              </button>
             ))}
+          </div>
         </div>
 
-        <footer className="mt-8 flex flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <span>Historical research only · no execution authority</span>
-          {/* The catalog shows runs from every strategy, so this must follow
-              what is on screen rather than always claiming strategy_04. */}
-          <span className="font-mono">
-            {selectedRun
-              ? `${selectedRun.run.strategy_id} / ${selectedRun.run.strategy_version} / ${
-                  selectedRun.instrument.symbol || 'unknown symbol'
-                }`
-              : `strategy_04 / ${version} / ${asset} / 1h→15m`}
-          </span>
-        </footer>
-      </main>
-    </div>
+        <div>
+          <div className="s4-control-label">Asset</div>
+          <div className="s4-segment mt-1.5">
+            {(['SPY', 'QQQ', 'DIA'] as Strategy04Asset[]).map((item) => (
+              <button
+                key={item}
+                type="button"
+                aria-pressed={asset === item}
+                onClick={() => setAsset(item)}
+                className={asset === item ? 'is-active' : ''}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="s4-context-divider hidden xl:block" />
+
+        <div className="s4-timeframe-flow">
+          <div>
+            <span>Setup</span>
+            <strong>1H zones</strong>
+          </div>
+          <ChevronRight size={17} />
+          <div>
+            <span>Trigger & entry</span>
+            <strong>15M reaction</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="s4-context-stat">
+          <Database size={16} />
+          <div>
+            <span>Dataset window</span>
+            <strong>{dateLabel(result.dataRange.first)} — {dateLabel(result.dataRange.last)}</strong>
+          </div>
+        </div>
+        <div className="s4-context-stat">
+          <BarChart3 size={16} />
+          <div>
+            <span>Completed bars</span>
+            <strong>{result.barCounts.setup.toLocaleString()} 1H · {result.barCounts.execution.toLocaleString()} 15M</strong>
+          </div>
+        </div>
+        <div className="s4-context-stat">
+          <FlaskConical size={16} />
+          <div>
+            <span>Signal funnel</span>
+            <strong>{result.candidateSignals} candidates · {result.eligibleSignals} eligible</strong>
+          </div>
+        </div>
+        <div className="s4-context-stat">
+          <Scale size={16} />
+          <div>
+            <span>Sizing comparison</span>
+            <strong>Fixed 0.15% vs RRMS</strong>
+          </div>
+        </div>
+      </section>
+
+      <nav className="s4-tabs mt-6" aria-label="Strategy 04 sections">
+        {[
+          { id: 'performance' as const, label: 'Performance', icon: TrendingUp },
+          { id: 'comparison' as const, label: 'Compare assets', icon: BarChart3 },
+          { id: 'rules' as const, label: 'Rules', icon: BookOpen },
+          { id: 'chart' as const, label: 'Chart & trades', icon: Activity },
+        ].map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            type="button"
+            aria-current={view === id ? 'page' : undefined}
+            onClick={() => setView(id)}
+            className={view === id ? 'is-active' : ''}
+          >
+            <Icon size={16} />
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <div className="mt-5">
+        {view === 'performance' && <PerformanceOverview result={result} />}
+        {view === 'comparison' && (
+          <AssetComparison
+            version={version}
+            selectedAsset={asset}
+            onSelectAsset={(nextAsset) => {
+              setAsset(nextAsset);
+              setView('performance');
+            }}
+          />
+        )}
+        {view === 'rules' && <RulesView version={version} />}
+        {view === 'chart' && (
+          <div className="space-y-5">
+            {auditedTrades.length === 0 ? (
+              <section className="s4-panel p-8 text-center">
+                <div className="text-sm font-semibold text-slate-900">
+                  Audit fixture not generated for {asset} {version}
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  Run <code>python -m ai_trade.build_strategy_04_fixture</code> for this
+                  symbol and version to populate the trade audit.
+                </p>
+              </section>
+            ) : (
+              <>
+                <AuditedTradeList
+                  trades={auditedTrades}
+                  selectedTradeId={selectedTrade ? selectedTrade.trade_id : null}
+                  onSelect={setSelectedTradeId}
+                />
+                {selectedTrade && (
+                  <>
+                    <TradeSetupChart trade={selectedTrade} />
+                    <TradeExecutionChart trade={selectedTrade} />
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

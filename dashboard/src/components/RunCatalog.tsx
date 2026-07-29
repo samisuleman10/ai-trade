@@ -1,30 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
-import { fetchDataset, fetchRuns } from '../catalog';
+import { useMemo, useState } from 'react';
 import type { CatalogEntry } from '../catalog';
 import { familyInfo, familyOf } from '../strategyDescriptions';
-
-interface PerformanceSummary {
-  trade_count?: number;
-  net_pnl?: number;
-  win_rate?: number;
-  profit_factor?: number;
-  max_drawdown?: number;
-  [key: string]: unknown;
-}
-
-interface PerformanceDataset {
-  summary?: PerformanceSummary;
-}
+import { useRunCatalog } from '../hooks/useRunCatalog';
 
 interface RunCatalogProps {
   onSelectRun?: (entry: CatalogEntry) => void;
 }
-
-type FetchStatus = 'loading' | 'loaded' | 'error';
-
-type MetricsState = Record<string, { status: FetchStatus; summary?: PerformanceSummary }>;
-
-const PERFORMANCE_DATASET_ID = 'performance_fixed';
 
 function familyLabel(family: string): string {
   const match = family.match(/^strategy_(\d+)$/);
@@ -59,57 +40,8 @@ const ratio = (value: unknown): string => (typeof value === 'number' ? value.toF
 const count = (value: unknown): string => (typeof value === 'number' ? String(value) : em);
 
 export function RunCatalog({ onSelectRun }: RunCatalogProps) {
-  const [status, setStatus] = useState<FetchStatus>('loading');
-  const [entries, setEntries] = useState<CatalogEntry[]>([]);
-  const [metrics, setMetrics] = useState<MetricsState>({});
+  const { status, entries, performance: metrics } = useRunCatalog();
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setStatus('loading');
-    fetchRuns()
-      .then((data) => {
-        if (cancelled) return;
-        setEntries(data);
-        setStatus('loaded');
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus('error');
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (entries.length === 0) return;
-    let cancelled = false;
-
-    for (const entry of entries) {
-      if (!entry.dataset_ids.includes(PERFORMANCE_DATASET_ID)) {
-        setMetrics((prev) => ({ ...prev, [entry.bundle_id]: { status: 'error' } }));
-        continue;
-      }
-      setMetrics((prev) => ({ ...prev, [entry.bundle_id]: { status: 'loading' } }));
-      fetchDataset<PerformanceDataset>(entry.bundle_id, PERFORMANCE_DATASET_ID)
-        .then((dataset) => {
-          if (cancelled) return;
-          setMetrics((prev) => ({
-            ...prev,
-            [entry.bundle_id]: { status: 'loaded', summary: dataset.summary },
-          }));
-        })
-        .catch(() => {
-          if (cancelled) return;
-          setMetrics((prev) => ({ ...prev, [entry.bundle_id]: { status: 'error' } }));
-        });
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [entries]);
 
   const groups = useMemo(() => {
     const byFamily = new Map<string, CatalogEntry[]>();

@@ -409,6 +409,42 @@ button:focus-visible {
   padding: 15px;
 }
 
+.s4-small-sample-flag {
+  display: inline-flex;
+  color: #c2410c;
+}
+
+.s4-nav {
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  padding: 4px;
+  border: 1px solid #dbe3ee;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.s4-nav button {
+  display: inline-flex;
+  min-height: 36px;
+  cursor: pointer;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 16px;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.s4-nav button.is-active {
+  background: #312e81;
+  color: white;
+  box-shadow: 0 5px 13px rgba(49, 46, 129, 0.16);
+}
+
 .s4-rule-number {
   display: grid;
   width: 28px;
@@ -473,11 +509,13 @@ button:focus-visible {
     flex-direction: column;
   }
 
-  .s4-tabs {
+  .s4-tabs,
+  .s4-nav {
     width: 100%;
   }
 
-  .s4-tabs button {
+  .s4-tabs button,
+  .s4-nav button {
     flex: 1;
     justify-content: center;
     padding: 0 8px;

@@ -2,10 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import './strategy04.css';
-import Strategy04Dashboard from './Strategy04Dashboard';
+import App from './App';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Strategy04Dashboard />
+    <App />
   </StrictMode>,
 );
