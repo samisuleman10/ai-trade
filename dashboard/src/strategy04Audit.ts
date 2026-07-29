@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchDataset, fetchRuns } from './catalog';
+import { familyOf } from './strategyDescriptions';
 import type { Bar, ExitReason, TradeSide } from './types';
 import type { Strategy04Asset, Strategy04Version } from './strategy04Data';
 
@@ -146,12 +147,16 @@ export function useStrategy04Audit(
     setState({ status: 'loading', trades: [] });
 
     const load = async () => {
-      const runs = await fetchRuns({
-        strategy_id: 'strategy_04',
-        strategy_version: version,
-        symbol: asset,
-      });
-      const entry = runs.find((run) => run.dataset_ids.includes('trade_audit'));
+      // The catalog's strategy_id filter is exact equality against the
+      // producer's full id (`strategy_04_v1_1_shallow_long_penetration`), so
+      // filtering on the family name server-side matches nothing. Narrow by
+      // version and symbol, then pick the Strategy 04 family here.
+      const runs = await fetchRuns({ strategy_version: version, symbol: asset });
+      const entry = runs.find(
+        (run) =>
+          familyOf(run.run.strategy_id) === 'strategy_04' &&
+          run.dataset_ids.includes('trade_audit'),
+      );
       if (!entry) {
         if (!cancelled) setState({ status: 'absent', trades: [] });
         return;
