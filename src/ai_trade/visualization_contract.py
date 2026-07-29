@@ -241,6 +241,203 @@ def build_performance(
     )
 
 
+def _zone_payload(zone: Mapping[str, Any], trade_id: str) -> Dict[str, Any]:
+    try:
+        lower = float(zone["lower"])
+        upper = float(zone["upper"])
+        zone_id = int(zone["zone_id"])
+        side = str(zone["side"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ContractError(f"trade {trade_id}: malformed zone: {exc}") from exc
+    if not math.isfinite(lower) or not math.isfinite(upper):
+        raise ContractError(f"trade {trade_id}: zone bounds must be finite")
+    if upper < lower:
+        raise ContractError(f"trade {trade_id}: zone upper {upper} is below lower {lower}")
+    return {
+        "zone_id": zone_id,
+        "side": side,
+        "lower": lower,
+        "upper": upper,
+        "qualified_timestamp": str(zone.get("qualified_timestamp") or ""),
+        "score": int(zone.get("score") or 0),
+    }
+
+
+def build_zones(entries: Sequence[Mapping[str, Any]]) -> Dataset:
+    """One-hour zone geometry per trade, including the zones it outranked.
+
+    Competing zones are part of the payload, not decoration: the strategy
+    ranks overlapping zones by evidence score, and a view drawing only the
+    winner could never show whether the ranking picked correctly.
+    """
+
+    seen = set()
+    trades: List[Dict[str, Any]] = []
+    for index, entry in enumerate(entries):
+        trade_id = _row_str(entry, "trade_id", index)
+        if trade_id in seen:
+            raise ContractError(f"duplicate trade_id in zones dataset: {trade_id!r}")
+        seen.add(trade_id)
+
+        selected = entry.get("selected")
+        if not isinstance(selected, Mapping):
+            raise ContractError(f"trade {trade_id}: zones entry has no 'selected' zone")
+
+        trades.append(
+            {
+                "trade_id": trade_id,
+                "selected": _zone_payload(selected, trade_id),
+                "competing": [
+                    _zone_payload(zone, trade_id) for zone in (entry.get("competing") or [])
+                ],
+            }
+        )
+
+    return Dataset(
+        dataset_id="zones",
+        kind="zones",
+        path=f"{DATA_SUBDIR}/zones.json",
+        payload={
+            "schema_version": SCHEMA_VERSION,
+            "dataset_id": "zones",
+            "kind": "zones",
+            "trades": trades,
+        },
+        record_count=len(trades),
+        first_timestamp=None,
+        last_timestamp=None,
+    )
+
+
+def build_trade_audit(entries: Sequence[Mapping[str, Any]]) -> Dataset:
+    """Per-trade rule-check results.
+
+    ``passed`` is derived here from the checks rather than copied from the
+    producer, so a summary can never disagree with the evidence beneath it.
+    """
+
+    seen = set()
+    trades: List[Dict[str, Any]] = []
+    for index, entry in enumerate(entries):
+        trade_id = _row_str(entry, "trade_id", index)
+        if trade_id in seen:
+            raise ContractError(f"duplicate trade_id in trade_audit dataset: {trade_id!r}")
+        seen.add(trade_id)
+
+        raw_checks = list(entry.get("checks") or [])
+        if not raw_checks:
+            raise ContractError(f"trade {trade_id}: audit entry has no checks")
+
+        checks: List[Dict[str, Any]] = []
+        for check in raw_checks:
+            try:
+                checks.append(
+                    {
+                        "check_id": str(check["check_id"]),
+                        "passed": bool(check["passed"]),
+                        "expected": str(check.get("expected", "")),
+                        "actual": str(check.get("actual", "")),
+                    }
+                )
+            except (KeyError, TypeError) as exc:
+                raise ContractError(f"trade {trade_id}: malformed check: {exc}") from exc
+
+        trades.append(
+            {
+                "trade_id": trade_id,
+                "trigger_timestamp": str(entry.get("trigger_timestamp") or ""),
+                "passed": all(check["passed"] for check in checks),
+                "checks": checks,
+            }
+        )
+
+    return Dataset(
+        dataset_id="trade_audit",
+        kind="trade_audit",
+        path=f"{DATA_SUBDIR}/trade-audit.json",
+        payload={
+            "schema_version": SCHEMA_VERSION,
+            "dataset_id": "trade_audit",
+            "kind": "trade_audit",
+            "summary": {
+                "audit_passed": sum(1 for trade in trades if trade["passed"]),
+                "audit_failed": sum(1 for trade in trades if not trade["passed"]),
+            },
+            "trades": trades,
+        },
+        record_count=len(trades),
+        first_timestamp=None,
+        last_timestamp=None,
+    )
+
+
+def _validate_window(
+    bars: Sequence[Mapping[str, Any]], trade_id: str, label: str
+) -> List[Dict[str, Any]]:
+    normalized: List[Dict[str, Any]] = []
+    previous: Optional[str] = None
+    for index, bar in enumerate(bars):
+        timestamp = _row_str(bar, "timestamp", index)
+        if previous is not None and timestamp <= previous:
+            raise ContractError(
+                f"trade {trade_id}: {label} bars are not strictly ascending at {timestamp!r}"
+            )
+        previous = timestamp
+        values = {field: _row_float(bar, field, index) for field in ("open", "high", "low", "close")}
+        body_low = min(values["open"], values["close"])
+        body_high = max(values["open"], values["close"])
+        if values["low"] > body_low or body_high > values["high"]:
+            raise ContractError(
+                f"trade {trade_id}: {label} bar at {timestamp} violates low <= open,close <= high"
+            )
+        normalized.append(
+            {"timestamp": timestamp, **values, "volume": _row_float(bar, "volume", index)}
+        )
+    return normalized
+
+
+def build_audit_windows(entries: Sequence[Mapping[str, Any]]) -> Dataset:
+    """Bounded bar windows around each audited trade.
+
+    Deliberately not a full candle series. The audit view shows roughly forty
+    bars per trade, and a full 15-minute series for one symbol is over 34,000
+    bars -- publishing it whole would ship two megabytes to render forty.
+    """
+
+    seen = set()
+    trades: List[Dict[str, Any]] = []
+    stamps: List[str] = []
+    for index, entry in enumerate(entries):
+        trade_id = _row_str(entry, "trade_id", index)
+        if trade_id in seen:
+            raise ContractError(f"duplicate trade_id in audit_windows dataset: {trade_id!r}")
+        seen.add(trade_id)
+
+        one_hour = _validate_window(entry.get("one_hour") or [], trade_id, "one_hour")
+        fifteen = _validate_window(entry.get("fifteen_minute") or [], trade_id, "fifteen_minute")
+        if not one_hour and not fifteen:
+            raise ContractError(f"trade {trade_id}: audit window carries no bars")
+
+        trades.append({"trade_id": trade_id, "one_hour": one_hour, "fifteen_minute": fifteen})
+        stamps.extend(bar["timestamp"] for bar in one_hour)
+        stamps.extend(bar["timestamp"] for bar in fifteen)
+
+    return Dataset(
+        dataset_id="audit_windows",
+        kind="candles",
+        path=f"{DATA_SUBDIR}/audit-windows.json",
+        payload={
+            "schema_version": SCHEMA_VERSION,
+            "dataset_id": "audit_windows",
+            "kind": "candles",
+            "trades": trades,
+        },
+        record_count=len(trades),
+        first_timestamp=min(stamps) if stamps else None,
+        last_timestamp=max(stamps) if stamps else None,
+    )
+
+
 def _validate_relative_path(path: Any) -> str:
     """Reject anything but a clean relative path within the bundle.
 

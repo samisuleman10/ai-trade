@@ -1,0 +1,688 @@
+{
+  "dataset_id": "zones",
+  "kind": "zones",
+  "schema_version": "1.0.0",
+  "trades": [
+    {
+      "competing": [],
+      "selected": {
+        "lower": 327.6360350616978,
+        "qualified_timestamp": "2021-03-23T16:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 327.98,
+        "zone_id": 215
+      },
+      "trade_id": "dia_1h_15m:fixed:000001"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 335.6229372804907,
+        "qualified_timestamp": "2021-05-13T16:00:00Z",
+        "score": 4,
+        "side": "demand",
+        "upper": 336.16,
+        "zone_id": 228
+      },
+      "trade_id": "dia_1h_15m:fixed:000002"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 340.89,
+        "qualified_timestamp": "2021-05-13T19:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 341.7691800054106,
+        "zone_id": 264
+      },
+      "trade_id": "dia_1h_15m:fixed:000003"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 346.65,
+        "qualified_timestamp": "2021-06-09T16:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 346.96,
+        "zone_id": 282
+      },
+      "trade_id": "dia_1h_15m:fixed:000004"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 348.71,
+        "qualified_timestamp": "2021-07-29T15:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 349.19,
+        "zone_id": 316
+      },
+      "trade_id": "dia_1h_15m:fixed:000005"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 353.64,
+        "qualified_timestamp": "2021-08-18T18:00:00Z",
+        "score": 4,
+        "side": "supply",
+        "upper": 354.0774270023569,
+        "zone_id": 345
+      },
+      "trade_id": "dia_1h_15m:fixed:000006"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 350.4,
+        "qualified_timestamp": "2021-09-14T17:00:00Z",
+        "score": 4,
+        "side": "supply",
+        "upper": 350.96360067285605,
+        "zone_id": 342
+      },
+      "trade_id": "dia_1h_15m:fixed:000007"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 348.4825613661625,
+        "qualified_timestamp": "2021-09-24T15:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 349.19,
+        "zone_id": 380
+      },
+      "trade_id": "dia_1h_15m:fixed:000008"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 349.64,
+        "qualified_timestamp": "2021-09-13T18:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 350.17541429058895,
+        "zone_id": 370
+      },
+      "trade_id": "dia_1h_15m:fixed:000009"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 358.64,
+        "qualified_timestamp": "2021-11-04T15:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 359.06,
+        "zone_id": 411
+      },
+      "trade_id": "dia_1h_15m:fixed:000010"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 357.98770119513586,
+        "qualified_timestamp": "2021-11-26T17:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 358.37,
+        "zone_id": 440
+      },
+      "trade_id": "dia_1h_15m:fixed:000011"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 354.58,
+        "qualified_timestamp": "2022-02-10T18:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 355.05,
+        "zone_id": 489
+      },
+      "trade_id": "dia_1h_15m:fixed:000012"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 333.22,
+        "qualified_timestamp": "2022-03-09T15:30:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 334.72,
+        "zone_id": 514
+      },
+      "trade_id": "dia_1h_15m:fixed:000013"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 345.3405934307319,
+        "qualified_timestamp": "2022-03-28T19:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 345.59,
+        "zone_id": 532
+      },
+      "trade_id": "dia_1h_15m:fixed:000014"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 324.46,
+        "qualified_timestamp": "2022-05-06T18:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 325.49,
+        "zone_id": 568
+      },
+      "trade_id": "dia_1h_15m:fixed:000015"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 326.53,
+        "qualified_timestamp": "2022-05-17T17:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 327.61,
+        "zone_id": 575
+      },
+      "trade_id": "dia_1h_15m:fixed:000016"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 332.43,
+        "qualified_timestamp": "2022-06-03T16:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 332.95,
+        "zone_id": 594
+      },
+      "trade_id": "dia_1h_15m:fixed:000017"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 328.34,
+        "qualified_timestamp": "2023-01-03T15:30:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 329.07,
+        "zone_id": 769
+      },
+      "trade_id": "dia_1h_15m:fixed:000018"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 333.77,
+        "qualified_timestamp": "2023-01-04T20:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 334.33,
+        "zone_id": 765
+      },
+      "trade_id": "dia_1h_15m:fixed:000019"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 339.01,
+        "qualified_timestamp": "2023-01-13T18:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 339.41,
+        "zone_id": 777
+      },
+      "trade_id": "dia_1h_15m:fixed:000020"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 336.51,
+        "qualified_timestamp": "2023-02-01T19:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 337.23,
+        "zone_id": 796
+      },
+      "trade_id": "dia_1h_15m:fixed:000021"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 322.84,
+        "qualified_timestamp": "2023-03-17T16:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 323.89,
+        "zone_id": 836
+      },
+      "trade_id": "dia_1h_15m:fixed:000022"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 325.42,
+        "qualified_timestamp": "2023-03-22T18:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 326.05,
+        "zone_id": 843
+      },
+      "trade_id": "dia_1h_15m:fixed:000023"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 337.21,
+        "qualified_timestamp": "2023-04-24T20:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 337.58,
+        "zone_id": 867
+      },
+      "trade_id": "dia_1h_15m:fixed:000024"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 336.81,
+        "qualified_timestamp": "2023-04-21T18:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 337.08,
+        "zone_id": 874
+      },
+      "trade_id": "dia_1h_15m:fixed:000025"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 331.31,
+        "qualified_timestamp": "2023-05-15T15:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 331.72,
+        "zone_id": 893
+      },
+      "trade_id": "dia_1h_15m:fixed:000026"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 344.22,
+        "qualified_timestamp": "2023-07-17T17:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 344.58,
+        "zone_id": 933
+      },
+      "trade_id": "dia_1h_15m:fixed:000027"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 342.49,
+        "qualified_timestamp": "2023-08-21T19:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 343.04,
+        "zone_id": 984
+      },
+      "trade_id": "dia_1h_15m:fixed:000028"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 346.62,
+        "qualified_timestamp": "2023-09-08T19:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 347.04,
+        "zone_id": 990
+      },
+      "trade_id": "dia_1h_15m:fixed:000029"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 339.89,
+        "qualified_timestamp": "2023-11-07T16:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 340.36,
+        "zone_id": 1019
+      },
+      "trade_id": "dia_1h_15m:fixed:000030"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 377.94,
+        "qualified_timestamp": "2024-01-25T17:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 378.29,
+        "zone_id": 1110
+      },
+      "trade_id": "dia_1h_15m:fixed:000031"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 385.51,
+        "qualified_timestamp": "2024-02-09T21:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 385.9,
+        "zone_id": 1126
+      },
+      "trade_id": "dia_1h_15m:fixed:000032"
+    },
+    {
+      "competing": [
+        {
+          "lower": 387.47,
+          "qualified_timestamp": "2024-02-08T18:00:00Z",
+          "score": 2,
+          "side": "supply",
+          "upper": 387.78,
+          "zone_id": 1122
+        }
+      ],
+      "selected": {
+        "lower": 387.76,
+        "qualified_timestamp": "2024-02-20T16:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 388.33,
+        "zone_id": 1131
+      },
+      "trade_id": "dia_1h_15m:fixed:000033"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 390.92,
+        "qualified_timestamp": "2024-03-05T16:00:00Z",
+        "score": 4,
+        "side": "supply",
+        "upper": 391.36,
+        "zone_id": 1143
+      },
+      "trade_id": "dia_1h_15m:fixed:000034"
+    },
+    {
+      "competing": [
+        {
+          "lower": 386.04,
+          "qualified_timestamp": "2024-03-15T20:00:00Z",
+          "score": 2,
+          "side": "demand",
+          "upper": 386.62,
+          "zone_id": 1153
+        }
+      ],
+      "selected": {
+        "lower": 385.5,
+        "qualified_timestamp": "2024-04-05T16:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 386.21233326072775,
+        "zone_id": 1158
+      },
+      "trade_id": "dia_1h_15m:fixed:000035"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 385.26,
+        "qualified_timestamp": "2024-04-25T14:30:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 385.59,
+        "zone_id": 1197
+      },
+      "trade_id": "dia_1h_15m:fixed:000036"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 388.32,
+        "qualified_timestamp": "2024-06-05T17:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 388.74,
+        "zone_id": 1208
+      },
+      "trade_id": "dia_1h_15m:fixed:000037"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 407.08,
+        "qualified_timestamp": "2024-07-30T18:00:00Z",
+        "score": 4,
+        "side": "supply",
+        "upper": 407.8300322954354,
+        "zone_id": 1267
+      },
+      "trade_id": "dia_1h_15m:fixed:000038"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 394.4755122665457,
+        "qualified_timestamp": "2024-08-07T18:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 395.04,
+        "zone_id": 1262
+      },
+      "trade_id": "dia_1h_15m:fixed:000039"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 415.99,
+        "qualified_timestamp": "2024-09-03T16:00:00Z",
+        "score": 2,
+        "side": "demand",
+        "upper": 416.55,
+        "zone_id": 1306
+      },
+      "trade_id": "dia_1h_15m:fixed:000040"
+    },
+    {
+      "competing": [
+        {
+          "lower": 422.74,
+          "qualified_timestamp": "2024-10-02T15:00:00Z",
+          "score": 2,
+          "side": "supply",
+          "upper": 423.3,
+          "zone_id": 1338
+        }
+      ],
+      "selected": {
+        "lower": 423.04,
+        "qualified_timestamp": "2024-10-11T15:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 423.61,
+        "zone_id": 1342
+      },
+      "trade_id": "dia_1h_15m:fixed:000041"
+    },
+    {
+      "competing": [
+        {
+          "lower": 405.84,
+          "qualified_timestamp": "2025-04-10T16:00:00Z",
+          "score": 3,
+          "side": "demand",
+          "upper": 407.79,
+          "zone_id": 1492
+        }
+      ],
+      "selected": {
+        "lower": 407.05,
+        "qualified_timestamp": "2025-04-14T18:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 407.86,
+        "zone_id": 1474
+      },
+      "trade_id": "dia_1h_15m:fixed:000042"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 410.33,
+        "qualified_timestamp": "2025-05-05T17:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 410.93,
+        "zone_id": 1516
+      },
+      "trade_id": "dia_1h_15m:fixed:000043"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 448.58,
+        "qualified_timestamp": "2025-08-18T18:00:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 449.04,
+        "zone_id": 1611
+      },
+      "trade_id": "dia_1h_15m:fixed:000044"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 468.42,
+        "qualified_timestamp": "2025-11-20T19:00:00Z",
+        "score": 4,
+        "side": "supply",
+        "upper": 469.7300316070582,
+        "zone_id": 1693
+      },
+      "trade_id": "dia_1h_15m:fixed:000045"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 480.33,
+        "qualified_timestamp": "2025-12-17T15:30:00Z",
+        "score": 4,
+        "side": "demand",
+        "upper": 481.23,
+        "zone_id": 1713
+      },
+      "trade_id": "dia_1h_15m:fixed:000046"
+    },
+    {
+      "competing": [
+        {
+          "lower": 483.71,
+          "qualified_timestamp": "2025-12-15T21:00:00Z",
+          "score": 3,
+          "side": "supply",
+          "upper": 484.4,
+          "zone_id": 1698
+        }
+      ],
+      "selected": {
+        "lower": 484.17,
+        "qualified_timestamp": "2025-12-17T19:00:00Z",
+        "score": 4,
+        "side": "supply",
+        "upper": 485.0879414972477,
+        "zone_id": 1722
+      },
+      "trade_id": "dia_1h_15m:fixed:000047"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 495.65,
+        "qualified_timestamp": "2026-01-13T17:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 496.34,
+        "zone_id": 1741
+      },
+      "trade_id": "dia_1h_15m:fixed:000048"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 488.55,
+        "qualified_timestamp": "2026-01-14T20:00:00Z",
+        "score": 2,
+        "side": "supply",
+        "upper": 489.33,
+        "zone_id": 1740
+      },
+      "trade_id": "dia_1h_15m:fixed:000049"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 489.56,
+        "qualified_timestamp": "2026-01-26T15:30:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 490.15,
+        "zone_id": 1752
+      },
+      "trade_id": "dia_1h_15m:fixed:000050"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 497.72,
+        "qualified_timestamp": "2026-05-13T16:00:00Z",
+        "score": 4,
+        "side": "demand",
+        "upper": 498.41,
+        "zone_id": 1829
+      },
+      "trade_id": "dia_1h_15m:fixed:000051"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 522.9220220633097,
+        "qualified_timestamp": "2026-07-01T14:30:00Z",
+        "score": 3,
+        "side": "demand",
+        "upper": 523.3,
+        "zone_id": 1881
+      },
+      "trade_id": "dia_1h_15m:fixed:000052"
+    },
+    {
+      "competing": [],
+      "selected": {
+        "lower": 527.13,
+        "qualified_timestamp": "2026-07-13T18:00:00Z",
+        "score": 3,
+        "side": "supply",
+        "upper": 527.86,
+        "zone_id": 1903
+      },
+      "trade_id": "dia_1h_15m:fixed:000053"
+    }
+  ]
+}

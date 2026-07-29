@@ -1,6 +1,7 @@
 {
   "bundle_id": "strategies_strategy_03_v1_results_us30_dia_4h_weekly_rrms",
   "capabilities": {
+    "has_trade_audit": false,
     "sizing_variants": [
       "fixed",
       "rrms"
@@ -45,7 +46,7 @@
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T10:49:37Z",
+  "generated_at": "2026-07-29T16:22:40Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

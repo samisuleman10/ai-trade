@@ -1,20 +1,73 @@
-import json
 from pathlib import Path
 
 import pytest
 
-from ai_trade.build_strategy_04_fixture import (
+from ai_trade.market_data import OHLCVBar
+from ai_trade.strategy_04_audit_datasets import (
+    audit_datasets_for,
     load_signals,
     load_trades,
     max_long_penetration_for,
+    report_bar_paths,
     resolve_max_long_penetration,
     window,
 )
-from ai_trade.market_data import OHLCVBar
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-RESULTS = REPO_ROOT / "strategies" / "strategy_04" / "v1_1" / "results" / "spy_1h_15m"
-FIXTURE = REPO_ROOT / "dashboard" / "src" / "fixtures" / "strategy_04_v1_1_spy.json"
+S4_RESULT = REPO_ROOT / "strategies" / "strategy_04" / "v1_1" / "results" / "spy_1h_15m"
+RESULTS = S4_RESULT
+
+
+def test_report_bar_paths_normalizes_recorded_windows_separators():
+    """backtest_report.json records paths as written on the producing machine."""
+
+    paths = report_bar_paths(
+        {"data": {"one_hour_file": "data\\m\\spy_1h.csv", "fifteen_minute_file": "data\\m\\spy_15m.csv"}}
+    )
+    assert paths == ("data/m/spy_1h.csv", "data/m/spy_15m.csv")
+
+
+def test_report_bar_paths_returns_none_when_not_recorded():
+    """An audit must never guess which bars a run consumed."""
+
+    assert report_bar_paths({"data": {}}) is None
+    assert report_bar_paths({}) is None
+    assert report_bar_paths(None) is None
+
+
+def test_a_directory_that_is_not_a_strategy_04_run_yields_nothing(tmp_path):
+    assert audit_datasets_for(tmp_path, REPO_ROOT) == []
+
+
+def test_strategy_04_result_yields_the_three_datasets():
+    datasets = audit_datasets_for(S4_RESULT, REPO_ROOT)
+    assert [d.dataset_id for d in datasets] == ["zones", "trade_audit", "audit_windows"]
+    assert [d.kind for d in datasets] == ["zones", "trade_audit", "candles"]
+
+
+def test_audit_trade_ids_match_the_ledger_ids_in_order():
+    """The dashboard joins on trade_id; a mismatch renders an empty audit."""
+
+    from ai_trade.backfill_visualization_bundles import _build_variant_datasets
+
+    ledger = _build_variant_datasets(S4_RESULT, "fixed", S4_RESULT.name)[0]
+    expected = [trade["trade_id"] for trade in ledger.payload["trades"]]
+    assert expected, "ledger produced no trades; the rest of this test would be vacuous"
+    for dataset in audit_datasets_for(S4_RESULT, REPO_ROOT):
+        assert [t["trade_id"] for t in dataset.payload["trades"]] == expected, dataset.dataset_id
+
+
+def test_every_trade_appears_in_every_audit_dataset():
+    datasets = {d.dataset_id: d.record_count for d in audit_datasets_for(S4_RESULT, REPO_ROOT)}
+    assert len(set(datasets.values())) == 1, datasets
+
+# --- helpers moved here from test_build_strategy_04_fixture.py ---
+#
+# These cover real bugs already found: a v1 signals CSV that has no
+# penetration column at all, and a forgotten CLI flag that silently turned
+# the v1.1 penetration rule into an unconditional pass. The generator they
+# were written against is gone; the functions they cover moved into this
+# module, so the tests move with them unchanged.
 
 
 def _bars() -> list[OHLCVBar]:
@@ -125,39 +178,3 @@ def test_an_unknown_version_with_an_explicit_flag_is_accepted():
     """Only the silent default is dangerous; a stated value is evidence."""
 
     assert resolve_max_long_penetration("0.25", "v9_9") == 0.25
-
-
-def test_fixture_reconciles_with_the_backtest_report():
-    fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
-    summary = json.loads((RESULTS / "fixed_summary.json").read_text(encoding="utf-8"))
-    assert len(fixture["trades"]) == summary["trade_count"]
-    assert abs(fixture["summary"]["net_pnl"] - summary["net_pnl"]) < 1e-6
-    assert abs(fixture["summary"]["ending_equity"] - summary["ending_equity"]) < 1e-6
-
-
-# Naming the checks, rather than counting them, means a fixture regenerated
-# from an older audit fails here instead of silently shipping a trade whose
-# entry price or R was never verified.
-EXPECTED_CHECK_IDS = [
-    "causality_atr",
-    "causality_zone",
-    "stop_buffer",
-    "stop_price",
-    "entry_timing",
-    "entry_price",
-    "target_price",
-    "penetration",
-    "session",
-    "outcome",
-    "result_r",
-    "side_match",
-]
-
-
-def test_every_trade_carries_zones_and_bar_windows():
-    fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
-    for trade in fixture["trades"]:
-        assert trade["zones"]["selected"]["zone_id"] > 0
-        assert len(trade["bars"]["one_hour"]) > 0
-        assert len(trade["bars"]["fifteen_minute"]) > 0
-        assert [check["check_id"] for check in trade["audit"]["checks"]] == EXPECTED_CHECK_IDS

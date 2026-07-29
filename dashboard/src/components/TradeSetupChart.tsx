@@ -1,6 +1,6 @@
 import type { SeriesMarker, Time } from 'lightweight-charts';
-import type { AuditedTrade } from '../strategy04Fixture';
-import { toEpochSeconds } from '../strategy04Fixture';
+import type { AuditedTrade } from '../strategy04Audit';
+import { toEpochSeconds } from '../strategy04Audit';
 import { useTradeChart } from './useTradeChart';
 
 interface Props {

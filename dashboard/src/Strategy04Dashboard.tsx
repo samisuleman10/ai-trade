@@ -11,7 +11,7 @@ import {
   Scale,
   TrendingUp,
 } from 'lucide-react';
-import { useStrategy04Fixture } from './strategy04Fixture';
+import { useStrategy04Audit } from './strategy04Audit';
 import {
   STRATEGY_04_RESULTS,
   STRATEGY_04_SPECS,
@@ -359,8 +359,7 @@ export default function Strategy04Dashboard() {
   const [asset, setAsset] = useState<Strategy04Asset>('SPY');
   const [view, setView] = useState<View>('performance');
   const result = STRATEGY_04_RESULTS[version][asset];
-  const { status: fixtureStatus, fixture } = useStrategy04Fixture(version, asset);
-  const auditedTrades = useMemo(() => fixture?.trades ?? [], [fixture]);
+  const { status: auditStatus, trades: auditedTrades } = useStrategy04Audit(version, asset);
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
@@ -496,7 +495,7 @@ export default function Strategy04Dashboard() {
         {view === 'rules' && <RulesView version={version} />}
         {view === 'chart' && (
           <div className="space-y-5">
-            {fixtureStatus === 'loading' ? (
+            {auditStatus === 'loading' ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
                   Loading the {asset} {version} audit…
@@ -506,14 +505,22 @@ export default function Strategy04Dashboard() {
                   rather than shipped in the initial page.
                 </p>
               </section>
+            ) : auditStatus === 'error' ? (
+              <section className="s4-panel p-8 text-center">
+                <div className="text-sm font-semibold text-slate-900">Catalog API unreachable</div>
+                <p className="mt-2 text-xs text-slate-500">
+                  Start it with <code>python -m ai_trade.server --port 8080</code>, then reopen
+                  this tab. Nothing is shown from a stale copy.
+                </p>
+              </section>
             ) : auditedTrades.length === 0 ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
-                  Audit fixture not generated for {asset} {version}
+                  No published audit for {asset} {version}
                 </div>
                 <p className="mt-2 text-xs text-slate-500">
-                  Run <code>python -m ai_trade.build_strategy_04_fixture</code> for this
-                  symbol and version to populate the trade audit.
+                  Run <code>python -m ai_trade.backfill_visualization_bundles</code> to publish
+                  this run's audit datasets.
                 </p>
               </section>
             ) : (
