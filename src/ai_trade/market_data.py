@@ -91,6 +91,21 @@ def mgc_continuous_contract() -> Contract:
     return contract
 
 
+def fx_contract(base: str, quote: str = "USD") -> Contract:
+    """Return a research-only IDEALPRO spot-FX contract.
+
+    Spot FX serves MIDPOINT bars only (no TRADES, no volume). Like the
+    other contract helpers this is for read-only historical research and
+    must never be passed to an order API.
+    """
+    contract = Contract()
+    contract.symbol = base.upper()
+    contract.secType = "CASH"
+    contract.exchange = "IDEALPRO"
+    contract.currency = quote.upper()
+    return contract
+
+
 def fetch_historical_bars(
     *,
     contract: Contract,
@@ -102,6 +117,7 @@ def fetch_historical_bars(
     use_rth: bool = True,
     timeout: float = 30.0,
     end_date_time: str = "",
+    what_to_show: str = "TRADES",
 ) -> list[OHLCVBar]:
     """Fetch completed historical trade bars and disconnect.
 
@@ -123,7 +139,7 @@ def fetch_historical_bars(
             end_date_time,
             duration,
             bar_size,
-            "TRADES",
+            what_to_show,
             1 if use_rth else 0,
             2,
             False,
