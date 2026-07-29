@@ -36,6 +36,8 @@ class BacktestConfig:
     force_friday_close: bool = True
     contract_multiplier: float = 1.0
     commission_per_contract_per_side: float | None = None
+    commission_bps_per_side: float | None = None
+    min_commission_per_order: float = 0.0
     session_timezone: str = "America/New_York"
     entry_window_start: tuple[int, int] | None = None
     entry_window_end: tuple[int, int] | None = None
@@ -183,12 +185,20 @@ def run_backtest(
         exit_index, exit_price, exit_reason = exit_result
         direction = 1 if side == "long" else -1
         gross_pnl = quantity * (exit_price - entry) * direction * config.contract_multiplier
-        commission = (
-            config.commission_per_contract_per_side
-            if config.commission_per_contract_per_side is not None
-            else config.commission_per_share_per_side
-        )
-        costs = quantity * commission * 2
+        if config.commission_bps_per_side is not None:
+            # Spot FX: commission is charged in bps of traded notional with a
+            # per-order minimum, on each side at that side's fill price.
+            fraction = config.commission_bps_per_side / 10_000
+            entry_commission = max(entry * quantity * fraction, config.min_commission_per_order)
+            exit_commission = max(exit_price * quantity * fraction, config.min_commission_per_order)
+            costs = entry_commission + exit_commission
+        else:
+            commission = (
+                config.commission_per_contract_per_side
+                if config.commission_per_contract_per_side is not None
+                else config.commission_per_share_per_side
+            )
+            costs = quantity * commission * 2
         net_pnl = gross_pnl - costs
         planned_risk = quantity * risk_per_unit
         result_r = net_pnl / planned_risk
