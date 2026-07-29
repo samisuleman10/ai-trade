@@ -26,6 +26,7 @@ from ai_trade.backfill_visualization_bundles import (
     bundle_id_for,
     run_identity,
 )
+from ai_trade.ledger_audit_datasets import ledger_audit_entries, merge_audit_datasets
 from ai_trade.visualization_contract import publish_bundle
 
 
@@ -71,9 +72,24 @@ def publish_result_directory(result_dir: Any) -> Optional[Path]:
             datasets.extend(_build_variant_datasets(result_dir, "rrms", run_id))
             variants.append("rrms")
 
+        # A live run publishes the same ledger audit the backfill does.
+        # Without this, re-running a backtest would replace an audited
+        # bundle with an unaudited one -- the audit would vanish from the
+        # dashboard precisely when the results were freshest. The Strategy
+        # 04 signal checks are not built here: they need the repository's
+        # bar caches, which a single result directory cannot locate on its
+        # own, so the backfill remains the place that adds them.
+        datasets.extend(
+            merge_audit_datasets(ledger_audit_entries(result_dir, run_id, "fixed"), [])
+        )
+
         publish_identity = dict(identity)
         publish_identity["bundle_id"] = bundle_id_for(result_dir)
-        capabilities = {"sizing_variants": variants}
+        capabilities = {
+            "sizing_variants": variants,
+            "has_trade_audit": True,
+            "has_signal_audit": False,
+        }
 
         return publish_bundle(result_dir, publish_identity, datasets, capabilities, [])
     except Exception as exc:  # noqa: BLE001 - a publish failure must never propagate to the caller

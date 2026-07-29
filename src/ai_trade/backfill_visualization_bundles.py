@@ -36,6 +36,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
+from ai_trade.ledger_audit_datasets import ledger_audit_entries, merge_audit_datasets
 from ai_trade.strategy_04_audit_datasets import audit_datasets_for
 from ai_trade.visualization_contract import (
     ContractError,
@@ -282,20 +283,32 @@ def backfill(roots: Sequence[Any], dry_run: bool) -> Dict[str, Any]:
             # where it records nothing.
             datasets.append(build_run_summary(_read_json(result_dir / REPORT_FILENAME)))
 
-            # Returns [] for anything that is not an auditable Strategy 04
-            # run, so this stays a single unconditional call rather than a
-            # per-strategy branch here.
-            audit_datasets = audit_datasets_for(result_dir, REPO_ROOT)
-            datasets.extend(audit_datasets)
+            # Every run gets the ledger checks: they read nothing but the
+            # ledger the run already published, so no strategy is exempt.
+            # audit_datasets_for returns [] for anything that is not an
+            # auditable Strategy 04 run, so the signal checks stay a single
+            # unconditional call rather than a per-strategy branch here, and
+            # merge_audit_datasets folds them into the SAME trade_audit
+            # dataset -- one audit per run, never two to reconcile.
+            signal_datasets = audit_datasets_for(result_dir, REPO_ROOT)
+            datasets.extend(
+                merge_audit_datasets(
+                    ledger_audit_entries(result_dir, run_id, "fixed"),
+                    signal_datasets,
+                )
+            )
 
             publish_identity = dict(identity)
             publish_identity["bundle_id"] = bundle_id_for(result_dir)
-            # has_trade_audit lets the dashboard hide the audit view for runs
-            # that do not publish one, instead of requesting a dataset that
-            # was never written.
+            # has_trade_audit is now true of every published run; it stays so
+            # a reader need not infer the dataset's presence from the
+            # strategy id. has_signal_audit is the narrower claim the
+            # Strategy 04 deep-dive needs: that zones and bar windows were
+            # published alongside the checks.
             capabilities = {
                 "sizing_variants": variants,
-                "has_trade_audit": bool(audit_datasets),
+                "has_trade_audit": True,
+                "has_signal_audit": bool(signal_datasets),
             }
 
             if not dry_run:

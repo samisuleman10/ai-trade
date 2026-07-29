@@ -18,7 +18,12 @@ def _make_result(directory: Path, with_report: bool = True) -> None:
         "entry_price,stop_price,target_price,exit_price,exit_reason,gross_pnl,costs,"
         "net_pnl,result_r,equity_after\n"
         "2021-06-21T18:15:00Z,2021-06-21T18:15:00Z,2021-06-22T14:15:00Z,short,0,227,"
-        "420.66,421.32,420.01,421.36,stop,-158.90,2.27,-161.17,-1.079,99838.83\n",
+        # Every field here is internally consistent, because the bundle this
+        # fixture publishes is now audited: net = gross - costs, and
+        # result_r = net / (|entry - stop| x quantity). The rounded -1.079
+        # this carried before was off by 3e-3 and would fail the ledger's
+        # own arithmetic -- which is the point of checking it.
+        "420.66,421.32,420.01,421.36,stop,-158.90,2.27,-161.17,-1.0758,99838.83\n",
         encoding="utf-8",
     )
     (directory / "fixed_summary.json").write_text(
@@ -31,7 +36,7 @@ def _make_result(directory: Path, with_report: bool = True) -> None:
                 "net_pnl": -161.17,
                 "ending_equity": 99838.83,
                 "profit_factor": 0.0,
-                "average_r": -1.079,
+                "average_r": -1.0758,
                 "max_drawdown": 161.17,
                 "long_trades": 0,
                 "short_trades": 1,
@@ -173,3 +178,54 @@ def test_published_bundles_use_the_path_derived_bundle_id_not_the_run_id(tmp_pat
     # run_id stays the human-readable directory name on both.
     assert manifest_a["run"]["run_id"] == "same_name"
     assert manifest_b["run"]["run_id"] == "same_name"
+
+
+# --- every run, not just Strategy 04, publishes a trade audit ---------------
+
+
+def _bundle_datasets(result_dir: Path) -> dict:
+    manifest = json.loads((result_dir / "visualization" / "manifest.json").read_text(encoding="utf-8"))
+    return {descriptor["dataset_id"]: descriptor for descriptor in manifest["datasets"]}
+
+
+def _audit_payload(result_dir: Path) -> dict:
+    descriptor = _bundle_datasets(result_dir)["trade_audit"]
+    return json.loads((result_dir / "visualization" / descriptor["path"]).read_text(encoding="utf-8"))
+
+
+def test_a_run_from_any_strategy_publishes_a_trade_audit(tmp_path):
+    """The demo report's strategy_id is strategy_09_demo: not Strategy 04,
+    and it still gets audited, because the ledger checks read the ledger."""
+
+    _make_result(tmp_path / "good")
+    backfill([tmp_path], dry_run=False)
+    assert "trade_audit" in _bundle_datasets(tmp_path / "good")
+
+
+def test_the_published_audit_covers_every_ledger_trade(tmp_path):
+    _make_result(tmp_path / "good")
+    backfill([tmp_path], dry_run=False)
+    payload = _audit_payload(tmp_path / "good")
+    assert [trade["trade_id"] for trade in payload["trades"]] == ["good:fixed:000001"]
+    assert payload["summary"] == {"audit_passed": 1, "audit_failed": 0}
+
+
+def test_a_ledger_that_contradicts_itself_is_published_as_failed(tmp_path):
+    """A corrupt run must publish a failure, not be skipped or smoothed."""
+
+    _make_result(tmp_path / "bad")
+    ledger = tmp_path / "bad" / "fixed_trades.csv"
+    ledger.write_text(ledger.read_text(encoding="utf-8").replace(",-161.17,", ",-99.99,"), encoding="utf-8")
+    backfill([tmp_path], dry_run=False)
+    payload = _audit_payload(tmp_path / "bad")
+    assert payload["summary"]["audit_failed"] == 1
+    failed = [c["check_id"] for c in payload["trades"][0]["checks"] if not c["passed"]]
+    assert "net_pnl" in failed
+
+
+def test_capabilities_separate_the_ledger_audit_from_the_signal_audit(tmp_path):
+    _make_result(tmp_path / "good")
+    backfill([tmp_path], dry_run=False)
+    manifest = json.loads((tmp_path / "good" / "visualization" / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["capabilities"]["has_trade_audit"] is True
+    assert manifest["capabilities"]["has_signal_audit"] is False

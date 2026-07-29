@@ -34,3 +34,14 @@ def test_publishing_never_raises_when_a_trade_row_is_malformed(tmp_path):
         encoding="utf-8",
     )
     assert publish_result_directory(directory) is None
+
+
+def test_a_live_publish_carries_the_same_ledger_audit_as_the_backfill(tmp_path):
+    """Re-running a backtest must not replace an audited bundle with an
+    unaudited one."""
+
+    _make_result(tmp_path / "run")
+    bundle = publish_result_directory(tmp_path / "run")
+    manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
+    assert "trade_audit" in [d["dataset_id"] for d in manifest["datasets"]]
+    assert manifest["capabilities"]["has_trade_audit"] is True
