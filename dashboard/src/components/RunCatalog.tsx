@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { CatalogEntry } from '../catalog';
-import { familyInfo, familyOf } from '../strategyDescriptions';
+import { compareFamiliesNewestFirst, familyInfo, familyOf } from '../strategyDescriptions';
 import { useRunCatalog } from '../hooks/useRunCatalog';
 
 interface RunCatalogProps {
@@ -65,7 +65,7 @@ export function RunCatalog({ onSelectRun }: RunCatalogProps) {
         return a.bundle_id.localeCompare(b.bundle_id);
       });
     }
-    return Array.from(byFamily.entries()).sort(([a], [b]) => a.localeCompare(b));
+    return Array.from(byFamily.entries()).sort(([a], [b]) => compareFamiliesNewestFirst(a, b));
   }, [entries]);
 
   if (status === 'loading') {

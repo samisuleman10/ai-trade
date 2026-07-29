@@ -84,6 +84,27 @@ export function familyOf(strategyId: string): string {
   return match ? match[1] : strategyId;
 }
 
+/**
+ * Orders strategy families newest first, so a future Strategy 05 appears at
+ * the top rather than below everything that came before it.
+ *
+ * The comparison is numeric, not lexical: string ordering would put
+ * `strategy_10` before `strategy_9` the moment the numbering passes nine.
+ * Families whose id carries no number sort last.
+ */
+export function compareFamiliesNewestFirst(a: string, b: string): number {
+  const numberOf = (family: string): number | null => {
+    const match = /^strategy_(\d+)$/.exec(family);
+    return match ? Number(match[1]) : null;
+  };
+  const left = numberOf(a);
+  const right = numberOf(b);
+  if (left !== null && right !== null) return right - left;
+  if (left !== null) return -1;
+  if (right !== null) return 1;
+  return a.localeCompare(b);
+}
+
 export function familyInfo(strategyId: string): StrategyFamily {
   const key = familyOf(strategyId);
   return (
