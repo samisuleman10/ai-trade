@@ -27,6 +27,18 @@ def _signal(**overrides) -> SignalRecord:
     return SignalRecord(**values)
 
 
+SLIPPAGE_BPS = 1.0
+SLIPPAGE_FRACTION = SLIPPAGE_BPS / 10_000.0
+
+# Fills are deterministic in backtest_strategy_01._fill: a level exit always
+# fills AT the level with one-sided slippage, never at a gapped-through price.
+# The clean fixture therefore uses the exact fill, not an approximation.
+LONG_TARGET = 438.95
+LONG_TARGET_FILL = LONG_TARGET * (1 - SLIPPAGE_FRACTION)
+LONG_STOP = 436.95
+LONG_STOP_FILL = LONG_STOP * (1 - SLIPPAGE_FRACTION)
+
+
 def _trade(**overrides) -> TradeRecord:
     values = dict(
         decision_timestamp="2021-08-03T14:30:00Z",
@@ -34,9 +46,9 @@ def _trade(**overrides) -> TradeRecord:
         exit_timestamp="2021-08-03T15:45:00Z",
         side="long",
         entry_price=437.95,
-        stop_price=436.95,
-        target_price=438.95,
-        exit_price=438.99,
+        stop_price=LONG_STOP,
+        target_price=LONG_TARGET,
+        exit_price=LONG_TARGET_FILL,
         exit_reason="target",
         result_r=0.97,
     )
@@ -49,8 +61,6 @@ TIMESTAMPS = [
     "2021-08-03T14:30:00Z",
     "2021-08-03T14:45:00Z",
 ]
-
-SLIPPAGE_BPS = 1.0
 
 
 def _result(results: list[CheckResult], check_id: str) -> CheckResult:
@@ -192,36 +202,92 @@ def test_target_exit_below_target_price_fails_outcome():
     assert _result(results, "outcome").passed is False
 
 
-def test_target_exit_worse_by_exactly_the_allowed_slippage_passes_outcome():
-    target_price = 438.95
-    exit_price = target_price - target_price * (SLIPPAGE_BPS / 10_000.0)
-    trade = _trade(target_price=target_price, exit_price=exit_price)
+def test_long_target_exit_at_the_slipped_level_passes_outcome():
+    trade = _trade(target_price=LONG_TARGET, exit_price=LONG_TARGET_FILL)
     results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
     assert _result(results, "outcome").passed is True
 
 
 def test_target_exit_worse_by_far_more_than_slippage_fails_outcome():
-    target_price = 438.95
-    exit_price = target_price - target_price * (SLIPPAGE_BPS / 10_000.0) * 50
-    trade = _trade(target_price=target_price, exit_price=exit_price)
+    exit_price = LONG_TARGET - LONG_TARGET * SLIPPAGE_FRACTION * 50
+    trade = _trade(target_price=LONG_TARGET, exit_price=exit_price)
     results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
     assert _result(results, "outcome").passed is False
 
 
-def test_stop_exit_worse_by_exactly_the_allowed_slippage_passes_outcome():
-    stop_price = 436.95
-    exit_price = stop_price - stop_price * (SLIPPAGE_BPS / 10_000.0)
-    trade = _trade(exit_reason="stop", stop_price=stop_price, exit_price=exit_price)
+def test_long_stop_exit_at_the_slipped_level_passes_outcome():
+    trade = _trade(exit_reason="stop", stop_price=LONG_STOP, exit_price=LONG_STOP_FILL)
     results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
     assert _result(results, "outcome").passed is True
 
 
 def test_stop_exit_worse_by_far_more_than_slippage_fails_outcome():
-    stop_price = 436.95
-    exit_price = stop_price - stop_price * (SLIPPAGE_BPS / 10_000.0) * 50
-    trade = _trade(exit_reason="stop", stop_price=stop_price, exit_price=exit_price)
+    exit_price = LONG_STOP - LONG_STOP * SLIPPAGE_FRACTION * 50
+    trade = _trade(exit_reason="stop", stop_price=LONG_STOP, exit_price=exit_price)
     results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
     assert _result(results, "outcome").passed is False
+
+
+def test_long_target_exit_far_above_the_target_fails_outcome():
+    """A target exit had NO upper bound: 10x the target used to pass."""
+
+    trade = _trade(target_price=LONG_TARGET, exit_price=LONG_TARGET * 10)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "outcome").passed is False
+
+
+def test_short_target_exit_far_below_the_target_fails_outcome():
+    """The mirror-image hole on the short side: 0.1x the target used to pass."""
+
+    signal = _signal(side="short", zone_side="supply")
+    target_price = 435.95
+    trade = _trade(
+        side="short",
+        entry_price=436.95,
+        stop_price=437.95,
+        target_price=target_price,
+        exit_reason="target",
+        exit_price=target_price * 0.1,
+    )
+    results = audit_trade(signal, trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "outcome").passed is False
+
+
+def test_long_target_exit_at_the_unslipped_level_fails_outcome():
+    """Slippage is not optional: the level itself is the wrong recorded fill."""
+
+    trade = _trade(target_price=LONG_TARGET, exit_price=LONG_TARGET)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "outcome").passed is False
+
+
+def test_long_stop_exit_at_the_unslipped_level_fails_outcome():
+    trade = _trade(exit_reason="stop", stop_price=LONG_STOP, exit_price=LONG_STOP)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "outcome").passed is False
+
+
+def test_short_stop_exit_fills_at_the_level_plus_slippage():
+    signal = _signal(side="short", zone_side="supply")
+    stop_price = 437.95
+    trade = _trade(
+        side="short",
+        entry_price=436.95,
+        stop_price=stop_price,
+        target_price=435.95,
+        exit_reason="stop",
+        exit_price=stop_price * (1 + SLIPPAGE_FRACTION),
+    )
+    results = audit_trade(signal, trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "outcome").passed is True
+
+
+def test_weekend_close_makes_no_level_assertion():
+    """Weekend closes fill at the bar close, which the audit cannot see."""
+
+    trade = _trade(exit_reason="weekend_close", exit_price=1.0)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", TIMESTAMPS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "outcome").passed is True
 
 
 def test_demand_zone_with_short_side_fails_side_match():

@@ -203,24 +203,22 @@ def check_session(trade: TradeRecord) -> CheckResult:
 
 
 def check_outcome(trade: TradeRecord, slippage_bps: float) -> CheckResult:
-    """The recorded exit price must agree with the recorded exit reason.
+    """The recorded exit price must be the exact fill the level implies.
 
-    The backtest applies ``slippage_bps`` of one-sided slippage to level
-    exits: the fill is allowed to be worse than the level by up to that
-    many basis points of the level price, plus the existing absolute
-    ``TOLERANCE``. That worse-side allowance applies to both target and
-    stop exits, since either can slip.
+    ``backtest_strategy_01._fill`` is deterministic and models no gaps: a
+    stop or target exit always fills AT the level with one side of
+    slippage applied against the position. So there is exactly one correct
+    exit price per (level, side), and exact equality within ``TOLERANCE``
+    is the right assertion -- it cannot produce a false positive.
 
-    The two exit reasons stay asymmetric on the *better* side, matching
-    what each one means:
+    A band would be strictly weaker, and the band this replaced had no
+    upper bound on a target at all: a long "target" exit recorded at ten
+    times the target price passed, because finishing "better than target"
+    was treated as unbounded-acceptable. Nothing in the producer can
+    finish better than the target, so that leniency only ever hid bugs.
 
-    * A target is a favorable exit, so finishing even better than the
-      target (beyond it, in the trade's direction) is unbounded-acceptable
-      -- there's no such thing as "too good" for a target.
-    * A stop is an unfavorable exit. A fill materially better than the
-      stop price means the position was not actually stopped out, so that
-      stays rejected beyond ``TOLERANCE`` -- otherwise this check could
-      never catch an exit mislabeled as "stop".
+    Any other reason (``weekend_close``) fills at a bar close the audit
+    never sees, so it asserts no level -- as before.
     """
 
     if trade.exit_reason == "target":
@@ -230,28 +228,11 @@ def check_outcome(trade: TradeRecord, slippage_bps: float) -> CheckResult:
     else:
         return _check("outcome", True, "no level assertion", trade.exit_reason)
 
-    slippage_allowance = level * (slippage_bps / 10_000.0) + TOLERANCE
-    # "worse" is toward loss: lower price for a long, higher price for a short.
-    worse_is_lower = trade.side == "long"
-
-    if trade.exit_reason == "target":
-        if worse_is_lower:
-            passed = trade.exit_price >= level - slippage_allowance
-            expected = "at or above " + str(level - slippage_allowance) + " (target " + str(level) + " less slippage)"
-        else:
-            passed = trade.exit_price <= level + slippage_allowance
-            expected = "at or below " + str(level + slippage_allowance) + " (target " + str(level) + " plus slippage)"
-    else:
-        if worse_is_lower:
-            low = level - slippage_allowance
-            high = level + TOLERANCE
-            passed = low <= trade.exit_price <= high
-        else:
-            low = level - TOLERANCE
-            high = level + slippage_allowance
-            passed = low <= trade.exit_price <= high
-        expected = "between " + str(low) + " and " + str(high) + " (stop " + str(level) + ")"
-    return _check("outcome", passed, expected, trade.exit_price)
+    fraction = slippage_bps / 10_000.0
+    # Exiting a long means selling (fill below the level); exiting a short
+    # means buying it back (fill above the level).
+    expected = level * (1 - fraction) if trade.side == "long" else level * (1 + fraction)
+    return _check("outcome", _close(expected, trade.exit_price), expected, trade.exit_price)
 
 
 def check_side_match(signal: SignalRecord) -> CheckResult:
