@@ -36,6 +36,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
+from ai_trade.strategy_04_audit_datasets import audit_datasets_for
 from ai_trade.visualization_contract import (
     ContractError,
     build_performance,
@@ -274,9 +275,21 @@ def backfill(roots: Sequence[Any], dry_run: bool) -> Dict[str, Any]:
                 datasets.extend(_build_variant_datasets(result_dir, "rrms", run_id))
                 variants.append("rrms")
 
+            # Returns [] for anything that is not an auditable Strategy 04
+            # run, so this stays a single unconditional call rather than a
+            # per-strategy branch here.
+            audit_datasets = audit_datasets_for(result_dir, REPO_ROOT)
+            datasets.extend(audit_datasets)
+
             publish_identity = dict(identity)
             publish_identity["bundle_id"] = bundle_id_for(result_dir)
-            capabilities = {"sizing_variants": variants}
+            # has_trade_audit lets the dashboard hide the audit view for runs
+            # that do not publish one, instead of requesting a dataset that
+            # was never written.
+            capabilities = {
+                "sizing_variants": variants,
+                "has_trade_audit": bool(audit_datasets),
+            }
 
             if not dry_run:
                 publish_bundle(result_dir, publish_identity, datasets, capabilities, [])
