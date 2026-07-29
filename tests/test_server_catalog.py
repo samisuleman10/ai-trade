@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from ai_trade.server import build_catalog, resolve_dataset_path
+from ai_trade.server import _validate_relative_dataset_path, build_catalog, resolve_dataset_path
 
 
 def _bundle(tmp_path: Path, bundle_id: str, strategy: str, symbol: str) -> Path:
@@ -58,3 +58,44 @@ def test_path_traversal_is_rejected(tmp_path):
     (bundle / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError):
         resolve_dataset_path(bundle, "evil")
+
+
+# The manifest is attacker-reachable input as far as this function is
+# concerned: it decides which file the HTTP dataset route opens. Rejecting
+# traversal on Windows is a stated constraint, but only the POSIX form was
+# exercised, and Windows has several escape shapes a "/"-only check misses.
+TRAVERSAL_PATHS = [
+    "C:\\x",                 # absolute, drive-qualified
+    "C:x",                   # drive-relative: resolves against C:'s current dir
+    "\\\\server\\share\\x",  # UNC path to another host
+    "data\\..\\..\\x",       # backslash-separated traversal
+    "..\\..\\..\\Windows\\System32\\config\\SAM",
+    "\\Windows\\x",          # root-relative on the current drive
+]
+
+
+@pytest.mark.parametrize("bad_path", TRAVERSAL_PATHS)
+def test_windows_path_traversal_is_rejected(tmp_path, bad_path):
+    bundle = _bundle(tmp_path, "run_a", "strategy_04", "SPY")
+    manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
+    manifest["datasets"].append({"dataset_id": "evil", "kind": "trades", "path": bad_path})
+    (bundle / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ValueError):
+        resolve_dataset_path(bundle, "evil")
+
+
+@pytest.mark.parametrize("bad_path", TRAVERSAL_PATHS)
+def test_string_validation_alone_rejects_windows_traversal_forms(bad_path):
+    """Assert the string layer directly, not just resolve_dataset_path's outcome.
+
+    resolve_dataset_path also resolves the joined path and compares it
+    against the bundle root, so most forms are refused twice and a rotted
+    string check would stay invisible behind that second guard. The second
+    guard does not cover every form: ``C:x`` is drive-relative, and pathlib
+    joins it onto a same-drive parent by concatenation, so it lands INSIDE
+    the bundle and the resolve-and-compare check never fires. The
+    drive-letter rejection here is the only thing stopping it.
+    """
+
+    with pytest.raises(ValueError):
+        _validate_relative_dataset_path(bad_path)

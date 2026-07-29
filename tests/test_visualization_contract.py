@@ -5,6 +5,7 @@ import pytest
 from ai_trade.visualization_contract import (
     ContractError,
     SCHEMA_VERSION,
+    _validate_relative_path,
     build_performance,
     build_trade_ledger,
     publish_bundle,
@@ -98,7 +99,22 @@ def test_performance_anchors_starting_equity_then_follows_trades():
     points = perf.payload["points"]
     assert points[0]["equity"] == 100000.0
     assert points[-1]["equity"] == 100177.55
-    assert points[-1]["trade_id"] == "demo_run:fixed:000002" or points[-1]["trade_id"] is None
+
+
+def test_performance_points_carry_no_trade_id():
+    """build_performance has no run_id, so it cannot construct a ledger
+    trade_id (``<run_id>:<variant>:<ordinal>``) and always writes None.
+
+    This assertion used to read ``== "demo_run:fixed:000002" or is None``,
+    which the implementation satisfied unconditionally via the second
+    branch -- a test that could not fail. Callers needing ledger-matching
+    ids get them from build_trade_ledger; if that ever changes here, this
+    test should fail and be updated deliberately.
+    """
+
+    perf = build_performance(_rows(), _summary(), "fixed", 100000.0)
+    points = perf.payload["points"]
+    assert [point["trade_id"] for point in points] == [None, None, None]
 
 
 def test_performance_rejects_summary_disagreeing_with_ledger():
@@ -156,6 +172,51 @@ def test_publish_rejects_a_dataset_path_escaping_the_bundle(tmp_path):
     datasets[0].path = "../escape.json"
     with pytest.raises(ContractError):
         publish_bundle(tmp_path, _identity(), datasets, {}, [])
+
+
+# Rejecting traversal on Windows is a stated constraint of this contract,
+# but only the POSIX form ("../..") was ever exercised. Windows has several
+# escape shapes that a "/"-only check would wave straight through.
+TRAVERSAL_PATHS = [
+    "C:\\x",              # absolute, drive-qualified
+    "C:x",                # drive-relative: resolves against C:'s current dir
+    "\\\\server\\share\\x",  # UNC path to another host
+    "data\\..\\..\\x",    # backslash-separated traversal
+    "..\\..\\..\\Windows\\System32\\config\\SAM",
+    "\\Windows\\x",       # root-relative on the current drive
+    "../../../etc/passwd",  # the POSIX form, kept for symmetry
+]
+
+
+@pytest.mark.parametrize("bad_path", TRAVERSAL_PATHS)
+def test_publish_rejects_windows_traversal_forms(tmp_path, bad_path):
+    datasets = [
+        build_trade_ledger(_rows(), "fixed", "demo_run"),
+        build_performance(_rows(), _summary(), "fixed", 100000.0),
+    ]
+    datasets[0].path = bad_path
+    with pytest.raises(ContractError):
+        publish_bundle(tmp_path, _identity(), datasets, {}, [])
+    # Validation runs before anything touches disk, so nothing was written.
+    assert not (tmp_path / "visualization" / "data").exists()
+
+
+@pytest.mark.parametrize("bad_path", TRAVERSAL_PATHS)
+def test_string_validation_alone_rejects_windows_traversal_forms(bad_path):
+    """Assert the string layer directly, not just the published outcome.
+
+    publish_bundle also resolves the joined path and compares it against
+    the bundle root, so most of these forms are refused twice. Testing only
+    through publish_bundle would let the string checks rot silently behind
+    that second guard -- and the second guard does not cover every form.
+    ``C:x`` is drive-relative: pathlib joins it onto a same-drive parent by
+    concatenation, so it lands INSIDE the bundle and the resolve-and-compare
+    check never fires. The drive-letter rejection here is the only thing
+    stopping it.
+    """
+
+    with pytest.raises(ContractError):
+        _validate_relative_path(bad_path)
 
 
 def test_republishing_replaces_the_previous_manifest(tmp_path):
