@@ -266,43 +266,57 @@ def _validate_relative_path(path: Any) -> str:
     return normalized
 
 
-def _write_json(path: Path, payload: Dict[str, Any]) -> str:
-    try:
-        serialized = json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n"
-    except ValueError as exc:
-        raise ContractError(f"dataset payload for {path} contains a non-finite number: {exc}") from exc
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(serialized, encoding="utf-8")
-    return serialized
-
-
-def _write_manifest_atomically(bundle_dir: Path, manifest: Dict[str, Any]) -> None:
-    """Write ``manifest.json`` via temp file + ``os.replace``.
+def _write_text_atomically(path: Path, serialized: str, prefix: str) -> None:
+    """Write ``serialized`` to ``path`` via temp file + ``os.replace``.
 
     ``os.replace`` is atomic on both POSIX and Windows, but only when the
     source and destination are on the same volume -- so the temp file is
-    created inside ``bundle_dir`` itself, never in a system temp
+    created in the destination's own directory, never in a system temp
     directory.
+
+    Sidecars need this as much as the manifest does. A backtest republishes
+    its bundle on every run and the API server is threaded, so a plain
+    write leaves a window where a reader holding the still-valid previous
+    manifest is served a half-written dataset. A partial write also used to
+    leave the old manifest pointing at new, incomplete sidecars -- exactly
+    the state that writing the manifest last is meant to make impossible.
     """
 
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_name = tempfile.mkstemp(prefix=prefix, suffix=".tmp", dir=str(path.parent))
     try:
-        serialized = json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n"
-    except ValueError as exc:
-        raise ContractError(f"manifest contains a non-finite number: {exc}") from exc
-
-    fd, tmp_name = tempfile.mkstemp(prefix=".manifest-", suffix=".tmp", dir=str(bundle_dir))
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        # newline="" disables newline translation. Without it Windows writes
+        # CRLF while the recorded sha256 is computed over the LF string, so
+        # every digest in every published bundle failed to match its own file
+        # -- the integrity check was not merely unverified but wrong.
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as handle:
             handle.write(serialized)
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(tmp_name, str(bundle_dir / MANIFEST_FILENAME))
+        os.replace(tmp_name, str(path))
     except BaseException:
         try:
             os.remove(tmp_name)
         except OSError:
             pass
         raise
+
+
+def _write_json(path: Path, payload: Dict[str, Any]) -> str:
+    try:
+        serialized = json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n"
+    except ValueError as exc:
+        raise ContractError(f"dataset payload for {path} contains a non-finite number: {exc}") from exc
+    _write_text_atomically(path, serialized, prefix=".dataset-")
+    return serialized
+
+
+def _write_manifest_atomically(bundle_dir: Path, manifest: Dict[str, Any]) -> None:
+    try:
+        serialized = json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n"
+    except ValueError as exc:
+        raise ContractError(f"manifest contains a non-finite number: {exc}") from exc
+    _write_text_atomically(bundle_dir / MANIFEST_FILENAME, serialized, prefix=".manifest-")
 
 
 def _now_iso() -> str:

@@ -316,12 +316,30 @@ def load_backtest_report(strategy_id: str, version_id: str, asset: str) -> Dict[
     }
 
 
+# Only the local Vite dev server needs to read this API. A wildcard let any
+# page open in the browser read the whole run catalogue and every trade ledger
+# while the server was running.
+ALLOWED_ORIGINS = (
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+)
+
+
 class StrategyApiHandler(BaseHTTPRequestHandler):
+
+    def _allowed_origin(self) -> Optional[str]:
+        """Echo the request's origin only when it is one we allow."""
+
+        origin = self.headers.get("Origin")
+        return origin if origin in ALLOWED_ORIGINS else None
 
     def _set_headers(self, status_code: int = 200, content_type: str = "application/json") -> None:
         self.send_response(status_code)
         self.send_header("Content-Type", content_type)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        allowed = self._allowed_origin()
+        if allowed is not None:
+            self.send_header("Access-Control-Allow-Origin", allowed)
+            self.send_header("Vary", "Origin")
         self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
