@@ -4,6 +4,8 @@ import { fetchDataset } from '../catalog';
 import type { CatalogEntry } from '../catalog';
 import type { ExitReason, Trade, TradeSide } from '../types';
 import { conditionsFor, familyInfo } from '../strategyDescriptions';
+import { auditFailures, failedTradeCount, useRunAudit } from '../ledgerAudit';
+import type { RunAuditStatus, TradeAuditDataset } from '../ledgerAudit';
 import { EquityChart } from './EquityChart';
 import { TradeTable } from './TradeTable';
 
@@ -147,6 +149,121 @@ function mapContractTrade(trade: ContractTrade, number: number): Trade {
   };
 }
 
+/** How many failing checks to list before collapsing the rest into a count. */
+const MAX_LISTED_FAILURES = 25;
+
+/**
+ * Whether this run's recorded trades survive their own arithmetic.
+ *
+ * Deliberately a verdict and its counter-evidence, not a second audit
+ * screen: a pass needs one line, and a failure needs the check that failed
+ * with the value it expected beside the value it found. The per-trade
+ * deep-dive with zone geometry and bar windows stays in the Strategy 04
+ * view, which is the only strategy that publishes the evidence for it.
+ *
+ * `absent` renders nothing at all. A bundle published before these checks
+ * existed has not been audited, and an empty failure list would read as a
+ * clean one.
+ */
+function LedgerAudit({
+  status,
+  dataset,
+  variant,
+}: {
+  status: RunAuditStatus;
+  dataset: TradeAuditDataset | null;
+  variant: Variant;
+}) {
+  if (status === 'absent') return null;
+
+  if (status === 'loading' || status === 'error') {
+    return (
+      <section className="s4-panel px-5 py-4">
+        <div className="s4-eyebrow">Ledger audit</div>
+        <p className="mt-1 text-xs text-slate-500">
+          {status === 'loading'
+            ? 'Checking each recorded trade against its own arithmetic…'
+            : 'The audit for this run could not be loaded, so its trades are unverified here.'}
+        </p>
+      </section>
+    );
+  }
+
+  const trades = dataset?.trades ?? [];
+  const failures = dataset ? auditFailures(dataset) : [];
+  const failingTrades = dataset ? failedTradeCount(dataset) : 0;
+  const listed = failures.slice(0, MAX_LISTED_FAILURES);
+
+  return (
+    <section className="s4-panel overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+        <div>
+          <div className="s4-eyebrow">Ledger audit</div>
+          <h3 className="mt-1 text-sm font-semibold text-slate-950">
+            {trades.length - failingTrades} of {trades.length} trades passed every check
+          </h3>
+          <p className="mt-1 text-xs text-slate-500">
+            {/* The audit is built from the fixed ledger, so say so rather
+                than let it read as a verdict on whichever variant is on
+                screen. */}
+            Covers the fixed ledger
+            {variant === 'rrms' ? '; the RRMS ledger is not audited.' : '.'}
+          </p>
+        </div>
+        <div className="flex gap-2 text-xs">
+          <span className="rounded bg-emerald-50 px-2 py-1 text-emerald-700">
+            {trades.length - failingTrades} passed
+          </span>
+          {failingTrades > 0 && (
+            <span className="rounded bg-rose-50 px-2 py-1 text-rose-700">
+              {failingTrades} need review
+            </span>
+          )}
+        </div>
+      </div>
+
+      {failures.length > 0 && (
+        <div className="max-h-[320px] overflow-y-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="sticky top-0 bg-slate-50 text-slate-500">
+              <tr>
+                <th className="px-4 py-2 font-medium">Trade</th>
+                <th className="px-4 py-2 font-medium">Check</th>
+                <th className="px-4 py-2 font-medium">Expected</th>
+                <th className="px-4 py-2 font-medium">Actual</th>
+              </tr>
+            </thead>
+            <tbody>
+              {listed.map((failure) => (
+                <tr
+                  key={`${failure.trade_id}:${failure.check.check_id}`}
+                  className="border-t border-slate-100"
+                >
+                  <td className="px-4 py-2 font-mono text-slate-500">{failure.trade_id}</td>
+                  <td className="px-4 py-2 font-medium text-rose-700">
+                    {failure.check.check_id}
+                  </td>
+                  <td className="px-4 py-2 font-mono text-slate-700">
+                    {failure.check.expected || em}
+                  </td>
+                  <td className="px-4 py-2 font-mono text-slate-700">
+                    {failure.check.actual || em}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {failures.length > listed.length && (
+            <div className="border-t border-slate-100 px-4 py-2 text-xs text-slate-500">
+              {failures.length - listed.length} further failing checks not listed.
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function RunDetail({ entry, onClose }: RunDetailProps) {
   const hasRrms =
     entry.dataset_ids.includes('trades_rrms') && entry.dataset_ids.includes('performance_rrms');
@@ -156,6 +273,11 @@ export function RunDetail({ entry, onClose }: RunDetailProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tradesDataset, setTradesDataset] = useState<TradesDataset | null>(null);
   const [performanceDataset, setPerformanceDataset] = useState<PerformanceDataset | null>(null);
+
+  // Fetched independently of the ledger and equity curve: an audit that
+  // fails to load must not take the run view down with it, and a run whose
+  // bundle predates the audit must still render.
+  const audit = useRunAudit(entry.bundle_id, entry.dataset_ids.includes('trade_audit'));
 
   // Reset to the fixed variant whenever the selected run changes so a
   // toggle choice from a previous run never leaks into the next one.
@@ -288,6 +410,8 @@ export function RunDetail({ entry, onClose }: RunDetailProps) {
               </article>
             ))}
           </section>
+
+          <LedgerAudit status={audit.status} dataset={audit.dataset} variant={variant} />
 
           <EquityChart points={equityPoints} variantLabel={variantLabel} />
 

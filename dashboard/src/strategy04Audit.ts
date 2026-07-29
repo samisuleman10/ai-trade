@@ -3,13 +3,17 @@ import { fetchDataset, fetchRuns } from './catalog';
 import { familyOf } from './strategyDescriptions';
 import type { Bar, ExitReason, TradeSide } from './types';
 import type { Strategy04Asset, Strategy04Version } from './strategy04Data';
+import type { AuditCheck } from './ledgerAudit';
 
-export interface AuditCheck {
-  check_id: string;
-  passed: boolean;
-  expected: string;
-  actual: string;
-}
+/**
+ * One check shape for both audits, mirroring the producer.
+ *
+ * A Strategy 04 trade's `trade_audit` entry is its ledger checks followed
+ * by its signal checks, in one list under one `passed` flag -- both emitted
+ * as `ledger_audit.CheckResult`. Declaring a second, identical interface
+ * here would let the two drift apart on this side of the wire.
+ */
+export type { AuditCheck };
 
 export interface AuditResult {
   passed: boolean;
