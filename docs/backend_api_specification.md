@@ -1,6 +1,15 @@
 # Backend API Specification & Contract for Frontend Dashboard
 
-This document outlines the REST API contracts required by the **Frontend Strategy Dashboard** for `ai-trade`. The backend team can implement these endpoints in Python/FastAPI/Flask or any preferred service.
+> **SUPERSEDED — do not implement.** This early draft was replaced by
+> [the visualization contract](design/strategy_visualization/shared/architecture_and_data_contract.md),
+> which serves published bundles through `/api/runs` instead of parsing
+> strategy artifacts per request.
+>
+> Every endpoint below has been removed from `src/ai_trade/server.py`. They
+> returned invented data — placeholder rule text from `/api/strategy/spec`,
+> and a fictional open position with unrealized P&L from `/api/shadow` — in a
+> system whose entire premise is that a number reaches the screen only if a
+> producer recorded it. Kept for history only.
 
 ---
 
