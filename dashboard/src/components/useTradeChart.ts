@@ -72,6 +72,10 @@ export function useTradeChart(
 
     const markersPlugin = createSeriesMarkers(candles, []);
 
+    // Fit before decorating so a caller that wants a tighter default view can
+    // override it with setVisibleRange inside its decorate callback.
+    chart.timeScale().fitContent();
+
     decorateRef.current({
       chart,
       candles,
@@ -79,8 +83,6 @@ export function useTradeChart(
       drawLevel,
       setMarkers: (markers) => markersPlugin.setMarkers(markers),
     });
-
-    chart.timeScale().fitContent();
 
     const resize = () => {
       if (!containerRef.current) return;

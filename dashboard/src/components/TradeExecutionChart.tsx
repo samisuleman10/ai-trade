@@ -7,8 +7,13 @@ interface Props {
   trade: AuditedTrade;
 }
 
+// Bars of breathing room either side of the trade in the default view. The
+// bar window is deliberately wider than the trade so you can pan into the
+// approach, but opening zoomed all the way out makes the candles unreadable.
+const FOCUS_PADDING_BARS = 6;
+
 export function TradeExecutionChart({ trade }: Props) {
-  const containerRef = useTradeChart(trade.bars.fifteen_minute, 2, ({ drawLevel, setMarkers }) => {
+  const containerRef = useTradeChart(trade.bars.fifteen_minute, 2, ({ chart, span, drawLevel, setMarkers }) => {
     drawLevel(trade.target_price, '#1d9e75', true, `target ${trade.target_price.toFixed(2)}`);
     drawLevel(trade.entry_price, '#378add', false, `entry ${trade.entry_price.toFixed(2)}`);
     drawLevel(trade.stop_price, '#e24b4a', true, `stop ${trade.stop_price.toFixed(2)}`);
@@ -39,6 +44,17 @@ export function TradeExecutionChart({ trade }: Props) {
       },
     ];
     setMarkers(markers);
+
+    const at = (timestamp: string) => {
+      const target = toEpochSeconds(timestamp);
+      const index = span.findIndex((time) => (time as number) >= target);
+      return index === -1 ? span.length - 1 : index;
+    };
+    const first = Math.max(0, at(trade.trigger_timestamp) - FOCUS_PADDING_BARS);
+    const last = Math.min(span.length - 1, at(trade.exit_timestamp) + FOCUS_PADDING_BARS);
+    if (last > first) {
+      chart.timeScale().setVisibleRange({ from: span[first], to: span[last] });
+    }
   });
 
   return (
@@ -53,7 +69,7 @@ export function TradeExecutionChart({ trade }: Props) {
           {trade.target_price.toFixed(2)} · exited at {trade.exit_price.toFixed(2)} by {trade.exit_reason}
         </p>
       </div>
-      <div ref={containerRef} className="h-[320px] w-full bg-white" />
+      <div ref={containerRef} className="h-[460px] w-full bg-white" />
     </section>
   );
 }

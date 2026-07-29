@@ -60,7 +60,7 @@ export function TradeSetupChart({ trade }: Props) {
           {trade.zones.competing.length} competing zone(s) shown dotted
         </p>
       </div>
-      <div ref={containerRef} className="h-[320px] w-full bg-white" />
+      <div ref={containerRef} className="h-[460px] w-full bg-white" />
     </section>
   );
 }
