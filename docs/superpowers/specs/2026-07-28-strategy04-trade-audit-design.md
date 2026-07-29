@@ -1,7 +1,13 @@
 # Strategy 04 Trade Audit View — Design
 
 Date: 2026-07-28
-Status: approved design, not yet implemented
+Status: delivered (Phase 1 and Phase 2), 2026-07-29
+
+Phase 2 landed with one deliberate deviation from section 7: bundles are
+published by running `backfill_visualization_bundles`, not by each backtest
+entry point. Hooking publication into all twelve backtest CLIs is its own
+change. The dashboard no longer needs editing when a run changes, which was
+the duplicated work this design set out to remove.
 
 ## 1. Purpose
 
@@ -219,9 +225,11 @@ the run appears in the dashboard with no file edited by hand.
 - The audit and the backtest could share a misreading of the strategy document.
   The checks therefore assert internal consistency of recorded values and
   causal ordering, which are falsifiable independently of rule interpretation.
-- The fixture is a point-in-time copy and will drift from the CSVs if a
-  backtest is rerun. Phase 2 removes the fixture entirely. Until then the
-  reconciliation test detects drift.
+- ~~The fixture is a point-in-time copy and will drift from the CSVs if a
+  backtest is rerun.~~ **Resolved 2026-07-29.** Phase 2 removed the fixtures.
+  The audit is published as `zones`, `trade_audit` and `audit_windows`
+  datasets inside the same bundle that carries the trade ledger, so the two
+  are written by one command and cannot disagree.
 - Emitting `qualified_timestamp` and competing zones requires changing the
   Strategy 04 producer's output. Existing artifacts are additive-only, so prior
   results remain readable.

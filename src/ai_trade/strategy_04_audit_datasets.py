@@ -1,36 +1,38 @@
 """Build Strategy 04's audit datasets for a published visualization bundle.
 
 Phase 2 of docs/superpowers/specs/2026-07-28-strategy04-trade-audit-design.md.
-These are the datasets the dashboard's deep-dive reads instead of the
-committed JSON fixtures it used to import, which meant a rerun updated the
-ledger without updating the screen.
+These are the datasets the dashboard's deep-dive reads. Before them it
+imported committed JSON fixtures, so rerunning a backtest updated the trade
+ledger while the screen kept showing the previous run's audit.
 
-``audit_datasets_for`` returns an empty list for anything that is not an
-auditable Strategy 04 run, so ``backfill_visualization_bundles`` can call it
+audit_datasets_for returns an empty list for anything that is not an
+auditable Strategy 04 run, so backfill_visualization_bundles can call it
 for every discovered directory without knowing which strategy produced it.
+
+Zone geometry for the selected zone comes from the recorded signal row, not
+from the rebuilt zone object, because a zone's side and status keep changing
+after the trigger. The rebuilt timeline supplies only the qualification
+timestamp and the competing zones, which the CSVs never recorded.
 """
 
 from __future__ import annotations
 
+import csv
 import json
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-from ai_trade.build_strategy_04_fixture import (
-    FIFTEEN_MINUTE_BARS_AFTER,
-    FIFTEEN_MINUTE_BARS_BEFORE,
-    ONE_HOUR_BARS_AFTER,
-    ONE_HOUR_BARS_BEFORE,
-    SLIPPAGE_BPS,
-    competing_zones,
-    load_signals,
-    load_trades,
-    resolve_max_long_penetration,
-    window,
-)
+from ai_trade.market_data import OHLCVBar
 from ai_trade.strategy_01 import load_ohlcv_csv
-from ai_trade.strategy_04_audit import FifteenMinuteBar, audit_trade
+from ai_trade.strategy_04_audit import (
+    FifteenMinuteBar,
+    SignalRecord,
+    TradeRecord,
+    audit_trade,
+)
 from ai_trade.strategy_04_indicator import (
+    Zone,
     build_one_hour_indicator,
     strategy_04_v0_3_parameters,
 )
@@ -41,6 +43,183 @@ from ai_trade.visualization_contract import (
     build_trade_audit,
     build_zones,
 )
+
+UTC_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+ONE_HOUR_BARS_BEFORE = 40
+ONE_HOUR_BARS_AFTER = 10
+FIFTEEN_MINUTE_BARS_BEFORE = 20
+FIFTEEN_MINUTE_BARS_AFTER = 20
+SLIPPAGE_BPS = 1.0
+
+# The long-side demand-zone penetration cap each strategy version states.
+# ``None`` means the version has no such rule; v1 predates it entirely and
+# its candidate_signals.csv has no penetration column at all. v1.2 keeps
+# v1.1's 0.25 cap and adds trigger-distance and 1h-direction filters on top.
+MAX_LONG_PENETRATION_BY_VERSION: dict[str, Optional[float]] = {
+    "v1": None,
+    "v1_1": 0.25,
+    "v1_2": 0.25,
+}
+
+
+def _parse(timestamp: str) -> datetime:
+    return datetime.strptime(timestamp, UTC_FORMAT).replace(tzinfo=timezone.utc)
+
+
+def _optional_float(value: Optional[str]) -> Optional[float]:
+    """Blank cells and absent columns stay None so neither reads as zero.
+
+    v1's candidate_signals.csv predates the penetration rule and has no
+    long_zone_penetration_fraction column at all, so ``value`` may be
+    ``None`` here (from ``dict.get`` on a missing key), not just ``""``.
+    """
+
+    return float(value) if value else None
+
+
+def load_signals(path: Path) -> list[SignalRecord]:
+    """Read candidate_signals.csv into typed records."""
+
+    records: list[SignalRecord] = []
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            records.append(
+                SignalRecord(
+                    decision_timestamp=row["decision_timestamp"],
+                    entry_timestamp=row["entry_timestamp"],
+                    side=row["side"],
+                    zone_id=int(row["zone_id"]),
+                    zone_side=row["zone_side"],
+                    zone_lower=float(row["zone_lower"]),
+                    zone_upper=float(row["zone_upper"]),
+                    trigger_timestamp=row["trigger_timestamp"],
+                    trigger_low=float(row["trigger_low"]),
+                    one_hour_atr=float(row["one_hour_atr"]),
+                    one_hour_atr_timestamp=row["one_hour_atr_timestamp"],
+                    stop_buffer=float(row["stop_buffer"]),
+                    long_zone_penetration_fraction=_optional_float(
+                        row.get("long_zone_penetration_fraction")
+                    ),
+                    reward_to_risk=float(row["reward_to_risk"]),
+                )
+            )
+    return records
+
+
+def load_trades(path: Path) -> list[TradeRecord]:
+    """Read a trade ledger CSV into typed records."""
+
+    records: list[TradeRecord] = []
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            records.append(
+                TradeRecord(
+                    decision_timestamp=row["decision_timestamp"],
+                    entry_timestamp=row["entry_timestamp"],
+                    exit_timestamp=row["exit_timestamp"],
+                    side=row["side"],
+                    quantity=int(row["quantity"]),
+                    entry_price=float(row["entry_price"]),
+                    stop_price=float(row["stop_price"]),
+                    target_price=float(row["target_price"]),
+                    exit_price=float(row["exit_price"]),
+                    exit_reason=row["exit_reason"],
+                    net_pnl=float(row["net_pnl"]),
+                    result_r=float(row["result_r"]),
+                )
+            )
+    return records
+
+
+def window(
+    bars: Sequence[OHLCVBar],
+    start: str,
+    end: str,
+    before: int,
+    after: int,
+) -> list[OHLCVBar]:
+    """Return bars spanning start..end, padded and clipped to the series."""
+
+    start_at = _parse(start)
+    end_at = _parse(end)
+    inside = [index for index, bar in enumerate(bars) if start_at <= _parse(bar.timestamp) <= end_at]
+    if not inside:
+        return []
+    first = max(0, inside[0] - before)
+    last = min(len(bars), inside[-1] + after + 1)
+    return list(bars[first:last])
+
+
+def _zone_by_id(zones: Sequence[Zone], zone_id: int) -> Optional[Zone]:
+    for zone in zones:
+        if zone.zone_id == zone_id:
+            return zone
+    return None
+
+
+def competing_zones(zones: Sequence[Zone], selected: Zone, signal: SignalRecord) -> list[Zone]:
+    """Zones qualified before the trigger that overlap the selected zone's range."""
+
+    trigger_at = _parse(signal.trigger_timestamp)
+    results: list[Zone] = []
+    for zone in zones:
+        if zone.zone_id == selected.zone_id or not zone.qualified_timestamp:
+            continue
+        if _parse(zone.qualified_timestamp) >= trigger_at:
+            continue
+        if zone.break_timestamp and _parse(zone.break_timestamp) < trigger_at:
+            continue
+        if zone.invalidated_timestamp and _parse(zone.invalidated_timestamp) < trigger_at:
+            continue
+        lower = zone.qualified_lower if zone.qualified_lower is not None else zone.lower
+        upper = zone.qualified_upper if zone.qualified_upper is not None else zone.upper
+        if lower <= signal.zone_upper and upper >= signal.zone_lower:
+            results.append(zone)
+    return results
+
+
+def max_long_penetration_for(strategy_version: str) -> Optional[float]:
+    """The long-side demand-zone penetration cap this version's rules state.
+
+    ``None`` means the version has no penetration rule at all, which is
+    true only of v1. Raises ``ValueError`` for a version this table does
+    not know: guessing "no rule" for an unrecognised version would turn
+    an unknown into a silent pass, which is exactly the failure mode this
+    table exists to prevent. Add the version here when you add it.
+    """
+
+    if strategy_version not in MAX_LONG_PENETRATION_BY_VERSION:
+        raise ValueError(
+            "no penetration rule recorded for strategy version %r; add it to "
+            "MAX_LONG_PENETRATION_BY_VERSION or pass --max-long-penetration "
+            "explicitly" % (strategy_version,)
+        )
+    return MAX_LONG_PENETRATION_BY_VERSION[strategy_version]
+
+
+def resolve_max_long_penetration(explicit: Optional[str], strategy_version: str) -> Optional[float]:
+    """Resolve the cap: an explicit flag wins, otherwise the version decides.
+
+    ``explicit`` is the raw ``--max-long-penetration`` argument, or
+    ``None`` when the flag was not supplied at all. That distinction is
+    the entire point. The flag used to default to ``None``, and ``None``
+    means "this version has no penetration rule" -- so forgetting the
+    flag while auditing v1.1 raised no error and no warning, it just
+    turned a real rule into an unconditional pass for every long trade.
+
+    Absence now means "ask the version"; passing ``none`` is the only way
+    to assert that no rule applies. An unrecognised version with no
+    explicit flag fails loudly (see ``max_long_penetration_for``), while
+    an explicit value is accepted for any version -- a stated value is
+    evidence, and only the silent default was dangerous.
+    """
+
+    if explicit is None:
+        return max_long_penetration_for(strategy_version)
+    if explicit.strip().lower() == "none":
+        return None
+    return float(explicit)
+
 
 REPORT_FILENAME = "backtest_report.json"
 SIGNALS_FILENAME = "candidate_signals.csv"
