@@ -13,7 +13,7 @@ import {
   Scale,
   TrendingUp,
 } from 'lucide-react';
-import { STRATEGY_04_FIXTURE } from './strategy04Fixture';
+import { getStrategy04Fixture } from './strategy04Fixture';
 import {
   STRATEGY_04_RESULTS,
   STRATEGY_04_SPECS,
@@ -358,8 +358,7 @@ export default function Strategy04Dashboard() {
   const [checkingApi, setCheckingApi] = useState(false);
   const result = STRATEGY_04_RESULTS[version][asset];
   const auditedTrades = useMemo(
-    () =>
-      asset === 'SPY' && version === 'v1_1' ? STRATEGY_04_FIXTURE.trades : [],
+    () => getStrategy04Fixture(version, asset)?.trades ?? [],
     [asset, version],
   );
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);

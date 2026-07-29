@@ -1,5 +1,11 @@
-import fixture from './fixtures/strategy_04_v1_1_spy.json';
+import fixtureV1Spy from './fixtures/strategy_04_v1_spy.json';
+import fixtureV1Qqq from './fixtures/strategy_04_v1_qqq.json';
+import fixtureV1Dia from './fixtures/strategy_04_v1_dia.json';
+import fixtureV1_1Spy from './fixtures/strategy_04_v1_1_spy.json';
+import fixtureV1_1Qqq from './fixtures/strategy_04_v1_1_qqq.json';
+import fixtureV1_1Dia from './fixtures/strategy_04_v1_1_dia.json';
 import type { Bar, ExitReason, TradeSide } from './types';
+import type { Strategy04Asset, Strategy04Version } from './strategy04Data';
 
 export interface AuditCheck {
   check_id: string;
@@ -66,7 +72,33 @@ export interface Strategy04Fixture {
   trades: AuditedTrade[];
 }
 
-export const STRATEGY_04_FIXTURE = fixture as unknown as Strategy04Fixture;
+/**
+ * Every strategy version / asset combination that has a generated audit
+ * fixture, keyed the same way the dashboard's version and asset pickers are.
+ * A combination with no fixture on disk is simply absent from its version's
+ * row -- callers must not assume every asset is present.
+ */
+export const STRATEGY_04_FIXTURES: Record<
+  Strategy04Version,
+  Partial<Record<Strategy04Asset, Strategy04Fixture>>
+> = {
+  v1: {
+    SPY: fixtureV1Spy as unknown as Strategy04Fixture,
+    QQQ: fixtureV1Qqq as unknown as Strategy04Fixture,
+    DIA: fixtureV1Dia as unknown as Strategy04Fixture,
+  },
+  v1_1: {
+    SPY: fixtureV1_1Spy as unknown as Strategy04Fixture,
+    QQQ: fixtureV1_1Qqq as unknown as Strategy04Fixture,
+    DIA: fixtureV1_1Dia as unknown as Strategy04Fixture,
+  },
+};
+
+/** Look up the audit fixture for a version/asset pair, or undefined if it was never generated. */
+export const getStrategy04Fixture = (
+  version: Strategy04Version,
+  asset: Strategy04Asset,
+): Strategy04Fixture | undefined => STRATEGY_04_FIXTURES[version]?.[asset];
 
 export const toEpochSeconds = (timestamp: string): number =>
   Math.floor(new Date(timestamp).getTime() / 1000);
