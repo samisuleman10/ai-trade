@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchDataset, fetchRuns } from '../catalog';
 import type { CatalogEntry } from '../catalog';
+import { familyInfo, familyOf } from '../strategyDescriptions';
 
 interface PerformanceSummary {
   trade_count?: number;
@@ -24,12 +25,6 @@ type FetchStatus = 'loading' | 'loaded' | 'error';
 type MetricsState = Record<string, { status: FetchStatus; summary?: PerformanceSummary }>;
 
 const PERFORMANCE_DATASET_ID = 'performance_fixed';
-const FAMILY_RE = /^strategy_\d+/;
-
-function familyOf(strategyId: string): string {
-  const match = strategyId.match(FAMILY_RE);
-  return match ? match[0] : strategyId;
-}
 
 function familyLabel(family: string): string {
   const match = family.match(/^strategy_(\d+)$/);
@@ -180,6 +175,9 @@ export function RunCatalog({ onSelectRun }: RunCatalogProps) {
             <h2 className="mt-1 text-base font-semibold text-slate-950">
               {familyEntries.length} run{familyEntries.length === 1 ? '' : 's'} discovered
             </h2>
+            <p className="mt-1 max-w-3xl text-xs text-slate-500">
+              {familyInfo(familyEntries[0].run.strategy_id).summary}
+            </p>
           </div>
           <div className="overflow-x-auto">
             <table className="s4-compare-table min-w-[980px]">

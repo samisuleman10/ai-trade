@@ -589,7 +589,15 @@ export default function Strategy04Dashboard() {
 
         <footer className="mt-8 flex flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <span>Historical research only · no execution authority</span>
-          <span className="font-mono">strategy_04 / {version} / {asset} / 1h→15m</span>
+          {/* The catalog shows runs from every strategy, so this must follow
+              what is on screen rather than always claiming strategy_04. */}
+          <span className="font-mono">
+            {selectedRun
+              ? `${selectedRun.run.strategy_id} / ${selectedRun.run.strategy_version} / ${
+                  selectedRun.instrument.symbol || 'unknown symbol'
+                }`
+              : `strategy_04 / ${version} / ${asset} / 1h→15m`}
+          </span>
         </footer>
       </main>
     </div>

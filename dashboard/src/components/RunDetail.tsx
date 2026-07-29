@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { fetchDataset } from '../catalog';
 import type { CatalogEntry } from '../catalog';
 import type { ExitReason, StrategySummary, Trade, TradeSide } from '../types';
+import { conditionsFor, familyInfo } from '../strategyDescriptions';
 import { EquityChart } from './EquityChart';
 import { TradeTable } from './TradeTable';
 
@@ -251,6 +252,9 @@ export function RunDetail({ entry, onClose }: RunDetailProps) {
               {entry.instrument.symbol || em}
               <span className="ml-2 text-xs font-normal text-slate-500">{entry.run.run_id}</span>
             </h2>
+            <p className="mt-1 max-w-3xl text-xs text-slate-500">
+              {conditionsFor(entry.run.strategy_id) ?? familyInfo(entry.run.strategy_id).summary}
+            </p>
           </div>
         </div>
 
