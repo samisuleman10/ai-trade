@@ -11,7 +11,7 @@ import {
   Scale,
   TrendingUp,
 } from 'lucide-react';
-import { getStrategy04Fixture } from './strategy04Fixture';
+import { useStrategy04Fixture } from './strategy04Fixture';
 import {
   STRATEGY_04_RESULTS,
   STRATEGY_04_SPECS,
@@ -359,10 +359,8 @@ export default function Strategy04Dashboard() {
   const [asset, setAsset] = useState<Strategy04Asset>('SPY');
   const [view, setView] = useState<View>('performance');
   const result = STRATEGY_04_RESULTS[version][asset];
-  const auditedTrades = useMemo(
-    () => getStrategy04Fixture(version, asset)?.trades ?? [],
-    [asset, version],
-  );
+  const { status: fixtureStatus, fixture } = useStrategy04Fixture(version, asset);
+  const auditedTrades = useMemo(() => fixture?.trades ?? [], [fixture]);
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
@@ -498,7 +496,17 @@ export default function Strategy04Dashboard() {
         {view === 'rules' && <RulesView version={version} />}
         {view === 'chart' && (
           <div className="space-y-5">
-            {auditedTrades.length === 0 ? (
+            {fixtureStatus === 'loading' ? (
+              <section className="s4-panel p-8 text-center">
+                <div className="text-sm font-semibold text-slate-900">
+                  Loading the {asset} {version} audit…
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  Each audit carries a bar window per trade, so it is fetched on demand
+                  rather than shipped in the initial page.
+                </p>
+              </section>
+            ) : auditedTrades.length === 0 ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
                   Audit fixture not generated for {asset} {version}

@@ -1,9 +1,4 @@
-import fixtureV1Spy from './fixtures/strategy_04_v1_spy.json';
-import fixtureV1Qqq from './fixtures/strategy_04_v1_qqq.json';
-import fixtureV1Dia from './fixtures/strategy_04_v1_dia.json';
-import fixtureV1_1Spy from './fixtures/strategy_04_v1_1_spy.json';
-import fixtureV1_1Qqq from './fixtures/strategy_04_v1_1_qqq.json';
-import fixtureV1_1Dia from './fixtures/strategy_04_v1_1_dia.json';
+import { useEffect, useState } from 'react';
 import type { Bar, ExitReason, TradeSide } from './types';
 import type { Strategy04Asset, Strategy04Version } from './strategy04Data';
 
@@ -77,28 +72,55 @@ export interface Strategy04Fixture {
  * fixture, keyed the same way the dashboard's version and asset pickers are.
  * A combination with no fixture on disk is simply absent from its version's
  * row -- callers must not assume every asset is present.
+ *
+ * These are `import()` thunks rather than static imports. Each fixture
+ * carries a bar window per trade, so the six together are about 10 MB of
+ * JSON; importing them eagerly put all six in the entry chunk and every
+ * visitor downloaded all of them to look at one. Vite gives each its own
+ * chunk, so only the selected version/asset is ever fetched.
  */
-export const STRATEGY_04_FIXTURES: Record<
+const FIXTURE_LOADERS: Record<
   Strategy04Version,
-  Partial<Record<Strategy04Asset, Strategy04Fixture>>
+  Partial<Record<Strategy04Asset, () => Promise<{ default: unknown }>>>
 > = {
   v1: {
-    SPY: fixtureV1Spy as unknown as Strategy04Fixture,
-    QQQ: fixtureV1Qqq as unknown as Strategy04Fixture,
-    DIA: fixtureV1Dia as unknown as Strategy04Fixture,
+    SPY: () => import('./fixtures/strategy_04_v1_spy.json'),
+    QQQ: () => import('./fixtures/strategy_04_v1_qqq.json'),
+    DIA: () => import('./fixtures/strategy_04_v1_dia.json'),
   },
   v1_1: {
-    SPY: fixtureV1_1Spy as unknown as Strategy04Fixture,
-    QQQ: fixtureV1_1Qqq as unknown as Strategy04Fixture,
-    DIA: fixtureV1_1Dia as unknown as Strategy04Fixture,
+    SPY: () => import('./fixtures/strategy_04_v1_1_spy.json'),
+    QQQ: () => import('./fixtures/strategy_04_v1_1_qqq.json'),
+    DIA: () => import('./fixtures/strategy_04_v1_1_dia.json'),
   },
 };
 
-/** Look up the audit fixture for a version/asset pair, or undefined if it was never generated. */
-export const getStrategy04Fixture = (
+/** True when a fixture was generated for this pair, without loading it. */
+export const hasStrategy04Fixture = (
   version: Strategy04Version,
   asset: Strategy04Asset,
-): Strategy04Fixture | undefined => STRATEGY_04_FIXTURES[version]?.[asset];
+): boolean => Boolean(FIXTURE_LOADERS[version]?.[asset]);
+
+const loaded = new Map<string, Promise<Strategy04Fixture>>();
+
+/**
+ * Load the audit fixture for a version/asset pair, or undefined if it was
+ * never generated. Resolved fixtures are kept so switching back to a pair
+ * does not refetch its chunk.
+ */
+export const loadStrategy04Fixture = (
+  version: Strategy04Version,
+  asset: Strategy04Asset,
+): Promise<Strategy04Fixture> | undefined => {
+  const loader = FIXTURE_LOADERS[version]?.[asset];
+  if (!loader) return undefined;
+  const key = `${version}:${asset}`;
+  const hit = loaded.get(key);
+  if (hit) return hit;
+  const pending = loader().then((module) => module.default as Strategy04Fixture);
+  loaded.set(key, pending);
+  return pending;
+};
 
 export const toEpochSeconds = (timestamp: string): number =>
   Math.floor(new Date(timestamp).getTime() / 1000);
@@ -115,3 +137,48 @@ export const toChartBars = (bars: FixtureBar[]): Bar[] =>
 
 export const failedChecks = (trade: AuditedTrade): AuditCheck[] =>
   trade.audit.checks.filter((check) => !check.passed);
+
+export type FixtureStatus = 'loading' | 'loaded' | 'absent';
+
+/**
+ * Load the fixture for the selected version/asset, tracking whether it is
+ * still in flight. `absent` means no fixture was ever generated for the pair,
+ * which is a different thing from one that is still downloading -- the two
+ * must not render the same message.
+ */
+export function useStrategy04Fixture(
+  version: Strategy04Version,
+  asset: Strategy04Asset,
+): { status: FixtureStatus; fixture: Strategy04Fixture | null } {
+  const [state, setState] = useState<{
+    status: FixtureStatus;
+    fixture: Strategy04Fixture | null;
+  }>(() => ({
+    status: hasStrategy04Fixture(version, asset) ? 'loading' : 'absent',
+    fixture: null,
+  }));
+
+  useEffect(() => {
+    const pending = loadStrategy04Fixture(version, asset);
+    if (!pending) {
+      setState({ status: 'absent', fixture: null });
+      return;
+    }
+    let cancelled = false;
+    setState({ status: 'loading', fixture: null });
+    pending
+      .then((fixture) => {
+        if (cancelled) return;
+        setState({ status: 'loaded', fixture });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setState({ status: 'absent', fixture: null });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [version, asset]);
+
+  return state;
+}
