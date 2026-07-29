@@ -46,6 +46,7 @@ class Strategy04IndicatorParameters:
     volume_reference_max_age_bars: int = 40
     volume_scoring_kinds: tuple[str, ...] = ("POC", "VAH", "VAL")
     profile_weighting: str = "volume"
+    session_day_boundary: str = "calendar"
     minimum_confluence_score: int = 2
     invalidation_buffer_atr: float = 0.05
     max_zone_age_bars: int = 240
@@ -70,6 +71,8 @@ class Strategy04IndicatorParameters:
             raise ValueError("Volume profile needs at least four bins")
         if self.profile_weighting not in {"volume", "time"}:
             raise ValueError("Profile weighting must be 'volume' or 'time'")
+        if self.session_day_boundary not in {"calendar", "fx_17et"}:
+            raise ValueError("Session day boundary must be 'calendar' or 'fx_17et'")
         if self.minimum_confluence_score < 1:
             raise ValueError("Minimum confluence score must be positive")
         if min(
@@ -189,6 +192,19 @@ def _bar_close_timestamp(bar: OHLCVBar) -> str:
     return _format(_parse(bar.timestamp) + timedelta(hours=1))
 
 
+def _session_date(timestamp: str, boundary: str) -> str:
+    """Return the session day a bar belongs to.
+
+    ``calendar`` is the New York calendar date (equities). ``fx_17et``
+    implements the 24/5 FX convention: the day rolls at 17:00 New York
+    time, so a bar at or after 17:00 belongs to the next session date.
+    """
+    local = _parse(timestamp).astimezone(NEW_YORK)
+    if boundary == "fx_17et" and local.hour >= 17:
+        return (local.date() + timedelta(days=1)).isoformat()
+    return local.date().isoformat()
+
+
 def _zone_distance(lower: float, upper: float, other_lower: float, other_upper: float) -> float:
     if lower <= other_upper and other_lower <= upper:
         return 0.0
@@ -252,7 +268,7 @@ def session_volume_references(
     rows = list(bars)
     sessions: dict[str, list[tuple[int, OHLCVBar]]] = defaultdict(list)
     for index, bar in enumerate(rows):
-        session_date = _parse(bar.timestamp).astimezone(NEW_YORK).date().isoformat()
+        session_date = _session_date(bar.timestamp, params.session_day_boundary)
         sessions[session_date].append((index, bar))
 
     references: list[VolumeReference] = []
