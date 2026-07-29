@@ -15,10 +15,12 @@ export function TradeExecutionChart({ trade }: Props) {
 
     const markers: SeriesMarker<Time>[] = [
       {
+        // Trigger and entry are adjacent bars. Placing them on opposite sides
+        // of the candle keeps their labels from overlapping into each other.
         time: toEpochSeconds(trade.trigger_timestamp) as Time,
-        position: 'belowBar',
+        position: 'aboveBar',
         color: '#639922',
-        shape: 'arrowUp',
+        shape: 'arrowDown',
         text: 'trigger',
       },
       {

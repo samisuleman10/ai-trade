@@ -7,14 +7,24 @@ interface Props {
   trade: AuditedTrade;
 }
 
+// Supply is resistance and only ever produces shorts; demand is support and
+// only ever produces longs. Colouring by side means the chart reads the same
+// direction as the trade without checking the label.
+const SUPPLY_COLOR = '#e24c63';
+const DEMAND_COLOR = '#0f9f74';
+
+const zoneColor = (side: string) => (side === 'supply' ? SUPPLY_COLOR : DEMAND_COLOR);
+
 export function TradeSetupChart({ trade }: Props) {
   const containerRef = useTradeChart(trade.bars.one_hour, 1, ({ drawLevel, setMarkers }) => {
     const zone = trade.zones.selected;
-    drawLevel(zone.lower, '#0f9f74', false, `zone ${zone.lower.toFixed(2)}`);
-    drawLevel(zone.upper, '#0f9f74', false, `score ${zone.score}`);
+    const color = zoneColor(zone.side);
+    drawLevel(zone.lower, color, false, `${zone.side} ${zone.lower.toFixed(2)}`);
+    drawLevel(zone.upper, color, false, `score ${zone.score}`);
     trade.zones.competing.forEach((competitor) => {
-      drawLevel(competitor.lower, '#94a3b8', true, `#${competitor.zone_id} score ${competitor.score}`);
-      drawLevel(competitor.upper, '#94a3b8', true, '');
+      const competitorColor = zoneColor(competitor.side);
+      drawLevel(competitor.lower, competitorColor, true, `#${competitor.zone_id} score ${competitor.score}`);
+      drawLevel(competitor.upper, competitorColor, true, '');
     });
 
     const markers: SeriesMarker<Time>[] = [];
