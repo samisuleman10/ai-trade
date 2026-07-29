@@ -314,6 +314,16 @@ def publish_bundle(
     next; ``manifest.json`` is written last, atomically, so a reader only
     ever sees the previous complete manifest or the new one -- never a
     partial file. Returns the ``visualization/`` bundle directory.
+
+    ``identity["run_id"]`` is the human-readable run identifier (by
+    convention, the result directory's basename) and is required.
+    ``identity["bundle_id"]`` is an optional, separate catalog identifier;
+    when omitted it defaults to ``run_id`` for backward compatibility, but
+    callers whose ``run_id`` values are not unique across the catalog (for
+    example, several result directories sharing a basename under
+    different parent directories) MUST supply an explicit, unique
+    ``bundle_id`` -- the catalog is keyed on it, and a collision silently
+    hides one of the colliding runs.
     """
 
     run_id = identity.get("run_id")
@@ -356,9 +366,13 @@ def publish_bundle(
             }
         )
 
+    bundle_id = identity.get("bundle_id")
+    if not bundle_id:
+        bundle_id = run_id
+
     manifest = {
         "schema_version": SCHEMA_VERSION,
-        "bundle_id": str(run_id),
+        "bundle_id": str(bundle_id),
         "mode": identity.get("mode"),
         "status": "complete",
         "generated_at": _now_iso(),
