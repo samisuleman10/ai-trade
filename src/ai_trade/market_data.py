@@ -185,7 +185,8 @@ def validate_bars(bars: Iterable[OHLCVBar]) -> dict[str, object]:
 
 
 def save_bars(
-    bars: Iterable[OHLCVBar], *, directory: Path, symbol: str, timeframe: str, source: str = "ibkr"
+    bars: Iterable[OHLCVBar], *, directory: Path, symbol: str, timeframe: str,
+    source: str = "ibkr", extra: dict | None = None,
 ) -> tuple[Path, Path]:
     """Save bars and their validation report as local, ignored research data."""
     import json
@@ -208,6 +209,8 @@ def save_bars(
         "saved_at": datetime.now(timezone.utc).isoformat(),
         "validation": validation,
     }
+    if extra:
+        report.update(extra)
     report_path = directory / f"{symbol.lower()}_{timeframe}.validation.json"
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return csv_path, report_path
