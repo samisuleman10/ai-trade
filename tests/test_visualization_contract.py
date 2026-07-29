@@ -6,8 +6,11 @@ from ai_trade.visualization_contract import (
     ContractError,
     SCHEMA_VERSION,
     _validate_relative_path,
+    build_audit_windows,
     build_performance,
+    build_trade_audit,
     build_trade_ledger,
+    build_zones,
     publish_bundle,
     read_manifest,
 )
@@ -233,3 +236,120 @@ def test_republishing_replaces_the_previous_manifest(tmp_path):
 def test_read_manifest_rejects_a_directory_with_no_manifest(tmp_path):
     with pytest.raises(ContractError):
         read_manifest(tmp_path / "visualization")
+
+
+# --- zones, trade_audit and audit_windows (Phase 2 audit datasets) ---
+
+
+def _audit_entry(trade_id="run:fixed:000001", passed=True):
+    return {
+        "trade_id": trade_id,
+        "trigger_timestamp": "2021-08-03T14:15:00Z",
+        "checks": [
+            {"check_id": "causality_atr", "passed": passed, "expected": "before", "actual": "ok"},
+        ],
+    }
+
+
+def _zone_entry(trade_id="run:fixed:000001"):
+    return {
+        "trade_id": trade_id,
+        "selected": {
+            "zone_id": 39,
+            "side": "demand",
+            "lower": 437.0,
+            "upper": 437.9,
+            "qualified_timestamp": "2021-08-03T13:00:00Z",
+            "score": 2,
+        },
+        "competing": [],
+    }
+
+
+def test_build_trade_audit_reports_pass_and_fail_counts():
+    dataset = build_trade_audit([_audit_entry(), _audit_entry("run:fixed:000002", passed=False)])
+    assert dataset.kind == "trade_audit"
+    assert dataset.dataset_id == "trade_audit"
+    assert dataset.record_count == 2
+    assert dataset.payload["summary"] == {"audit_passed": 1, "audit_failed": 1}
+
+
+def test_build_trade_audit_derives_passed_from_its_own_checks():
+    """A stored `passed` flag that disagreed with the checks would misreport the audit."""
+
+    dataset = build_trade_audit([_audit_entry(passed=False)])
+    assert dataset.payload["trades"][0]["passed"] is False
+
+
+def test_build_trade_audit_rejects_a_trade_with_no_checks():
+    with pytest.raises(ContractError):
+        build_trade_audit([{"trade_id": "run:fixed:000001", "trigger_timestamp": "x", "checks": []}])
+
+
+def test_build_trade_audit_rejects_duplicate_trade_ids():
+    with pytest.raises(ContractError):
+        build_trade_audit([_audit_entry(), _audit_entry()])
+
+
+def test_build_zones_requires_a_selected_zone():
+    with pytest.raises(ContractError):
+        build_zones([{"trade_id": "run:fixed:000001", "competing": []}])
+
+
+def test_build_zones_keeps_competing_zones():
+    dataset = build_zones([_zone_entry()])
+    assert dataset.kind == "zones"
+    assert dataset.record_count == 1
+    assert dataset.payload["trades"][0]["selected"]["zone_id"] == 39
+    assert dataset.payload["trades"][0]["competing"] == []
+
+
+def test_build_zones_rejects_an_inverted_zone():
+    """upper below lower is a geometry bug, not a renderable zone."""
+
+    entry = _zone_entry()
+    entry["selected"]["upper"] = 400.0
+    with pytest.raises(ContractError):
+        build_zones([entry])
+
+
+def _bar(timestamp, low=99.0, high=101.0):
+    return {"timestamp": timestamp, "open": 100.0, "high": high, "low": low, "close": 100.5, "volume": 10.0}
+
+
+def _window_entry(trade_id="run:fixed:000001"):
+    return {
+        "trade_id": trade_id,
+        "one_hour": [_bar("2021-08-03T13:00:00Z"), _bar("2021-08-03T14:00:00Z")],
+        "fifteen_minute": [_bar("2021-08-03T14:15:00Z")],
+    }
+
+
+def test_build_audit_windows_spans_every_bar_it_carries():
+    dataset = build_audit_windows([_window_entry()])
+    assert dataset.kind == "candles"
+    assert dataset.dataset_id == "audit_windows"
+    assert dataset.record_count == 1
+    assert dataset.first_timestamp == "2021-08-03T13:00:00Z"
+    assert dataset.last_timestamp == "2021-08-03T14:15:00Z"
+
+
+def test_build_audit_windows_rejects_an_impossible_bar():
+    """low above high is not a bar; rendering it would draw an inverted candle."""
+
+    entry = _window_entry()
+    entry["one_hour"][0]["low"] = 500.0
+    with pytest.raises(ContractError):
+        build_audit_windows([entry])
+
+
+def test_build_audit_windows_rejects_unordered_bars():
+    entry = _window_entry()
+    entry["one_hour"] = [_bar("2021-08-03T14:00:00Z"), _bar("2021-08-03T13:00:00Z")]
+    with pytest.raises(ContractError):
+        build_audit_windows([entry])
+
+
+def test_build_audit_windows_rejects_a_trade_with_no_bars():
+    with pytest.raises(ContractError):
+        build_audit_windows([{"trade_id": "run:fixed:000001", "one_hour": [], "fifteen_minute": []}])
