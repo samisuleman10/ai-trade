@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { fetchDataset } from '../catalog';
 import type { CatalogEntry } from '../catalog';
-import type { ExitReason, StrategySummary, Trade, TradeSide } from '../types';
+import type { ExitReason, Trade, TradeSide } from '../types';
 import { conditionsFor, familyInfo } from '../strategyDescriptions';
 import { EquityChart } from './EquityChart';
 import { TradeTable } from './TradeTable';
@@ -121,7 +121,7 @@ const count = (value: unknown): string => (typeof value === 'number' ? String(va
 
 /**
  * Maps a visualization-contract trade (snake_case) onto the camelCase
- * `Trade` shape that TradeTable/EquityChart consume. `number` has no
+ * `Trade` shape that TradeTable consumes. `number` has no
  * contract equivalent, so callers pass the 1-based ledger position.
  */
 function mapContractTrade(trade: ContractTrade, number: number): Trade {
@@ -199,36 +199,11 @@ export function RunDetail({ entry, onClose }: RunDetailProps) {
     return tradesDataset.trades.map((trade, index) => mapContractTrade(trade, index + 1));
   }, [tradesDataset]);
 
-  // The performance summary has no `starting_equity` field -- points[0] is
-  // the deliberate pre-first-trade anchor, so it is the source of truth.
-  const startingEquity = performanceDataset?.points[0]?.equity ?? null;
-
-  const strategySummary = useMemo<StrategySummary | null>(() => {
-    if (startingEquity === null) return null;
-    const summary = performanceDataset?.summary;
-    return {
-      strategyId: entry.run.strategy_id,
-      versionId: entry.run.strategy_version,
-      name: entry.run.run_id,
-      symbol: entry.instrument.symbol,
-      timeframe: '',
-      startingEquity,
-      endingEquityFixed: summary?.ending_equity ?? startingEquity,
-      endingEquityRrms: summary?.ending_equity ?? startingEquity,
-      totalTrades: summary?.trade_count ?? trades.length,
-      wins: summary?.wins ?? 0,
-      losses: summary?.losses ?? 0,
-      winRate: summary?.win_rate ?? 0,
-      netPnlFixed: summary?.net_pnl ?? 0,
-      netPnlRrms: summary?.net_pnl ?? 0,
-      profitFactorFixed: summary?.profit_factor ?? 0,
-      profitFactorRrms: summary?.profit_factor ?? 0,
-      maxDrawdownFixed: summary?.max_drawdown ?? 0,
-      maxDrawdownRrms: summary?.max_drawdown ?? 0,
-      avgR: summary?.average_r ?? 0,
-      description: '',
-    };
-  }, [entry, performanceDataset, startingEquity, trades.length]);
+  // The equity chart is fed the producer's recorded points directly. Building a
+  // synthetic StrategySummary here previously required substituting 0 for every
+  // absent field, which fabricated numbers on the way into the chart.
+  const equityPoints = performanceDataset?.points ?? [];
+  const variantLabel = variant === 'rrms' ? 'RRMS' : 'Fixed 0.15%';
 
   const summary = performanceDataset?.summary;
 
@@ -295,7 +270,7 @@ export function RunDetail({ entry, onClose }: RunDetailProps) {
         </section>
       )}
 
-      {status === 'loaded' && strategySummary && (
+      {status === 'loaded' && equityPoints.length > 0 && (
         <>
           <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
             {[
@@ -314,7 +289,7 @@ export function RunDetail({ entry, onClose }: RunDetailProps) {
             ))}
           </section>
 
-          <EquityChart summary={strategySummary} trades={trades} />
+          <EquityChart points={equityPoints} variantLabel={variantLabel} />
 
           <TradeTable trades={trades} onFocusTrade={() => {}} />
         </>
