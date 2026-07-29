@@ -43,6 +43,11 @@ LONG_TARGET = LONG_ENTRY + (LONG_ENTRY - LONG_STOP)
 LONG_TARGET_FILL = LONG_TARGET * (1 - SLIPPAGE_FRACTION)
 LONG_STOP_FILL = LONG_STOP * (1 - SLIPPAGE_FRACTION)
 
+QUANTITY = 100
+RESULT_R = 0.97
+PLANNED_RISK = abs(LONG_ENTRY - LONG_STOP) * QUANTITY
+NET_PNL = RESULT_R * PLANNED_RISK
+
 
 def _trade(**overrides) -> TradeRecord:
     values = dict(
@@ -50,12 +55,14 @@ def _trade(**overrides) -> TradeRecord:
         entry_timestamp="2021-08-03T14:30:00Z",
         exit_timestamp="2021-08-03T15:45:00Z",
         side="long",
+        quantity=QUANTITY,
         entry_price=LONG_ENTRY,
         stop_price=LONG_STOP,
         target_price=LONG_TARGET,
         exit_price=LONG_TARGET_FILL,
         exit_reason="target",
-        result_r=0.97,
+        net_pnl=NET_PNL,
+        result_r=RESULT_R,
     )
     values.update(overrides)
     return TradeRecord(**values)
@@ -337,6 +344,67 @@ def test_weekend_close_makes_no_level_assertion():
     trade = _trade(exit_reason="weekend_close", exit_price=1.0)
     results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS,0.25, SLIPPAGE_BPS)
     assert _result(results, "outcome").passed is True
+
+
+def test_result_r_matches_net_pnl_over_planned_risk():
+    results = audit_trade(_signal(), _trade(), "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is True
+
+
+def test_result_r_off_by_ten_percent_fails():
+    trade = _trade(result_r=RESULT_R * 1.1)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is False
+
+
+def test_result_r_derived_from_gross_instead_of_net_fails():
+    """Costs are real: R measured before them overstates every trade."""
+
+    costs = QUANTITY * 0.005 * 2
+    trade = _trade(result_r=(NET_PNL + costs) / PLANNED_RISK)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is False
+
+
+def test_result_r_sized_with_the_wrong_quantity_fails():
+    trade = _trade(quantity=QUANTITY * 2)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is False
+
+
+def test_result_r_with_no_risk_distance_fails():
+    """A stop at the entry makes R undefined, which is a defect, not a pass."""
+
+    trade = _trade(stop_price=LONG_ENTRY)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is False
+
+
+def test_result_r_with_zero_quantity_fails():
+    trade = _trade(quantity=0)
+    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is False
+
+
+def test_short_result_r_uses_the_absolute_risk_distance():
+    """A short's stop sits above its entry; risk is a distance, not a signed gap."""
+
+    signal = _signal(side="short", zone_side="supply")
+    entry = SHORT_ENTRY
+    stop = entry + 1.0
+    planned = 1.0 * QUANTITY
+    trade = _trade(
+        side="short",
+        entry_price=entry,
+        stop_price=stop,
+        target_price=entry - 1.0,
+        exit_reason="stop",
+        exit_price=stop * (1 + SLIPPAGE_FRACTION),
+        net_pnl=-1.05 * planned,
+        result_r=-1.05,
+    )
+    results = audit_trade(signal, trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert _result(results, "result_r").passed is True
 
 
 def test_demand_zone_with_short_side_fails_side_match():

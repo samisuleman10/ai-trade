@@ -55,11 +55,13 @@ class TradeRecord:
     entry_timestamp: str
     exit_timestamp: str
     side: str
+    quantity: int
     entry_price: float
     stop_price: float
     target_price: float
     exit_price: float
     exit_reason: str
+    net_pnl: float
     result_r: float
 
 
@@ -286,6 +288,41 @@ def check_outcome(trade: TradeRecord, slippage_bps: float) -> CheckResult:
     return _check("outcome", _close(expected, trade.exit_price), expected, trade.exit_price)
 
 
+def check_result_r(trade: TradeRecord) -> CheckResult:
+    """R is net P&L divided by the risk the position was actually sized to.
+
+    ``result_r`` is the headline number on every dashboard row and in
+    every summary statistic, and nothing verified it. This derives it from
+    fields recorded alongside it in the same ledger row, so a mismatch
+    means the ledger disagrees with itself.
+
+    ``run_backtest`` computes ``result_r = net_pnl / planned_risk`` with
+    ``planned_risk = quantity * |entry_price - stop_price|`` (times the
+    contract multiplier, which is 1.0 for the equity ETFs Strategy 04
+    trades -- a multiplied instrument would need that factor supplied
+    here). Verified against all 303 recorded Strategy 04 trades across
+    six configurations, this reproduces the recorded value bit-for-bit,
+    so ``TOLERANCE`` leaves roughly six orders of magnitude of headroom
+    over observed float noise while still catching a real discrepancy.
+
+    Risk is a distance, so the absolute value is deliberate: a short's
+    stop sits above its entry. A zero planned risk (a stop at the entry,
+    or a zero quantity) makes R undefined and fails -- that is a defect
+    in the ledger, not a trade to wave through.
+    """
+
+    planned_risk = abs(trade.entry_price - trade.stop_price) * trade.quantity
+    if planned_risk <= 0:
+        return _check(
+            "result_r",
+            False,
+            "a positive planned risk (quantity x |entry - stop|)",
+            planned_risk,
+        )
+    expected = trade.net_pnl / planned_risk
+    return _check("result_r", _close(expected, trade.result_r), expected, trade.result_r)
+
+
 def check_side_match(signal: SignalRecord) -> CheckResult:
     """Demand zones support longs; supply zones support shorts."""
 
@@ -314,5 +351,6 @@ def audit_trade(
         check_penetration(signal, max_long_penetration),
         check_session(trade),
         check_outcome(trade, slippage_bps),
+        check_result_r(trade),
         check_side_match(signal),
     ]

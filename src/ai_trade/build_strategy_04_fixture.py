@@ -42,6 +42,16 @@ FIFTEEN_MINUTE_BARS_BEFORE = 20
 FIFTEEN_MINUTE_BARS_AFTER = 20
 SLIPPAGE_BPS = 1.0
 
+# The long-side demand-zone penetration cap each strategy version states.
+# ``None`` means the version has no such rule; v1 predates it entirely and
+# its candidate_signals.csv has no penetration column at all. v1.2 keeps
+# v1.1's 0.25 cap and adds trigger-distance and 1h-direction filters on top.
+MAX_LONG_PENETRATION_BY_VERSION: dict[str, Optional[float]] = {
+    "v1": None,
+    "v1_1": 0.25,
+    "v1_2": 0.25,
+}
+
 
 def _parse(timestamp: str) -> datetime:
     return datetime.strptime(timestamp, UTC_FORMAT).replace(tzinfo=timezone.utc)
@@ -99,11 +109,13 @@ def load_trades(path: Path) -> list[TradeRecord]:
                     entry_timestamp=row["entry_timestamp"],
                     exit_timestamp=row["exit_timestamp"],
                     side=row["side"],
+                    quantity=int(row["quantity"]),
                     entry_price=float(row["entry_price"]),
                     stop_price=float(row["stop_price"]),
                     target_price=float(row["target_price"]),
                     exit_price=float(row["exit_price"]),
                     exit_reason=row["exit_reason"],
+                    net_pnl=float(row["net_pnl"]),
                     result_r=float(row["result_r"]),
                 )
             )
@@ -324,12 +336,47 @@ def build_fixture(
     }
 
 
-def _max_long_penetration_type(value: str) -> Optional[float]:
-    """Parse ``--max-long-penetration``: 'none' (any case) disables the rule."""
+def max_long_penetration_for(strategy_version: str) -> Optional[float]:
+    """The long-side demand-zone penetration cap this version's rules state.
 
-    if value.strip().lower() == "none":
+    ``None`` means the version has no penetration rule at all, which is
+    true only of v1. Raises ``ValueError`` for a version this table does
+    not know: guessing "no rule" for an unrecognised version would turn
+    an unknown into a silent pass, which is exactly the failure mode this
+    table exists to prevent. Add the version here when you add it.
+    """
+
+    if strategy_version not in MAX_LONG_PENETRATION_BY_VERSION:
+        raise ValueError(
+            "no penetration rule recorded for strategy version %r; add it to "
+            "MAX_LONG_PENETRATION_BY_VERSION or pass --max-long-penetration "
+            "explicitly" % (strategy_version,)
+        )
+    return MAX_LONG_PENETRATION_BY_VERSION[strategy_version]
+
+
+def resolve_max_long_penetration(explicit: Optional[str], strategy_version: str) -> Optional[float]:
+    """Resolve the cap: an explicit flag wins, otherwise the version decides.
+
+    ``explicit`` is the raw ``--max-long-penetration`` argument, or
+    ``None`` when the flag was not supplied at all. That distinction is
+    the entire point. The flag used to default to ``None``, and ``None``
+    means "this version has no penetration rule" -- so forgetting the
+    flag while auditing v1.1 raised no error and no warning, it just
+    turned a real rule into an unconditional pass for every long trade.
+
+    Absence now means "ask the version"; passing ``none`` is the only way
+    to assert that no rule applies. An unrecognised version with no
+    explicit flag fails loudly (see ``max_long_penetration_for``), while
+    an explicit value is accepted for any version -- a stated value is
+    evidence, and only the silent default was dangerous.
+    """
+
+    if explicit is None:
+        return max_long_penetration_for(strategy_version)
+    if explicit.strip().lower() == "none":
         return None
-    return float(value)
+    return float(explicit)
 
 
 def main() -> int:
@@ -353,13 +400,12 @@ def main() -> int:
     parser.add_argument("--strategy-version", default="v1_1")
     parser.add_argument(
         "--max-long-penetration",
-        type=_max_long_penetration_type,
         default=None,
         help=(
-            "Maximum allowed long-side demand-zone penetration fraction for "
-            "this strategy version. Omit, or pass 'none', for a version with "
-            "no penetration rule (e.g. v1). Pass a number (e.g. 0.25) for a "
-            "version that has the rule (e.g. v1.1)."
+            "Override the maximum allowed long-side demand-zone penetration "
+            "fraction. Omit to use the cap --strategy-version declares (v1: "
+            "no rule, v1_1/v1_2: 0.25). Pass 'none' to assert that no rule "
+            "applies, or a number (e.g. 0.25) to state one."
         ),
     )
     parser.add_argument(
@@ -369,13 +415,20 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    try:
+        max_long_penetration = resolve_max_long_penetration(
+            args.max_long_penetration, args.strategy_version
+        )
+    except ValueError as exc:
+        parser.error(str(exc))
+
     fixture = build_fixture(
         args.results,
         args.one_hour,
         args.fifteen_minute,
         args.symbol,
         args.strategy_version,
-        args.max_long_penetration,
+        max_long_penetration,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(fixture, indent=2, sort_keys=True) + "\n", encoding="utf-8")
