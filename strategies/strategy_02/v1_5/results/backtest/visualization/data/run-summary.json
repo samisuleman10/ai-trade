@@ -1,0 +1,22 @@
+{
+  "cost_model": {
+    "commission_per_share_per_side": null,
+    "recorded": false,
+    "slippage_bps_per_side": null
+  },
+  "data": {
+    "execution_bar_count": 34200,
+    "first_timestamp": null,
+    "last_timestamp": null,
+    "setup_bar_count": 9189
+  },
+  "dataset_id": "run_summary",
+  "kind": "run_summary",
+  "schema_version": "1.0.0",
+  "signals": {
+    "candidate": 56,
+    "eligible": null
+  },
+  "starting_equity": null,
+  "variants": {}
+}

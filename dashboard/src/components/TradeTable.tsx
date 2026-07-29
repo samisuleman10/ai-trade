@@ -106,9 +106,11 @@ export const TradeTable: React.FC<TradeTableProps> = ({ trades, focusedTradeId, 
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* Search Input */}
           <div className="relative flex-1 sm:w-48">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" aria-hidden="true" />
             <input
               type="text"
+              id="trade-search"
+              aria-label="Search trades by date, price or exit reason"
               placeholder="Search date, price, exit..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -118,6 +120,7 @@ export const TradeTable: React.FC<TradeTableProps> = ({ trades, focusedTradeId, 
 
           {/* Side Filter */}
           <select
+            aria-label="Filter trades by side"
             value={sideFilter}
             onChange={(e) => setSideFilter(e.target.value as any)}
             className="bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none cursor-pointer"
@@ -129,6 +132,7 @@ export const TradeTable: React.FC<TradeTableProps> = ({ trades, focusedTradeId, 
 
           {/* Outcome Filter */}
           <select
+            aria-label="Filter trades by outcome"
             value={outcomeFilter}
             onChange={(e) => setOutcomeFilter(e.target.value as any)}
             className="bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none cursor-pointer"
@@ -235,11 +239,13 @@ export const TradeTable: React.FC<TradeTableProps> = ({ trades, focusedTradeId, 
                     </td>
                     <td className="p-3 text-center">
                       <button
+                        type="button"
                         onClick={() => onFocusTrade(t)}
                         className="p-1.5 rounded bg-slate-100 hover:bg-indigo-100 text-slate-600 hover:text-indigo-700 transition-all cursor-pointer"
+                        aria-label={`Focus trade ${t.number} on the candlestick chart`}
                         title="Focus trade on candlestick chart"
                       >
-                        <Focus className="w-3.5 h-3.5" />
+                        <Focus className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                     </td>
                   </tr>

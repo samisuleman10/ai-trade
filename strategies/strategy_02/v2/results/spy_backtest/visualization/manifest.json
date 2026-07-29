@@ -43,10 +43,19 @@
       "path": "data/performance-rrms.json",
       "record_count": 18,
       "sha256": "837c09e1f54f53d8346df11776220aeae5a5e5d0d8f5a6832e0a1bcd225d4b1a"
+    },
+    {
+      "dataset_id": "run_summary",
+      "first_timestamp": null,
+      "kind": "run_summary",
+      "last_timestamp": null,
+      "path": "data/run-summary.json",
+      "record_count": 0,
+      "sha256": "afec904864d79901fa7eef828b3bc68becc327e62870f029a990a9a2d7c55114"
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T16:22:39Z",
+  "generated_at": "2026-07-29T18:35:38Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

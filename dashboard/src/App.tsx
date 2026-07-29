@@ -30,6 +30,13 @@ export default function App() {
   const [selectedRun, setSelectedRun] = useState<CatalogEntry | null>(null);
   const [health, setHealth] = useState<HealthReport | null>(null);
   const [checkingApi, setCheckingApi] = useState(false);
+  /**
+   * Bumped by the refresh control and handed to every screen that reads the
+   * catalog. Clearing the request cache alone was not enough: an already
+   * mounted Compare or All runs screen kept the state it had fetched, so the
+   * button refreshed the health badge and appeared to do nothing else.
+   */
+  const [refreshToken, setRefreshToken] = useState(0);
 
   /**
    * `/health` reports how many bundles parsed and how many failed validation.
@@ -39,7 +46,10 @@ export default function App() {
    */
   const checkApi = async (refresh = false) => {
     setCheckingApi(true);
-    if (refresh) clearCatalogCache();
+    if (refresh) {
+      clearCatalogCache();
+      setRefreshToken((value) => value + 1);
+    }
     try {
       setHealth(await fetchHealth());
     } catch {
@@ -130,13 +140,13 @@ export default function App() {
             (selectedRun ? (
               <RunDetail entry={selectedRun} onClose={() => setSelectedRun(null)} />
             ) : (
-              <StrategyComparison onSelectRun={setSelectedRun} />
+              <StrategyComparison onSelectRun={setSelectedRun} refreshToken={refreshToken} />
             ))}
           {section === 'runs' &&
             (selectedRun ? (
               <RunDetail entry={selectedRun} onClose={() => setSelectedRun(null)} />
             ) : (
-              <RunCatalog onSelectRun={setSelectedRun} />
+              <RunCatalog onSelectRun={setSelectedRun} refreshToken={refreshToken} />
             ))}
           {section === 'strategy04' && <Strategy04Dashboard />}
         </div>

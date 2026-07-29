@@ -61,7 +61,7 @@ const PERFORMANCE_DATASET_ID = 'performance_fixed';
  * fan-out over the same data -- this hook is the single place that fetch
  * loop lives, so it isn't duplicated between the two screens.
  */
-export function useRunCatalog(): RunCatalogState {
+export function useRunCatalog(refreshToken = 0): RunCatalogState {
   const [status, setStatus] = useState<FetchStatus>('loading');
   const [entries, setEntries] = useState<CatalogEntry[]>([]);
   const [performance, setPerformance] = useState<PerformanceState>({});
@@ -76,6 +76,9 @@ export function useRunCatalog(): RunCatalogState {
   useEffect(() => {
     let cancelled = false;
     setStatus('loading');
+    // Drop per-run state as well: a run that disappeared from the catalog
+    // would otherwise keep rendering its old numbers under a stale key.
+    setPerformance({});
     fetchRuns()
       .then((data) => {
         if (cancelled) return;
@@ -89,7 +92,11 @@ export function useRunCatalog(): RunCatalogState {
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+    // refreshToken changes when the header's refresh control fires. Without
+    // it, that control cleared the request cache but left every mounted
+    // screen showing the state it had already fetched -- so the catalog only
+    // appeared to refresh if you happened to navigate away and back.
+  }, [attempt, refreshToken]);
 
   useEffect(() => {
     if (entries.length === 0) return;

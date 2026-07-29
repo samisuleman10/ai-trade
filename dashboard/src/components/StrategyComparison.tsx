@@ -7,6 +7,8 @@ import type { PerformancePoint, PerformanceSummary } from '../hooks/useRunCatalo
 
 interface StrategyComparisonProps {
   onSelectRun?: (entry: CatalogEntry) => void;
+  /** Bumped by the header refresh control; re-fetches the catalog. */
+  refreshToken?: number;
 }
 
 /**
@@ -105,8 +107,8 @@ function symbolKeyOf(entry: CatalogEntry): string {
   return symbol ? symbol : UNKNOWN_SYMBOL_KEY;
 }
 
-export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
-  const { status, entries, performance, retry } = useRunCatalog();
+export function StrategyComparison({ onSelectRun, refreshToken }: StrategyComparisonProps) {
+  const { status, entries, performance, retry } = useRunCatalog(refreshToken);
 
   const groups = useMemo(() => {
     const bySymbol = new Map<string, ComparisonRow[]>();

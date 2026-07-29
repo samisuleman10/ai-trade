@@ -5,6 +5,8 @@ import { useRunCatalog } from '../hooks/useRunCatalog';
 
 interface RunCatalogProps {
   onSelectRun?: (entry: CatalogEntry) => void;
+  /** Bumped by the header refresh control; re-fetches the catalog. */
+  refreshToken?: number;
 }
 
 function familyLabel(family: string): string {
@@ -39,8 +41,8 @@ const ratio = (value: unknown): string => (typeof value === 'number' ? value.toF
 
 const count = (value: unknown): string => (typeof value === 'number' ? String(value) : em);
 
-export function RunCatalog({ onSelectRun }: RunCatalogProps) {
-  const { status, entries, performance: metrics, retry } = useRunCatalog();
+export function RunCatalog({ onSelectRun, refreshToken }: RunCatalogProps) {
+  const { status, entries, performance: metrics, retry } = useRunCatalog(refreshToken);
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
 
   const groups = useMemo(() => {

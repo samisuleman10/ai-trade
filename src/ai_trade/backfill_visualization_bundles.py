@@ -40,6 +40,7 @@ from ai_trade.strategy_04_audit_datasets import audit_datasets_for
 from ai_trade.visualization_contract import (
     ContractError,
     build_performance,
+    build_run_summary,
     build_trade_ledger,
     publish_bundle,
 )
@@ -274,6 +275,12 @@ def backfill(roots: Sequence[Any], dry_run: bool) -> Dict[str, Any]:
             if has_rrms:
                 datasets.extend(_build_variant_datasets(result_dir, "rrms", run_id))
                 variants.append("rrms")
+
+            # Run metadata the dashboard would otherwise hardcode: signal
+            # counts, bar counts, starting equity and the cost model. Built
+            # from whatever backtest_report.json actually records, with nulls
+            # where it records nothing.
+            datasets.append(build_run_summary(_read_json(result_dir / REPORT_FILENAME)))
 
             # Returns [] for anything that is not an auditable Strategy 04
             # run, so this stays a single unconditional call rather than a

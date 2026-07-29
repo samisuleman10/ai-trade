@@ -45,6 +45,15 @@
       "sha256": "2eec4a47a7b41b0c13eb0dd193a09bc70687f3496c5d423edfc846f77b3c1a6f"
     },
     {
+      "dataset_id": "run_summary",
+      "first_timestamp": "2021-03-09T14:30:00Z",
+      "kind": "run_summary",
+      "last_timestamp": "2026-07-23T19:45:00Z",
+      "path": "data/run-summary.json",
+      "record_count": 2,
+      "sha256": "3ece66019a0ddb8c3fe836ad1edb28c073c75321eebd1dbf54c3aa0fed35be8c"
+    },
+    {
       "dataset_id": "zones",
       "first_timestamp": null,
       "kind": "zones",
@@ -73,7 +82,7 @@
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T16:25:52Z",
+  "generated_at": "2026-07-29T18:38:23Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

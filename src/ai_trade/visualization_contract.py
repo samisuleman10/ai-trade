@@ -371,6 +371,77 @@ def build_trade_audit(entries: Sequence[Mapping[str, Any]]) -> Dataset:
     )
 
 
+def _opt(container: Any, *keys: str) -> Any:
+    """Walk a nested mapping, returning None the moment a key is missing."""
+
+    current = container
+    for key in keys:
+        if not isinstance(current, Mapping):
+            return None
+        current = current.get(key)
+    return current
+
+
+def build_run_summary(report: Mapping[str, Any]) -> Dataset:
+    """Run metadata the dashboard would otherwise have to hardcode.
+
+    Everything here comes from ``backtest_report.json``: starting equity,
+    signal funnel counts, bar counts, data range, the cost model, and each
+    sizing variant's detail block.
+
+    Absent values stay ``None`` and the cost model carries an explicit
+    ``recorded`` flag. Only six of the fifty-six reports in this repo record
+    a ``backtest_configuration`` at all, so substituting a default would let
+    a comparison claim two runs share a cost model when one never stated one.
+    """
+
+    config = report.get("backtest_configuration")
+    has_config = isinstance(config, Mapping)
+
+    variants: Dict[str, Any] = {}
+    results = report.get("results")
+    if isinstance(results, Mapping):
+        for name, block in results.items():
+            details = _opt(block, "details")
+            if isinstance(details, Mapping):
+                variants[str(name)] = dict(details)
+
+    payload = {
+        "schema_version": SCHEMA_VERSION,
+        "dataset_id": "run_summary",
+        "kind": "run_summary",
+        "starting_equity": _opt(config, "starting_equity") if has_config else None,
+        "signals": {
+            "candidate": report.get("candidate_signal_count"),
+            "eligible": report.get("session_eligible_signal_count"),
+        },
+        "cost_model": {
+            "recorded": bool(has_config),
+            "slippage_bps_per_side": _opt(config, "slippage_bps_per_side") if has_config else None,
+            "commission_per_share_per_side": (
+                _opt(config, "commission_per_share_per_side") if has_config else None
+            ),
+        },
+        "data": {
+            "setup_bar_count": _opt(report, "data", "one_hour_bar_count"),
+            "execution_bar_count": _opt(report, "data", "fifteen_minute_bar_count"),
+            "first_timestamp": _opt(report, "data", "fifteen_minute_first"),
+            "last_timestamp": _opt(report, "data", "fifteen_minute_last"),
+        },
+        "variants": variants,
+    }
+
+    return Dataset(
+        dataset_id="run_summary",
+        kind="run_summary",
+        path=f"{DATA_SUBDIR}/run-summary.json",
+        payload=payload,
+        record_count=len(variants),
+        first_timestamp=payload["data"]["first_timestamp"],
+        last_timestamp=payload["data"]["last_timestamp"],
+    )
+
+
 def _validate_window(
     bars: Sequence[Mapping[str, Any]], trade_id: str, label: str
 ) -> List[Dict[str, Any]]:

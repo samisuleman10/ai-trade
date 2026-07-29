@@ -8,6 +8,7 @@ from ai_trade.visualization_contract import (
     _validate_relative_path,
     build_audit_windows,
     build_performance,
+    build_run_summary,
     build_trade_audit,
     build_trade_ledger,
     build_zones,
@@ -353,3 +354,68 @@ def test_build_audit_windows_rejects_unordered_bars():
 def test_build_audit_windows_rejects_a_trade_with_no_bars():
     with pytest.raises(ContractError):
         build_audit_windows([{"trade_id": "run:fixed:000001", "one_hour": [], "fifteen_minute": []}])
+
+
+# --- run_summary: the run metadata the dashboard used to hardcode ---
+
+
+def _report():
+    return {
+        "candidate_signal_count": 93,
+        "session_eligible_signal_count": 39,
+        "backtest_configuration": {
+            "starting_equity": 100000.0,
+            "slippage_bps_per_side": 1.0,
+            "commission_per_share_per_side": 0.005,
+        },
+        "data": {
+            "one_hour_bar_count": 9189,
+            "fifteen_minute_bar_count": 34200,
+            "fifteen_minute_first": "2021-04-14T13:30:00Z",
+            "fifteen_minute_last": "2026-07-16T19:45:00Z",
+        },
+        "results": {"fixed": {"details": {"trades": 38, "total_costs": 41.83}}},
+    }
+
+
+def test_run_summary_carries_signal_counts_and_starting_equity():
+    dataset = build_run_summary(_report())
+    assert dataset.kind == "run_summary"
+    assert dataset.dataset_id == "run_summary"
+    assert dataset.payload["signals"] == {"candidate": 93, "eligible": 39}
+    assert dataset.payload["starting_equity"] == 100000.0
+
+
+def test_run_summary_records_the_cost_model_when_present():
+    payload = build_run_summary(_report()).payload
+    assert payload["cost_model"] == {
+        "recorded": True,
+        "slippage_bps_per_side": 1.0,
+        "commission_per_share_per_side": 0.005,
+    }
+
+
+def test_run_summary_marks_an_unrecorded_cost_model_rather_than_inventing_one():
+    """Most runs predate backtest_configuration. Reporting a default here
+    would let the comparison screen claim two runs share a cost model when
+    one of them never stated any.
+    """
+
+    report = _report()
+    del report["backtest_configuration"]
+    payload = build_run_summary(report).payload
+    assert payload["cost_model"]["recorded"] is False
+    assert payload["cost_model"]["slippage_bps_per_side"] is None
+    assert payload["starting_equity"] is None
+
+
+def test_run_summary_keeps_per_variant_details():
+    payload = build_run_summary(_report()).payload
+    assert payload["variants"]["fixed"]["total_costs"] == 41.83
+
+
+def test_run_summary_tolerates_a_report_with_nothing_useful():
+    payload = build_run_summary({}).payload
+    assert payload["signals"] == {"candidate": None, "eligible": None}
+    assert payload["variants"] == {}
+    assert payload["data"]["setup_bar_count"] is None
