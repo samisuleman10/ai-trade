@@ -88,6 +88,36 @@ button:focus-visible {
   color: #1e293b;
 }
 
+.s4-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  cursor: pointer;
+  border: 1px solid #dbe3ee;
+  border-radius: 9px;
+  background: white;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.s4-button:hover {
+  border-color: #bcc8d8;
+  color: #0f172a;
+}
+
+/* Table rows that open a detail view are real buttons for the keyboard:
+   focusable, activated by Enter or Space, and visibly focused. */
+.s4-row-button {
+  cursor: pointer;
+}
+
+.s4-row-button:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+}
+
 .s4-context-panel {
   display: flex;
   align-items: center;

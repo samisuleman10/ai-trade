@@ -40,7 +40,7 @@ const ratio = (value: unknown): string => (typeof value === 'number' ? value.toF
 const count = (value: unknown): string => (typeof value === 'number' ? String(value) : em);
 
 export function RunCatalog({ onSelectRun }: RunCatalogProps) {
-  const { status, entries, performance: metrics } = useRunCatalog();
+  const { status, entries, performance: metrics, retry } = useRunCatalog();
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
 
   const groups = useMemo(() => {
@@ -83,8 +83,11 @@ export function RunCatalog({ onSelectRun }: RunCatalogProps) {
         <div className="s4-eyebrow">All runs</div>
         <div className="mt-2 text-sm font-semibold text-slate-900">Catalog API unreachable</div>
         <p className="mt-2 text-xs text-slate-500">
-          Start it with <code>python -m ai_trade.server --port 8080</code>, then reopen this tab.
+          Start it with <code>python -m ai_trade.server --port 8080</code>, then retry.
         </p>
+        <button type="button" className="s4-button mt-4" onClick={retry}>
+          Retry
+        </button>
       </section>
     );
   }
@@ -132,8 +135,19 @@ export function RunCatalog({ onSelectRun }: RunCatalogProps) {
                   return (
                     <tr
                       key={entry.bundle_id}
-                      className={`cursor-pointer hover:bg-indigo-50/50 ${isSelected ? 'bg-indigo-50/50' : ''}`}
+                      className={`s4-row-button hover:bg-indigo-50/50 ${isSelected ? 'bg-indigo-50/50' : ''}`}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Open ${entry.run.strategy_id} ${entry.run.strategy_version} on ${
+                        entry.instrument.symbol || 'unknown symbol'
+                      }`}
                       onClick={() => {
+                        setSelectedBundleId(entry.bundle_id);
+                        onSelectRun?.(entry);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
                         setSelectedBundleId(entry.bundle_id);
                         onSelectRun?.(entry);
                       }}

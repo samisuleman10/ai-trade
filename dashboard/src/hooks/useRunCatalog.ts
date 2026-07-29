@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { fetchDataset, fetchRuns } from '../catalog';
+import { useCallback, useEffect, useState } from 'react';
+import { clearCatalogCache, fetchDataset, fetchRuns } from '../catalog';
 import type { CatalogEntry } from '../catalog';
 
 /**
@@ -47,6 +47,8 @@ export interface RunCatalogState {
   entries: CatalogEntry[];
   /** Per-bundle `performance_fixed` fetch state, keyed by `bundle_id`. */
   performance: PerformanceState;
+  /** Drop cached responses and fetch again. Backs the error states' retry control. */
+  retry: () => void;
 }
 
 const PERFORMANCE_DATASET_ID = 'performance_fixed';
@@ -63,6 +65,13 @@ export function useRunCatalog(): RunCatalogState {
   const [status, setStatus] = useState<FetchStatus>('loading');
   const [entries, setEntries] = useState<CatalogEntry[]>([]);
   const [performance, setPerformance] = useState<PerformanceState>({});
+  const [attempt, setAttempt] = useState(0);
+
+  const retry = useCallback(() => {
+    clearCatalogCache();
+    setPerformance({});
+    setAttempt((value) => value + 1);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,7 +89,7 @@ export function useRunCatalog(): RunCatalogState {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [attempt]);
 
   useEffect(() => {
     if (entries.length === 0) return;
@@ -111,5 +120,5 @@ export function useRunCatalog(): RunCatalogState {
     };
   }, [entries]);
 
-  return { status, entries, performance };
+  return { status, entries, performance, retry };
 }

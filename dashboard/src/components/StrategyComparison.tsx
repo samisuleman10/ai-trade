@@ -83,7 +83,7 @@ function symbolKeyOf(entry: CatalogEntry): string {
 }
 
 export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
-  const { status, entries, performance } = useRunCatalog();
+  const { status, entries, performance, retry } = useRunCatalog();
 
   const groups = useMemo(() => {
     const bySymbol = new Map<string, ComparisonRow[]>();
@@ -145,8 +145,11 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
         <div className="s4-eyebrow">Compare strategies</div>
         <div className="mt-2 text-sm font-semibold text-slate-900">Catalog API unreachable</div>
         <p className="mt-2 text-xs text-slate-500">
-          Start it with <code>python -m ai_trade.server --port 8080</code>, then reopen this tab.
+          Start it with <code>python -m ai_trade.server --port 8080</code>, then retry.
         </p>
+        <button type="button" className="s4-button mt-4" onClick={retry}>
+          Retry
+        </button>
       </section>
     );
   }
@@ -213,8 +216,18 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
                   {rows.map(({ entry, summary, points, isSmallSample }) => (
                     <tr
                       key={entry.bundle_id}
-                      className="cursor-pointer hover:bg-indigo-50/50"
+                      className="s4-row-button hover:bg-indigo-50/50"
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Open ${entry.run.strategy_id} ${entry.run.strategy_version} on ${
+                        entry.instrument.symbol || 'unknown symbol'
+                      }`}
                       onClick={() => onSelectRun?.(entry)}
+                      onKeyDown={(event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        onSelectRun?.(entry);
+                      }}
                     >
                       <td>{familyLabel(familyOf(entry.run.strategy_id))}</td>
                       <td>

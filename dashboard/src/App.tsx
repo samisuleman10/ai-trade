@@ -4,7 +4,8 @@ import { StrategyComparison } from './components/StrategyComparison';
 import { RunCatalog } from './components/RunCatalog';
 import { RunDetail } from './components/RunDetail';
 import Strategy04Dashboard from './Strategy04Dashboard';
-import type { CatalogEntry } from './catalog';
+import { clearCatalogCache, fetchHealth } from './catalog';
+import type { CatalogEntry, HealthReport } from './catalog';
 
 type Section = 'compare' | 'runs' | 'strategy04';
 
@@ -27,16 +28,22 @@ const LANDING_SECTION: Section = SECTIONS[0].id;
 export default function App() {
   const [section, setSection] = useState<Section>(LANDING_SECTION);
   const [selectedRun, setSelectedRun] = useState<CatalogEntry | null>(null);
-  const [apiReachable, setApiReachable] = useState(false);
+  const [health, setHealth] = useState<HealthReport | null>(null);
   const [checkingApi, setCheckingApi] = useState(false);
 
-  const checkApi = async () => {
+  /**
+   * `/health` reports how many bundles parsed and how many failed validation.
+   * A run that fails to publish is invisible in the catalog by design, so
+   * without this count a broken bundle looks exactly like a run that was
+   * never generated.
+   */
+  const checkApi = async (refresh = false) => {
     setCheckingApi(true);
+    if (refresh) clearCatalogCache();
     try {
-      const response = await fetch('http://localhost:8080/api/strategies');
-      setApiReachable(response.ok);
+      setHealth(await fetchHealth());
     } catch {
-      setApiReachable(false);
+      setHealth(null);
     } finally {
       setCheckingApi(false);
     }
@@ -81,15 +88,19 @@ export default function App() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className={`s4-api-status ${apiReachable ? 'online' : 'offline'}`}>
+            <div className={`s4-api-status ${health ? 'online' : 'offline'}`}>
               <span />
-              {apiReachable ? 'API reachable' : 'Saved result snapshot'}
+              {health
+                ? `${health.valid_bundles} runs${
+                    health.invalid_bundles > 0 ? ` · ${health.invalid_bundles} invalid` : ''
+                  }`
+                : 'API unreachable'}
             </div>
             <button
               type="button"
               className="s4-icon-button"
-              aria-label="Check API connection"
-              onClick={() => void checkApi()}
+              aria-label="Refresh run catalog"
+              onClick={() => void checkApi(true)}
               disabled={checkingApi}
             >
               <RefreshCw size={15} className={checkingApi ? 'animate-spin' : ''} />

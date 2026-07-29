@@ -8,6 +8,44 @@ interface TradeTableProps {
   onFocusTrade: (trade: Trade) => void;
 }
 
+type SortField = 'number' | 'entryTimestamp' | 'netPnl' | 'resultR';
+
+/**
+ * A sortable column heading.
+ *
+ * The control is a real `<button>` rather than a click handler on the `<th>`,
+ * so it is reachable by keyboard, and the `<th>` carries `aria-sort` so a
+ * screen reader announces the current direction instead of leaving sorting
+ * as a purely visual affordance.
+ */
+const SortableHeader: React.FC<{
+  field: SortField;
+  label: string;
+  activeField: SortField;
+  ascending: boolean;
+  align?: 'left' | 'right';
+  onSort: (field: SortField) => void;
+}> = ({ field, label, activeField, ascending, align = 'left', onSort }) => {
+  const isActive = activeField === field;
+  return (
+    <th
+      className={`p-3 ${align === 'right' ? 'text-right' : ''}`}
+      aria-sort={isActive ? (ascending ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(field)}
+        className={`flex items-center gap-1 uppercase tracking-wider hover:text-slate-900 ${
+          align === 'right' ? 'ml-auto justify-end' : ''
+        }`}
+      >
+        {label}
+        <ArrowUpDown className="h-3 w-3 text-slate-400" aria-hidden="true" />
+      </button>
+    </th>
+  );
+};
+
 export const TradeTable: React.FC<TradeTableProps> = ({ trades, focusedTradeId, onFocusTrade }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sideFilter, setSideFilter] = useState<'all' | 'long' | 'short'>('all');
@@ -107,33 +145,43 @@ export const TradeTable: React.FC<TradeTableProps> = ({ trades, focusedTradeId, 
         <table className="w-full text-left text-xs font-mono border-collapse">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
-              <th className="p-3 cursor-pointer hover:text-slate-900" onClick={() => toggleSort('number')}>
-                <div className="flex items-center gap-1">
-                  # <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                </div>
-              </th>
+              <SortableHeader
+                field="number"
+                label="#"
+                activeField={sortField}
+                ascending={sortAsc}
+                onSort={toggleSort}
+              />
               <th className="p-3">Side</th>
-              <th className="p-3 cursor-pointer hover:text-slate-900" onClick={() => toggleSort('entryTimestamp')}>
-                <div className="flex items-center gap-1">
-                  Entry Time (UTC) <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                </div>
-              </th>
+              <SortableHeader
+                field="entryTimestamp"
+                label="Entry Time (UTC)"
+                activeField={sortField}
+                ascending={sortAsc}
+                onSort={toggleSort}
+              />
               <th className="p-3 text-right">Qty</th>
               <th className="p-3 text-right">Entry Price</th>
               <th className="p-3 text-right text-rose-600">Stop Loss</th>
               <th className="p-3 text-right text-emerald-600">Target Price</th>
               <th className="p-3 text-right">Exit Price</th>
               <th className="p-3">Exit Reason</th>
-              <th className="p-3 text-right cursor-pointer hover:text-slate-900" onClick={() => toggleSort('netPnl')}>
-                <div className="flex items-center justify-end gap-1">
-                  Net PnL <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                </div>
-              </th>
-              <th className="p-3 text-right cursor-pointer hover:text-slate-900" onClick={() => toggleSort('resultR')}>
-                <div className="flex items-center justify-end gap-1">
-                  Result R <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                </div>
-              </th>
+              <SortableHeader
+                field="netPnl"
+                label="Net PnL"
+                activeField={sortField}
+                ascending={sortAsc}
+                align="right"
+                onSort={toggleSort}
+              />
+              <SortableHeader
+                field="resultR"
+                label="Result R"
+                activeField={sortField}
+                ascending={sortAsc}
+                align="right"
+                onSort={toggleSort}
+              />
               <th className="p-3 text-center">Focus</th>
             </tr>
           </thead>
