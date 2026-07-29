@@ -16,3 +16,21 @@ def test_publishing_a_finished_result_directory_creates_a_bundle(tmp_path):
 def test_publishing_returns_none_when_requirements_are_missing(tmp_path):
     (tmp_path / "bare").mkdir()
     assert publish_result_directory(tmp_path / "bare") is None
+
+
+def test_publishing_never_raises_when_a_trade_row_is_malformed(tmp_path):
+    # Required files and a valid report are present -- publication gets past
+    # the early "missing requirements" check -- but a required ledger field
+    # is missing from the CSV, which is a contract violation deeper in the
+    # pipeline (build_trade_ledger raises ContractError). The constraint
+    # this is guarding is explicit: a failed export must never raise into
+    # the caller, only report None, so a bad trade row can never take down
+    # a caller that just finished writing real results.
+    directory = tmp_path / "malformed"
+    _make_result(directory)
+    (directory / "fixed_trades.csv").write_text(
+        "decision_timestamp,entry_timestamp,exit_timestamp,side\n"
+        "2021-06-21T18:15:00Z,2021-06-21T18:15:00Z,2021-06-22T14:15:00Z,short\n",
+        encoding="utf-8",
+    )
+    assert publish_result_directory(directory) is None
