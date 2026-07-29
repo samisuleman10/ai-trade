@@ -346,65 +346,26 @@ def test_weekend_close_makes_no_level_assertion():
     assert _result(results, "outcome").passed is True
 
 
-def test_result_r_matches_net_pnl_over_planned_risk():
+def test_result_r_is_not_a_strategy_04_check_any_more():
+    """It moved to ledger_audit, which applies the contract multiplier.
+
+    Emitting it here as well would publish two result_r checks per trade
+    into one trade_audit entry, and the two could disagree -- which is the
+    drift this consolidation exists to prevent.
+    """
+
     results = audit_trade(_signal(), _trade(), "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is True
+    assert [item for item in results if item.check_id == "result_r"] == []
 
 
-def test_result_r_off_by_ten_percent_fails():
-    trade = _trade(result_r=RESULT_R * 1.1)
-    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is False
+def test_strategy_04_emits_the_shared_check_result_type():
+    """Both audits feed one dataset, so they must emit one type, not two alike."""
 
+    from ai_trade.ledger_audit import CheckResult as SharedCheckResult
 
-def test_result_r_derived_from_gross_instead_of_net_fails():
-    """Costs are real: R measured before them overstates every trade."""
-
-    costs = QUANTITY * 0.005 * 2
-    trade = _trade(result_r=(NET_PNL + costs) / PLANNED_RISK)
-    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is False
-
-
-def test_result_r_sized_with_the_wrong_quantity_fails():
-    trade = _trade(quantity=QUANTITY * 2)
-    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is False
-
-
-def test_result_r_with_no_risk_distance_fails():
-    """A stop at the entry makes R undefined, which is a defect, not a pass."""
-
-    trade = _trade(stop_price=LONG_ENTRY)
-    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is False
-
-
-def test_result_r_with_zero_quantity_fails():
-    trade = _trade(quantity=0)
-    results = audit_trade(_signal(), trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is False
-
-
-def test_short_result_r_uses_the_absolute_risk_distance():
-    """A short's stop sits above its entry; risk is a distance, not a signed gap."""
-
-    signal = _signal(side="short", zone_side="supply")
-    entry = SHORT_ENTRY
-    stop = entry + 1.0
-    planned = 1.0 * QUANTITY
-    trade = _trade(
-        side="short",
-        entry_price=entry,
-        stop_price=stop,
-        target_price=entry - 1.0,
-        exit_reason="stop",
-        exit_price=stop * (1 + SLIPPAGE_FRACTION),
-        net_pnl=-1.05 * planned,
-        result_r=-1.05,
-    )
-    results = audit_trade(signal, trade, "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
-    assert _result(results, "result_r").passed is True
+    results = audit_trade(_signal(), _trade(), "2021-08-03T13:00:00Z", BARS, 0.25, SLIPPAGE_BPS)
+    assert CheckResult is SharedCheckResult
+    assert all(isinstance(item, SharedCheckResult) for item in results)
 
 
 def test_demand_zone_with_short_side_fails_side_match():

@@ -2,6 +2,21 @@
 
 Every function is pure. A failing check means the backtest is wrong, not that
 the trade was unprofitable.
+
+Scope: these checks verify Strategy 04's *written rules*, and every one of
+them needs signal evidence -- zone geometry, the ATR reference, the
+penetration fraction -- that only Strategy 04 records. Checks that need
+nothing but the ledger row live in ``ledger_audit`` and run for every
+strategy; ``CheckResult`` is imported from there so both audits emit the
+same type into one ``trade_audit`` dataset per run.
+
+``check_result_r`` used to live here and assumed a contract multiplier of
+1.0, which was correct only for the equity ETFs Strategy 04 has traded so
+far and would have silently mis-stated R the first time it ran on futures.
+It now lives in ``ledger_audit.check_result_r`` with the multiplier
+supplied, and Strategy 04 runs get it from the ledger audit that publishes
+alongside these checks -- one implementation, applied to every strategy,
+rather than two that can drift apart.
 """
 
 from __future__ import annotations
@@ -10,6 +25,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional, Sequence
 from zoneinfo import ZoneInfo
+
+from ai_trade.ledger_audit import CheckResult
 
 UTC_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 EASTERN = ZoneInfo("America/New_York")
@@ -63,14 +80,6 @@ class TradeRecord:
     exit_reason: str
     net_pnl: float
     result_r: float
-
-
-@dataclass(frozen=True)
-class CheckResult:
-    check_id: str
-    passed: bool
-    expected: str
-    actual: str
 
 
 def _parse(timestamp: str) -> datetime:
@@ -288,41 +297,6 @@ def check_outcome(trade: TradeRecord, slippage_bps: float) -> CheckResult:
     return _check("outcome", _close(expected, trade.exit_price), expected, trade.exit_price)
 
 
-def check_result_r(trade: TradeRecord) -> CheckResult:
-    """R is net P&L divided by the risk the position was actually sized to.
-
-    ``result_r`` is the headline number on every dashboard row and in
-    every summary statistic, and nothing verified it. This derives it from
-    fields recorded alongside it in the same ledger row, so a mismatch
-    means the ledger disagrees with itself.
-
-    ``run_backtest`` computes ``result_r = net_pnl / planned_risk`` with
-    ``planned_risk = quantity * |entry_price - stop_price|`` (times the
-    contract multiplier, which is 1.0 for the equity ETFs Strategy 04
-    trades -- a multiplied instrument would need that factor supplied
-    here). Verified against all 303 recorded Strategy 04 trades across
-    six configurations, this reproduces the recorded value bit-for-bit,
-    so ``TOLERANCE`` leaves roughly six orders of magnitude of headroom
-    over observed float noise while still catching a real discrepancy.
-
-    Risk is a distance, so the absolute value is deliberate: a short's
-    stop sits above its entry. A zero planned risk (a stop at the entry,
-    or a zero quantity) makes R undefined and fails -- that is a defect
-    in the ledger, not a trade to wave through.
-    """
-
-    planned_risk = abs(trade.entry_price - trade.stop_price) * trade.quantity
-    if planned_risk <= 0:
-        return _check(
-            "result_r",
-            False,
-            "a positive planned risk (quantity x |entry - stop|)",
-            planned_risk,
-        )
-    expected = trade.net_pnl / planned_risk
-    return _check("result_r", _close(expected, trade.result_r), expected, trade.result_r)
-
-
 def check_side_match(signal: SignalRecord) -> CheckResult:
     """Demand zones support longs; supply zones support shorts."""
 
@@ -338,7 +312,14 @@ def audit_trade(
     max_long_penetration: Optional[float],
     slippage_bps: float,
 ) -> list[CheckResult]:
-    """Run every check for one trade, in stable order."""
+    """Run every Strategy 04 rule check for one trade, in stable order.
+
+    ``result_r`` is deliberately absent: it needs no signal evidence, so it
+    is a ledger check now (``ledger_audit.check_result_r``) and is emitted
+    for Strategy 04 runs -- with the contract multiplier applied -- by the
+    ledger audit these checks are concatenated with. Reinstating it here
+    would publish the same check_id twice per trade.
+    """
 
     return [
         check_causality_atr(signal),
@@ -351,6 +332,5 @@ def audit_trade(
         check_penetration(signal, max_long_penetration),
         check_session(trade),
         check_outcome(trade, slippage_bps),
-        check_result_r(trade),
         check_side_match(signal),
     ]
