@@ -9,6 +9,7 @@ from pathlib import Path
 
 from ai_trade.backtest_strategy_01 import _entry_allowed, run_backtest, summarize, write_results
 from ai_trade.backtest_strategy_04_v1 import _config, _write_signals
+from ai_trade.publish_run import publish_result_directory
 from ai_trade.rrms_five_loss_reset import FIVE_LOSS_TIERS, run_backtest_five_loss_reset
 from ai_trade.strategy_01 import load_ohlcv_csv
 from ai_trade.strategy_04_indicator import strategy_04_v0_3_parameters
@@ -104,6 +105,10 @@ def main() -> int:
     )
     print(json.dumps(report["results"], indent=2))
     print(f"Saved Strategy 04 v1.1 backtest to {args.output}")
+
+    bundle_dir = publish_result_directory(args.output)
+    print(f"Published visualization bundle to {bundle_dir}")
+
     return 0
 
 
