@@ -74,7 +74,30 @@ interface ComparisonRow {
   summary?: PerformanceSummary;
   points?: PerformancePoint[];
   isSmallSample: boolean;
+  /** The run's own period, used to detect a group whose runs are not comparable. */
+  period: string;
+  /** True while this run's dataset is still in flight. */
+  isLoading: boolean;
 }
+
+/**
+ * Placeholder for a run whose dataset has not arrived yet.
+ *
+ * Deliberately not the same glyph as a recorded-but-absent value: the
+ * catalog fans out one request per run, so for the first few seconds most
+ * rows have no numbers. Rendering those as the not-recorded dash made whole
+ * strategies look like they had produced no results at all.
+ */
+const loadingCell = '…';
+
+/**
+ * How much two runs' periods must overlap before ranking them together is
+ * fair. Average R survives different sample sizes, but not different market
+ * regimes: a run measured only through 2021 and one measured through 2022
+ * are answering different questions, and the higher average R may just mean
+ * the easier years.
+ */
+const PERIOD_MISMATCH_LABEL = 'different period';
 
 /** Symbol used to group a run, or the sentinel key for "not recorded". */
 function symbolKeyOf(entry: CatalogEntry): string {
@@ -97,6 +120,8 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
         points,
         isSmallSample:
           typeof summary?.trade_count === 'number' && summary.trade_count < SMALL_SAMPLE_THRESHOLD,
+        period: dateRangeLabel(points),
+        isLoading: performance[entry.bundle_id]?.status === 'loading',
       };
       const list = bySymbol.get(key);
       if (list) {
@@ -184,6 +209,18 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
 
       {groups.map(([symbolKey, rows]) => {
         const isUnknown = symbolKey === UNKNOWN_SYMBOL_KEY;
+        // Runs are ranked against each other inside this group, so a group
+        // whose runs cover different periods is not a fair cohort. The most
+        // common period is treated as the group's baseline and every run
+        // outside it is marked, rather than silently ranked alongside.
+        const periodCounts = new Map<string, number>();
+        for (const row of rows) {
+          if (row.period === em) continue;
+          periodCounts.set(row.period, (periodCounts.get(row.period) ?? 0) + 1);
+        }
+        const basePeriod =
+          Array.from(periodCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? em;
+        const mixedPeriods = periodCounts.size > 1;
         return (
           <section key={symbolKey} className="s4-panel overflow-hidden">
             <div className="border-b border-slate-200 px-5 py-4">
@@ -195,6 +232,16 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
                 <p className="mt-1 max-w-3xl text-xs text-slate-500">
                   These runs' manifests never recorded an instrument symbol. Shown separately rather
                   than guessed or dropped.
+                </p>
+              )}
+              {mixedPeriods && (
+                <p className="mt-2 flex max-w-3xl items-start gap-2 text-xs text-amber-700">
+                  <AlertTriangle className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>
+                    These runs do not cover the same period, so their average R is not measured over
+                    the same market. Rows marked <strong>{PERIOD_MISMATCH_LABEL}</strong> fall outside{' '}
+                    {basePeriod}, and their rank against the others is not a like-for-like result.
+                  </span>
                 </p>
               )}
             </div>
@@ -213,7 +260,7 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map(({ entry, summary, points, isSmallSample }) => (
+                  {rows.map(({ entry, summary, points, isSmallSample, period, isLoading }) => (
                     <tr
                       key={entry.bundle_id}
                       className="s4-row-button hover:bg-indigo-50/50"
@@ -255,11 +302,11 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
                               <AlertTriangle size={12} />
                             </span>
                           )}
-                          {averageR(summary?.average_r)}
+                          {isLoading ? loadingCell : averageR(summary?.average_r)}
                         </span>
                       </td>
-                      <td>{winRate(summary?.win_rate)}</td>
-                      <td>{ratio(summary?.profit_factor)}</td>
+                      <td>{isLoading ? loadingCell : winRate(summary?.win_rate)}</td>
+                      <td>{isLoading ? loadingCell : ratio(summary?.profit_factor)}</td>
                       <td
                         className={
                           typeof summary?.net_pnl === 'number'
@@ -269,10 +316,17 @@ export function StrategyComparison({ onSelectRun }: StrategyComparisonProps) {
                             : undefined
                         }
                       >
-                        {netPnl(summary?.net_pnl)}
+                        {isLoading ? loadingCell : netPnl(summary?.net_pnl)}
                       </td>
-                      <td>{count(summary?.trade_count)}</td>
-                      <td className="whitespace-nowrap font-normal">{dateRangeLabel(points)}</td>
+                      <td>{isLoading ? loadingCell : count(summary?.trade_count)}</td>
+                      <td className="whitespace-nowrap font-normal">
+                        {isLoading ? loadingCell : dateRangeLabel(points)}
+                        {mixedPeriods && period !== basePeriod && (
+                          <span className="s4-cohort-flag" title={`Group baseline is ${basePeriod}`}>
+                            {PERIOD_MISMATCH_LABEL}
+                          </span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

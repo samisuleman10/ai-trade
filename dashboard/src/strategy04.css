@@ -444,6 +444,20 @@ button:focus-visible {
   color: #c2410c;
 }
 
+/* Marks a run whose period differs from the rest of its comparison group,
+   so its rank is visibly not like-for-like. */
+.s4-cohort-flag {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .s4-nav {
   display: flex;
   gap: 4px;
