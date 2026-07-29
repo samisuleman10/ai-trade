@@ -130,6 +130,26 @@ def test_long_with_no_recorded_penetration_fails():
     assert _result(results, "penetration").passed is False
 
 
+def test_version_with_no_penetration_rule_passes_with_no_recorded_fraction():
+    """v1 has no penetration rule at all: max_long_penetration=None means the
+
+    check must not fail a long trade just because the column never existed.
+    """
+    signal = _signal(long_zone_penetration_fraction=None)
+    results = audit_trade(signal, _trade(), "2021-08-03T13:00:00Z", TIMESTAMPS, None, SLIPPAGE_BPS)
+    assert _result(results, "penetration").passed is True
+
+
+def test_version_with_no_penetration_rule_passes_even_with_a_recorded_fraction():
+    """A None rule is a property of the version, not of the individual trade,
+
+    so it stays inapplicable even if a fraction happens to be present.
+    """
+    signal = _signal(long_zone_penetration_fraction=0.9)
+    results = audit_trade(signal, _trade(), "2021-08-03T13:00:00Z", TIMESTAMPS, None, SLIPPAGE_BPS)
+    assert _result(results, "penetration").passed is True
+
+
 def test_short_trades_skip_the_penetration_gate():
     signal = _signal(side="short", zone_side="supply", long_zone_penetration_fraction=0.9)
     trade = _trade(side="short", stop_price=437.95, entry_price=436.95, target_price=435.95, exit_price=435.9)

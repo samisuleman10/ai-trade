@@ -154,11 +154,29 @@ def check_target_price(signal: SignalRecord, trade: TradeRecord) -> CheckResult:
     return _check("target_price", passed, expected, trade.target_price)
 
 
-def check_penetration(signal: SignalRecord, max_long_penetration: float) -> CheckResult:
-    """Version 1.1 caps how far a long trigger may travel into demand."""
+def check_penetration(signal: SignalRecord, max_long_penetration: Optional[float]) -> CheckResult:
+    """Version 1.1 caps how far a long trigger may travel into demand.
+
+    ``max_long_penetration=None`` means the strategy version being audited
+    (v1) has no penetration rule at all -- ``long_zone_penetration_fraction``
+    is not even a column in v1's ``candidate_signals.csv``. Failing a v1 long
+    trade for lacking evidence of a rule that version never had would be a
+    false accusation, so the check passes and says so explicitly.
+
+    When a rule does apply (``max_long_penetration`` is a number), a missing
+    fraction still fails: the rule exists but the evidence backing it is
+    absent, which is itself a defect worth surfacing.
+    """
 
     if signal.side != "long":
         return _check("penetration", True, "not applicable to shorts", signal.side)
+    if max_long_penetration is None:
+        return _check(
+            "penetration",
+            True,
+            "not applicable: this version has no penetration rule",
+            signal.long_zone_penetration_fraction,
+        )
     if signal.long_zone_penetration_fraction is None:
         return _check("penetration", False, "a recorded penetration fraction", "missing")
     passed = signal.long_zone_penetration_fraction <= max_long_penetration + TOLERANCE
@@ -248,7 +266,7 @@ def audit_trade(
     trade: TradeRecord,
     zone_qualified_timestamp: str,
     fifteen_minute_timestamps: Sequence[str],
-    max_long_penetration: float,
+    max_long_penetration: Optional[float],
     slippage_bps: float,
 ) -> list[CheckResult]:
     """Run every check for one trade, in stable order."""
