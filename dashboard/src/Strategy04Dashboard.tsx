@@ -30,6 +30,8 @@ import { AuditedTradeList } from './components/AuditedTradeList';
 import { TradeSetupChart } from './components/TradeSetupChart';
 import { TradeExecutionChart } from './components/TradeExecutionChart';
 import { RunCatalog } from './components/RunCatalog';
+import { RunDetail } from './components/RunDetail';
+import type { CatalogEntry } from './catalog';
 
 type View = 'performance' | 'comparison' | 'rules' | 'chart' | 'runs';
 
@@ -362,6 +364,7 @@ export default function Strategy04Dashboard() {
     [asset, version],
   );
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
+  const [selectedRun, setSelectedRun] = useState<CatalogEntry | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
     [auditedTrades, selectedTradeId],
@@ -576,9 +579,12 @@ export default function Strategy04Dashboard() {
               )}
             </div>
           )}
-          {view === 'runs' && (
-            <RunCatalog onSelectRun={(entry) => console.info('Selected run', entry.bundle_id)} />
-          )}
+          {view === 'runs' &&
+            (selectedRun ? (
+              <RunDetail entry={selectedRun} onClose={() => setSelectedRun(null)} />
+            ) : (
+              <RunCatalog onSelectRun={setSelectedRun} />
+            ))}
         </div>
 
         <footer className="mt-8 flex flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
