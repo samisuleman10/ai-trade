@@ -1,9 +1,13 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from ai_trade.build_strategy_04_fixture import (
     load_signals,
     load_trades,
+    max_long_penetration_for,
+    resolve_max_long_penetration,
     window,
 )
 from ai_trade.market_data import OHLCVBar
@@ -80,6 +84,47 @@ def test_load_signals_reads_a_present_penetration_column(tmp_path):
     )
     signals = load_signals(csv_path)
     assert signals[0].long_zone_penetration_fraction == 0.2
+
+
+# --- the penetration cap belongs to the strategy version, not to the CLI ---
+#
+# --max-long-penetration used to default to None, and None means "this
+# version has no penetration rule at all". So forgetting the flag while
+# auditing v1.1 did not produce an error or even a warning: it silently
+# turned a real rule into an unconditional pass for every long trade.
+
+
+def test_each_known_version_declares_its_own_penetration_cap():
+    assert max_long_penetration_for("v1") is None
+    assert max_long_penetration_for("v1_1") == 0.25
+    assert max_long_penetration_for("v1_2") == 0.25
+
+
+def test_an_unknown_version_fails_loudly_rather_than_disabling_the_rule():
+    with pytest.raises(ValueError):
+        max_long_penetration_for("v9_9")
+
+
+def test_omitting_the_flag_derives_the_cap_from_the_version():
+    assert resolve_max_long_penetration(None, "v1") is None
+    assert resolve_max_long_penetration(None, "v1_1") == 0.25
+    assert resolve_max_long_penetration(None, "v1_2") == 0.25
+
+
+def test_a_forgotten_flag_no_longer_disables_the_v1_1_rule():
+    assert resolve_max_long_penetration(None, "v1_1") is not None
+
+
+def test_an_explicit_flag_still_overrides_the_version_default():
+    assert resolve_max_long_penetration("0.4", "v1_1") == 0.4
+    assert resolve_max_long_penetration("none", "v1_1") is None
+    assert resolve_max_long_penetration("NONE", "v1_1") is None
+
+
+def test_an_unknown_version_with_an_explicit_flag_is_accepted():
+    """Only the silent default is dangerous; a stated value is evidence."""
+
+    assert resolve_max_long_penetration("0.25", "v9_9") == 0.25
 
 
 def test_fixture_reconciles_with_the_backtest_report():
