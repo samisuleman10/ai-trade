@@ -1,0 +1,65 @@
+{
+  "dataset_id": "performance_rrms",
+  "kind": "performance",
+  "points": [
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100000.0,
+      "peak_equity": 100000.0,
+      "timestamp": "2021-04-21T16:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100010.404022,
+      "peak_equity": 100010.404022,
+      "timestamp": "2021-04-23T19:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 146.15049565381196,
+      "drawdown_percent": 0.001461352917059131,
+      "equity": 99864.25352634619,
+      "peak_equity": 100010.404022,
+      "timestamp": "2023-06-02T15:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 244.00924765381205,
+      "drawdown_percent": 0.002439838635189751,
+      "equity": 99766.39477434619,
+      "peak_equity": 100010.404022,
+      "timestamp": "2025-08-08T19:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 591.3016477766942,
+      "drawdown_percent": 0.005912401350229735,
+      "equity": 99419.10237422331,
+      "peak_equity": 100010.404022,
+      "timestamp": "2026-02-06T15:00:00Z",
+      "trade_id": null
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "average_r": -0.5570211233535588,
+    "ending_equity": 99419.10237422331,
+    "exit_reasons": {
+      "stop": 2,
+      "weekend_close": 2
+    },
+    "long_trades": 1,
+    "losses": 3,
+    "max_drawdown": 591.3016477766942,
+    "net_pnl": -580.8976257766977,
+    "profit_factor": 0.017595117549764613,
+    "short_trades": 3,
+    "trade_count": 4,
+    "win_rate": 0.25,
+    "wins": 1
+  },
+  "variant": "rrms"
+}

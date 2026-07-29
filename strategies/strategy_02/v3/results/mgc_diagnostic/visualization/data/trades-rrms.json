@@ -1,0 +1,28 @@
+{
+  "dataset_id": "trades_rrms",
+  "kind": "trades",
+  "schema_version": "1.0.0",
+  "trades": [
+    {
+      "costs": 0.05,
+      "decision_timestamp": "2023-11-02T15:00:00Z",
+      "entry_price": 2305.0694700000004,
+      "entry_timestamp": "2023-11-02T15:00:00Z",
+      "equity_after": 99959.6409,
+      "exit_price": 2313.1312900000003,
+      "exit_reason": "weekend_close",
+      "exit_timestamp": "2023-11-03T19:00:00Z",
+      "gross_pnl": -40.30909999999949,
+      "net_pnl": -40.359099999999486,
+      "quantity": 5,
+      "result_r": -0.2940064078683413,
+      "rrms_tier": 0,
+      "side": "short",
+      "status": "closed",
+      "stop_price": 2332.5240416827187,
+      "target_price": 2277.614898317282,
+      "trade_id": "mgc_diagnostic:rrms:000001"
+    }
+  ],
+  "variant": "rrms"
+}

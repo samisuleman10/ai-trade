@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_04_v1_results_dia_1h_15m",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2021-03-24T15:15:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-15T14:45:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 53,
+      "sha256": "198dc0e2a191076e1feb6e8ba0a56b264881d410ed9d20c16381f8064c39e048"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2021-03-24T15:15:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-15T16:00:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 54,
+      "sha256": "f0a59b890cd08498ffd2ff1629ff849fe16197e988cc295a866af95b4f71076f"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2021-03-24T15:15:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-15T14:45:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 53,
+      "sha256": "39a142bfe4da2b3dce7f9a9111c2ae4a7058cfe1e37d8fd804ac86b62f38bf87"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2021-03-24T15:15:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-15T16:00:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 54,
+      "sha256": "5368f1c50265132a0e184d8a415419fb2191a54435b39af24696db8d399ac872"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:04Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "DIA"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "dia_1h_15m",
+    "strategy_id": "strategy_04_v1_1h_zones_15m_reaction",
+    "strategy_version": "v1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

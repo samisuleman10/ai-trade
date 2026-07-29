@@ -1,0 +1,81 @@
+{
+  "dataset_id": "performance_rrms",
+  "kind": "performance",
+  "points": [
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100000.0,
+      "peak_equity": 100000.0,
+      "timestamp": "2022-04-04T15:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 144.00014016087516,
+      "drawdown_percent": 0.0014400014016087517,
+      "equity": 99855.99985983912,
+      "peak_equity": 100000.0,
+      "timestamp": "2022-04-06T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 495.4368368897849,
+      "drawdown_percent": 0.004954368368897849,
+      "equity": 99504.56316311022,
+      "peak_equity": 100000.0,
+      "timestamp": "2023-04-12T19:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100191.16855628604,
+      "peak_equity": 100191.16855628604,
+      "timestamp": "2023-05-26T16:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 145.94676259312837,
+      "drawdown_percent": 0.0014566829062497406,
+      "equity": 100045.22179369291,
+      "peak_equity": 100191.16855628604,
+      "timestamp": "2023-10-18T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100384.43707871925,
+      "peak_equity": 100384.43707871925,
+      "timestamp": "2025-06-05T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100533.89652506022,
+      "peak_equity": 100533.89652506022,
+      "timestamp": "2026-07-16T19:00:00Z",
+      "trade_id": null
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "average_r": -0.006652173543370961,
+    "ending_equity": 100533.89652506022,
+    "exit_reasons": {
+      "stop": 3,
+      "target": 3
+    },
+    "long_trades": 5,
+    "losses": 3,
+    "max_drawdown": 495.4368368897849,
+    "net_pnl": 533.8965250602157,
+    "profit_factor": 1.8324137466106711,
+    "short_trades": 1,
+    "trade_count": 6,
+    "win_rate": 0.5,
+    "wins": 3
+  },
+  "variant": "rrms"
+}

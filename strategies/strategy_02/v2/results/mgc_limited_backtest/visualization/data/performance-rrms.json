@@ -1,0 +1,40 @@
+{
+  "dataset_id": "performance_rrms",
+  "kind": "performance",
+  "points": [
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100000.0,
+      "peak_equity": 100000.0,
+      "timestamp": "2026-07-20T15:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 148.92041123645322,
+      "drawdown_percent": 0.0014892041123645322,
+      "equity": 99851.07958876355,
+      "peak_equity": 100000.0,
+      "timestamp": "2026-07-21T02:30:00Z",
+      "trade_id": null
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "average_r": -1.0112640717751653,
+    "ending_equity": 99851.07958876355,
+    "exit_reasons": {
+      "stop": 1
+    },
+    "long_trades": 0,
+    "losses": 1,
+    "max_drawdown": 148.92041123645322,
+    "net_pnl": -148.9204112364596,
+    "profit_factor": 0.0,
+    "short_trades": 1,
+    "trade_count": 1,
+    "win_rate": 0.0,
+    "wins": 0
+  },
+  "variant": "rrms"
+}

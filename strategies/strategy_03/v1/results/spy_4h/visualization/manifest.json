@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_03_v1_results_spy_4h",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2020-10-29T16:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-14T16:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 73,
+      "sha256": "d45b7d46f9291a4dc58dc236e5f46c7176bb6a14ba99b4b7406fb6945462ef13"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2020-10-29T16:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-17T13:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 74,
+      "sha256": "4edc0ad0e1330abef06000654fd125019b231d29d117eda5be8e6decd795c46c"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2020-10-29T16:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-14T16:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 73,
+      "sha256": "b89c9aa411d4e0c5dd5746ad47a56ac9e27494e9c54aa6c135171f35e61ffed2"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2020-10-29T16:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-17T13:30:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 74,
+      "sha256": "0a4d66da7a99636d1bbdb854eb9306baffc10349807c2e63b449a726c89c6ac3"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:03Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "SPY"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "spy_4h",
+    "strategy_id": "strategy_03_v1_4h_alligator_open",
+    "strategy_version": "v1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

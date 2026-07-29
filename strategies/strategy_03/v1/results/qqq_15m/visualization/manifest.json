@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_03_v1_results_qqq_15m",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2021-03-10T15:30:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-21T15:45:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 805,
+      "sha256": "d5fa2be21378a70b1c30b3f7ed556443ce37d751e3094aba1a18dd0b522ad667"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2021-03-10T15:30:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-23T13:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 806,
+      "sha256": "4a64ff50b176afaa13f082e875cbba4caab14a701b49e36dbb728e91c3f18d25"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2021-03-10T15:30:00Z",
+      "kind": "trades",
+      "last_timestamp": "2021-04-27T16:15:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 21,
+      "sha256": "8e029b6d0b1240e0fbfd168e717fe582e7093223bd3428585e0ac84a607b499c"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2021-03-10T15:30:00Z",
+      "kind": "performance",
+      "last_timestamp": "2021-04-27T16:45:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 22,
+      "sha256": "82f60658be53abde332373a51e9424603b7aef28d8df5b0e4b257139ba04acb4"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:03Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "QQQ"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "qqq_15m",
+    "strategy_id": "strategy_03_v1_15m_alligator_open",
+    "strategy_version": "v1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

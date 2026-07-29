@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_03_v1_results_qqq_1h",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2020-08-03T17:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-22T17:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 294,
+      "sha256": "e67b34738c8f862f2caeda2a091dbf08f3c054eac490606e110096eab78607d6"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2020-08-03T17:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-23T13:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 295,
+      "sha256": "f7d9d56ba127308814f5deece3ed2cc88314a3228b198c47b0f335ab7f9d986f"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2020-08-03T17:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2021-02-01T16:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 24,
+      "sha256": "b37406c44ab65087d35239f30def4483f22cba66563c2eb5ee54f2574f7e7abe"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2020-08-03T17:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2021-02-02T14:30:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 25,
+      "sha256": "f6d9b9d599074730b292df4658c81b63a6466298705f8526c98bb586041ff406"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:03Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "QQQ"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "qqq_1h",
+    "strategy_id": "strategy_03_v1_1h_alligator_open",
+    "strategy_version": "v1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_03_v1_results_us30_dia_4h",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-15T16:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 76,
+      "sha256": "da4a05d6dc88e0173e3ac6136af00a3b468ac6a57e23a013073fa3d3a1ba56be"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-17T13:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 77,
+      "sha256": "7830cd68aecb0c42699e134a48bf5472c3d18979cc127d1bf75a3321709c28f7"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-15T16:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 76,
+      "sha256": "dbfd0cd7a39a2a9f683e91c6ff2ece6076a875235ac9f28e5ff78f1921b53cf2"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-17T13:30:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 77,
+      "sha256": "c4ffd827a1355afcc7a75dc50b05226118e730f11204592916cd280819ea3b49"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:04Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "DIA"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "us30_dia_4h",
+    "strategy_id": "strategy_03_v1_4h_alligator_open",
+    "strategy_version": "v1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

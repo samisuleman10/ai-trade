@@ -1,0 +1,28 @@
+{
+  "dataset_id": "trades_fixed",
+  "kind": "trades",
+  "schema_version": "1.0.0",
+  "trades": [
+    {
+      "costs": 0.04,
+      "decision_timestamp": "2026-07-20T15:00:00Z",
+      "entry_price": 4010.09895,
+      "entry_timestamp": "2026-07-20T15:00:00Z",
+      "equity_after": 99851.07958876355,
+      "exit_price": 4047.319052809115,
+      "exit_reason": "stop",
+      "exit_timestamp": "2026-07-21T02:30:00Z",
+      "gross_pnl": -148.88041123645962,
+      "net_pnl": -148.9204112364596,
+      "quantity": 4,
+      "result_r": -1.0112640717751653,
+      "rrms_tier": 0,
+      "side": "short",
+      "status": "closed",
+      "stop_price": 4046.9143613729775,
+      "target_price": 3973.2835386270226,
+      "trade_id": "mgc_limited_backtest:fixed:000001"
+    }
+  ],
+  "variant": "fixed"
+}

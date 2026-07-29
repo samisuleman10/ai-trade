@@ -1,0 +1,81 @@
+{
+  "dataset_id": "performance_fixed",
+  "kind": "performance",
+  "points": [
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100000.00000000001,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2022-04-04T15:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 144.0001401608897,
+      "drawdown_percent": 0.001440001401608897,
+      "equity": 99855.99985983912,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2022-04-06T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 292.26249659339373,
+      "drawdown_percent": 0.002922624965933937,
+      "equity": 99707.73750340662,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2023-04-12T19:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 143.8072764472745,
+      "drawdown_percent": 0.0014380727644727447,
+      "equity": 99856.19272355274,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2023-05-26T16:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 289.75403904040286,
+      "drawdown_percent": 0.002897540390404028,
+      "equity": 99710.24596095961,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2023-10-18T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 143.06634821819898,
+      "drawdown_percent": 0.0014306634821819896,
+      "equity": 99856.93365178182,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2025-06-05T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 5.10378236498218,
+      "drawdown_percent": 5.1037823649821794e-05,
+      "equity": 99994.89621763503,
+      "peak_equity": 100000.00000000001,
+      "timestamp": "2026-07-16T19:00:00Z",
+      "trade_id": null
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "average_r": -0.006652173543370961,
+    "ending_equity": 99994.89621763503,
+    "exit_reasons": {
+      "stop": 3,
+      "target": 3
+    },
+    "long_trades": 5,
+    "losses": 3,
+    "max_drawdown": 292.2624965933792,
+    "net_pnl": -5.103782364982067,
+    "profit_factor": 0.9883530932813774,
+    "short_trades": 1,
+    "trade_count": 6,
+    "win_rate": 0.5,
+    "wins": 3
+  },
+  "variant": "fixed"
+}

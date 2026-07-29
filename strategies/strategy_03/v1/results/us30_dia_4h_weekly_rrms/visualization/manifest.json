@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_03_v1_results_us30_dia_4h_weekly_rrms",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-15T16:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 76,
+      "sha256": "2063137167df9208045eb8ab6c95a763a99af9af8b66776a432c0cd3934bdd26"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-17T13:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 77,
+      "sha256": "7830cd68aecb0c42699e134a48bf5472c3d18979cc127d1bf75a3321709c28f7"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-15T16:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 76,
+      "sha256": "a214495fb80b7883a04a3e97a60cac34cd002e7a8145be798f12d0c46d0a1c22"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2020-08-26T16:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-17T13:30:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 77,
+      "sha256": "7f89a9d3de1616575567bd564778dd5ec31d53bc9ac1940d4a539f9a74ea7ec1"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:04Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "DIA"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "us30_dia_4h_weekly_rrms",
+    "strategy_id": "strategy_03_v1_4h_weekly_reset_rrms",
+    "strategy_version": "v1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

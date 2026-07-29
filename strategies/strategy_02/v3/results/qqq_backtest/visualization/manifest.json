@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_02_v3_results_qqq_backtest",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2022-04-04T15:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-13T16:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 6,
+      "sha256": "9c5b900131df95ed6726ede0b652080a2ecc485cfa883dbdbb26c3ffcd93a7a5"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2022-04-04T15:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-16T19:00:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 7,
+      "sha256": "e650efab0ccd7616e8ae569e4debdbca23aaf9e3581c692dd33e742f557799f2"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2022-04-04T15:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-13T16:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 6,
+      "sha256": "2624c3a5fa248340392e7e7ee46e524b134587c6452b881590df23aa8f040a6d"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2022-04-04T15:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-16T19:00:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 7,
+      "sha256": "3b92c694b6cf4bc30fbf941bf6f53c81488b98681dd3bbda7b5f2169c5806c6a"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:03Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "QQQ"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "qqq_backtest",
+    "strategy_id": "strategy_02_v3_4h_trend_1h_execution_vix_under_20",
+    "strategy_version": "v3"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

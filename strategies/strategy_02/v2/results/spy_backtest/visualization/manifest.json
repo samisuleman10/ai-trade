@@ -1,0 +1,67 @@
+{
+  "bundle_id": "strategies_strategy_02_v2_results_spy_backtest",
+  "capabilities": {
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2024-06-03T15:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-09T15:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 17,
+      "sha256": "0f5955b12f4b2e8a325cb08acb9ad0e6451d86686442979f4036da3bacd68424"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2024-06-03T15:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-10T19:45:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 18,
+      "sha256": "0d30f40545caae9c7499aa772a6eecbcde51a66798363f0d73432d3ed853fa97"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2024-06-03T15:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-09T15:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 17,
+      "sha256": "c5decfac801548d1c5b36d011284b5e2c086fb4883ea8ae3c804a6d9da2ec239"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2024-06-03T15:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-10T19:45:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 18,
+      "sha256": "837c09e1f54f53d8346df11776220aeae5a5e5d0d8f5a6832e0a1bcd225d4b1a"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-29T06:15:03Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "SPY"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "spy_backtest",
+    "strategy_id": "strategy_02_v2_vix_under_20",
+    "strategy_version": "v2"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

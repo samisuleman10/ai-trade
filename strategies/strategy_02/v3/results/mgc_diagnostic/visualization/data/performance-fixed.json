@@ -1,0 +1,40 @@
+{
+  "dataset_id": "performance_fixed",
+  "kind": "performance",
+  "points": [
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100000.0,
+      "peak_equity": 100000.0,
+      "timestamp": "2023-11-02T15:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 40.35910000000149,
+      "drawdown_percent": 0.0004035910000000149,
+      "equity": 99959.6409,
+      "peak_equity": 100000.0,
+      "timestamp": "2023-11-03T19:00:00Z",
+      "trade_id": null
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "average_r": -0.2940064078683413,
+    "ending_equity": 99959.6409,
+    "exit_reasons": {
+      "weekend_close": 1
+    },
+    "long_trades": 0,
+    "losses": 1,
+    "max_drawdown": 40.35910000000149,
+    "net_pnl": -40.359099999999486,
+    "profit_factor": 0.0,
+    "short_trades": 1,
+    "trade_count": 1,
+    "win_rate": 0.0,
+    "wins": 0
+  },
+  "variant": "fixed"
+}
