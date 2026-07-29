@@ -1,5 +1,5 @@
-import type { AuditedTrade } from '../strategy04Fixture';
-import { failedChecks } from '../strategy04Fixture';
+import type { AuditedTrade } from '../strategy04Audit';
+import { failedChecks } from '../strategy04Audit';
 
 interface Props {
   trades: AuditedTrade[];

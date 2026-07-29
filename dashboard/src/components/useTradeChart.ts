@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { CandlestickSeries, LineSeries, createChart, createSeriesMarkers } from 'lightweight-charts';
 import type { IChartApi, ISeriesApi, SeriesMarker, Time } from 'lightweight-charts';
-import type { FixtureBar } from '../strategy04Fixture';
-import { toChartBars } from '../strategy04Fixture';
+import type { AuditBar } from '../strategy04Audit';
+import { toChartBars } from '../strategy04Audit';
 
 export interface TradeChartHandles {
   chart: IChartApi;
@@ -33,7 +33,7 @@ const CANDLE_OPTIONS = {
  * it needs to draw price levels and markers on top.
  */
 export function useTradeChart(
-  bars: FixtureBar[],
+  bars: AuditBar[],
   lineWidth: 1 | 2,
   decorate: (handles: TradeChartHandles) => void,
 ) {
