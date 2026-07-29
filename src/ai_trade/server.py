@@ -10,7 +10,7 @@ import argparse
 import csv
 import json
 import re
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 import urllib.parse
@@ -528,12 +528,23 @@ class StrategyApiHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"error": f"Endpoint '{path}' not found"}).encode("utf-8"))
 
 
+def create_server(port: int) -> ThreadingHTTPServer:
+    """Build the API server.
+
+    Threading matters: the dashboard requests one dataset per discovered run,
+    so a single-threaded server drops most of a 48-run fan-out and the UI
+    silently renders blanks where numbers belong.
+    """
+
+    return ThreadingHTTPServer(("localhost", port), StrategyApiHandler)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Strategy Visualization REST API Server")
     parser.add_argument("--port", type=int, default=8080, help="Port to serve on (default: 8080)")
     args = parser.parse_args()
 
-    server = HTTPServer(("localhost", args.port), StrategyApiHandler)
+    server = create_server(args.port)
     print(f"Server running at http://localhost:{args.port}")
     try:
         server.serve_forever()
