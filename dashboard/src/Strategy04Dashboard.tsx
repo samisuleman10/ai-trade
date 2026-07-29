@@ -29,8 +29,9 @@ import { AssetComparison } from './components/AssetComparison';
 import { AuditedTradeList } from './components/AuditedTradeList';
 import { TradeSetupChart } from './components/TradeSetupChart';
 import { TradeExecutionChart } from './components/TradeExecutionChart';
+import { RunCatalog } from './components/RunCatalog';
 
-type View = 'performance' | 'comparison' | 'rules' | 'chart';
+type View = 'performance' | 'comparison' | 'rules' | 'chart' | 'runs';
 
 const money = (value: number) =>
   new Intl.NumberFormat('en-US', {
@@ -519,6 +520,7 @@ export default function Strategy04Dashboard() {
             { id: 'comparison' as const, label: 'Compare assets', icon: BarChart3 },
             { id: 'rules' as const, label: 'Rules', icon: BookOpen },
             { id: 'chart' as const, label: 'Chart & trades', icon: Activity },
+            { id: 'runs' as const, label: 'All runs', icon: Database },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -574,6 +576,9 @@ export default function Strategy04Dashboard() {
                 </>
               )}
             </div>
+          )}
+          {view === 'runs' && (
+            <RunCatalog onSelectRun={(entry) => console.info('Selected run', entry.bundle_id)} />
           )}
         </div>
 
