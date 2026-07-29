@@ -9,10 +9,18 @@ description = "AI-assisted trading project."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ name = "Sami" }]
-dependencies = ["ibapi>=9.81.1"]
+dependencies = [
+    "ibapi>=9.81.1",
+    # Windows ships no system tz database, so zoneinfo.ZoneInfo("America/New_York")
+    # raises ZoneInfoNotFoundError without this. Session rules depend on it, so it
+    # is a runtime dependency rather than a dev one.
+    "tzdata; platform_system == 'Windows'",
+]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+# Upper bound is future-proofing, not a fix for a current break: pytest 9 requires
+# Python 3.10+, so pip already refuses it on this project's 3.9 floor.
+dev = ["pytest>=8.0,<9"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
