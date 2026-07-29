@@ -39,7 +39,6 @@ ONE_HOUR_BARS_BEFORE = 40
 ONE_HOUR_BARS_AFTER = 10
 FIFTEEN_MINUTE_BARS_BEFORE = 20
 FIFTEEN_MINUTE_BARS_AFTER = 20
-MAX_LONG_PENETRATION = 0.25
 SLIPPAGE_BPS = 1.0
 
 
@@ -47,8 +46,13 @@ def _parse(timestamp: str) -> datetime:
     return datetime.strptime(timestamp, UTC_FORMAT).replace(tzinfo=timezone.utc)
 
 
-def _optional_float(value: str) -> Optional[float]:
-    """Blank cells stay None so a missing value can never read as zero."""
+def _optional_float(value: Optional[str]) -> Optional[float]:
+    """Blank cells and absent columns stay None so neither reads as zero.
+
+    v1's candidate_signals.csv predates the penetration rule and has no
+    long_zone_penetration_fraction column at all, so ``value`` may be
+    ``None`` here (from ``dict.get`` on a missing key), not just ``""``.
+    """
 
     return float(value) if value else None
 
@@ -73,7 +77,9 @@ def load_signals(path: Path) -> list[SignalRecord]:
                     one_hour_atr=float(row["one_hour_atr"]),
                     one_hour_atr_timestamp=row["one_hour_atr_timestamp"],
                     stop_buffer=float(row["stop_buffer"]),
-                    long_zone_penetration_fraction=_optional_float(row["long_zone_penetration_fraction"]),
+                    long_zone_penetration_fraction=_optional_float(
+                        row.get("long_zone_penetration_fraction")
+                    ),
                     reward_to_risk=float(row["reward_to_risk"]),
                 )
             )
@@ -204,8 +210,16 @@ def build_fixture(
     fifteen_minute_path: Path,
     symbol: str,
     strategy_version: str,
+    max_long_penetration: Optional[float],
 ) -> dict:
-    """Assemble the complete fixture document."""
+    """Assemble the complete fixture document.
+
+    ``max_long_penetration`` is a property of the strategy version being
+    audited, not a fixed constant: v1 has no shallow-penetration rule at all
+    (pass ``None``), while v1.1 caps it at 0.25. Passing the wrong value for
+    a version would make the audit report a false violation or silently miss
+    a real one.
+    """
 
     signals = {
         signal.decision_timestamp: signal
@@ -235,7 +249,7 @@ def build_fixture(
             trade,
             selected.qualified_timestamp or "",
             minute_timestamps,
-            MAX_LONG_PENETRATION,
+            max_long_penetration,
             SLIPPAGE_BPS,
         )
         hour_window_start = selected.qualified_timestamp or trade.entry_timestamp
@@ -307,6 +321,14 @@ def build_fixture(
     }
 
 
+def _max_long_penetration_type(value: str) -> Optional[float]:
+    """Parse ``--max-long-penetration``: 'none' (any case) disables the rule."""
+
+    if value.strip().lower() == "none":
+        return None
+    return float(value)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build the Strategy 04 dashboard fixture.")
     parser.add_argument(
@@ -327,6 +349,17 @@ def main() -> int:
     parser.add_argument("--symbol", default="SPY")
     parser.add_argument("--strategy-version", default="v1_1")
     parser.add_argument(
+        "--max-long-penetration",
+        type=_max_long_penetration_type,
+        default=None,
+        help=(
+            "Maximum allowed long-side demand-zone penetration fraction for "
+            "this strategy version. Omit, or pass 'none', for a version with "
+            "no penetration rule (e.g. v1). Pass a number (e.g. 0.25) for a "
+            "version that has the rule (e.g. v1.1)."
+        ),
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path("dashboard/src/fixtures/strategy_04_v1_1_spy.json"),
@@ -339,6 +372,7 @@ def main() -> int:
         args.fifteen_minute,
         args.symbol,
         args.strategy_version,
+        args.max_long_penetration,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(fixture, indent=2, sort_keys=True) + "\n", encoding="utf-8")

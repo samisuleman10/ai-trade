@@ -45,6 +45,43 @@ def test_signals_and_trades_join_on_decision_timestamp():
     assert {trade.decision_timestamp for trade in trades} <= signal_keys
 
 
+def test_load_signals_tolerates_a_missing_penetration_column(tmp_path):
+    """v1's candidate_signals.csv predates the penetration rule and has no
+
+    long_zone_penetration_fraction column at all. load_signals must not raise
+    KeyError for it -- the column's absence should just read as None.
+    """
+    csv_path = tmp_path / "candidate_signals.csv"
+    csv_path.write_text(
+        "decision_timestamp,entry_timestamp,side,zone_id,zone_side,zone_lower,"
+        "zone_upper,trigger_timestamp,trigger_low,one_hour_atr,"
+        "one_hour_atr_timestamp,stop_buffer,reward_to_risk\n"
+        "2021-08-03T14:30:00Z,2021-08-03T14:30:00Z,long,39,demand,437.0,437.9,"
+        "2021-08-03T14:15:00Z,437.5,1.0,2021-08-03T14:00:00Z,0.05,1.0\n",
+        encoding="utf-8",
+    )
+    signals = load_signals(csv_path)
+    assert len(signals) == 1
+    assert signals[0].long_zone_penetration_fraction is None
+
+
+def test_load_signals_reads_a_present_penetration_column(tmp_path):
+    """v1.1's column is still read normally when it is present."""
+
+    csv_path = tmp_path / "candidate_signals.csv"
+    csv_path.write_text(
+        "decision_timestamp,entry_timestamp,side,zone_id,zone_side,zone_lower,"
+        "zone_upper,trigger_timestamp,trigger_low,one_hour_atr,"
+        "one_hour_atr_timestamp,stop_buffer,long_zone_penetration_fraction,"
+        "reward_to_risk\n"
+        "2021-08-03T14:30:00Z,2021-08-03T14:30:00Z,long,39,demand,437.0,437.9,"
+        "2021-08-03T14:15:00Z,437.5,1.0,2021-08-03T14:00:00Z,0.05,0.2,1.0\n",
+        encoding="utf-8",
+    )
+    signals = load_signals(csv_path)
+    assert signals[0].long_zone_penetration_fraction == 0.2
+
+
 def test_fixture_reconciles_with_the_backtest_report():
     fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
     summary = json.loads((RESULTS / "fixed_summary.json").read_text(encoding="utf-8"))
