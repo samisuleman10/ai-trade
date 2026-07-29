@@ -107,6 +107,24 @@ def test_performance_rejects_summary_disagreeing_with_ledger():
         build_performance(_rows(), bad, "fixed", 100000.0)
 
 
+def test_performance_rejects_a_summary_with_no_ending_equity():
+    """The reconciliation guard used to switch itself off when the value it
+    reconciles against was absent -- so the one summary that most needed
+    checking was the one that skipped the check entirely.
+    """
+
+    bad = dict(_summary())
+    del bad["ending_equity"]
+    with pytest.raises(ContractError):
+        build_performance(_rows(), bad, "fixed", 100000.0)
+
+
+def test_performance_rejects_a_null_ending_equity():
+    bad = dict(_summary(), ending_equity=None)
+    with pytest.raises(ContractError):
+        build_performance(_rows(), bad, "fixed", 100000.0)
+
+
 def test_publish_writes_manifest_last_and_hashes_every_sidecar(tmp_path):
     datasets = [
         build_trade_ledger(_rows(), "fixed", "demo_run"),

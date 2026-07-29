@@ -193,7 +193,19 @@ def _read_json(path: Path) -> Dict[str, Any]:
         return json.load(handle)
 
 
-def _starting_equity(rows: Sequence[Dict[str, str]], summary: Dict[str, Any]) -> float:
+def _required_float(summary: Dict[str, Any], field: str) -> float:
+    value = summary.get(field)
+    if value is None:
+        raise ContractError(
+            f"summary has no {field!r}; the run's starting equity cannot be recovered from it"
+        )
+    try:
+        return float(value)
+    except (TypeError, ValueError) as exc:
+        raise ContractError(f"summary field {field!r} is not a number: {value!r}") from exc
+
+
+def _starting_equity(summary: Dict[str, Any]) -> float:
     """Recover the equity a run started with from its own summary.
 
     Neither ``fixed_summary.json`` nor ``fixed_trades.csv`` records a
@@ -202,17 +214,23 @@ def _starting_equity(rows: Sequence[Dict[str, str]], summary: Dict[str, Any]) ->
     -- this is reading the producer's own arithmetic, not inventing a
     default. When there are no trades, this correctly yields
     ``ending_equity`` itself.
+
+    Both fields are therefore required. They used to default to 0.0, which
+    turned a missing ``ending_equity`` into a published equity anchor of
+    ``-net_pnl`` -- a fabricated number presented as the producer's own.
+    A missing ``net_pnl`` was quieter but no better: it reported the run as
+    having started exactly where it ended. Raising ``ContractError``
+    instead means ``backfill`` skips the directory and records why, which
+    is the honest outcome for a summary that cannot answer the question.
     """
 
-    ending_equity = float(summary.get("ending_equity", 0.0))
-    net_pnl = float(summary.get("net_pnl", 0.0))
-    return ending_equity - net_pnl
+    return _required_float(summary, "ending_equity") - _required_float(summary, "net_pnl")
 
 
 def _build_variant_datasets(result_dir: Path, variant: str, run_id: str) -> List[Any]:
     rows = _read_csv_rows(result_dir / f"{variant}_trades.csv")
     summary = _read_json(result_dir / f"{variant}_summary.json")
-    starting_equity = _starting_equity(rows, summary)
+    starting_equity = _starting_equity(summary)
     ledger = build_trade_ledger(rows, variant, run_id)
     performance = build_performance(rows, summary, variant, starting_equity)
     return [ledger, performance]

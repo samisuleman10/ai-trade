@@ -167,7 +167,10 @@ def build_performance(
     The derived series is cross-checked against the producer's own
     ``summary``: a ``trade_count`` or ``ending_equity`` disagreement means
     the summary and the ledger describe different runs, which is rejected
-    rather than silently trusted.
+    rather than silently trusted. A summary with no ``ending_equity`` at
+    all is rejected too -- the guard used to skip itself when the value it
+    reconciles against was absent, so the least trustworthy summaries were
+    exactly the ones that went unchecked.
     """
 
     trade_count = summary.get("trade_count")
@@ -207,7 +210,13 @@ def build_performance(
         )
 
     ending_equity = summary.get("ending_equity")
-    if ending_equity is not None and abs(equity - float(ending_equity)) > RECONCILIATION_TOLERANCE:
+    if ending_equity is None:
+        raise ContractError("summary has no 'ending_equity' to reconcile the ledger against")
+    try:
+        ending_equity = float(ending_equity)
+    except (TypeError, ValueError) as exc:
+        raise ContractError(f"summary 'ending_equity' is not a number: {ending_equity!r}") from exc
+    if abs(equity - ending_equity) > RECONCILIATION_TOLERANCE:
         raise ContractError(
             f"summary ending_equity {ending_equity!r} disagrees with final ledger equity {equity!r}"
         )

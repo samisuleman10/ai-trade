@@ -77,6 +77,42 @@ def test_backfill_publishes_a_readable_bundle(tmp_path):
     assert manifest["status"] == "complete"
 
 
+# --- a missing ending_equity must not be papered over ---
+#
+# starting_equity was recovered as ``ending_equity - net_pnl`` with both
+# defaulting to 0.0. A summary with no ending_equity therefore published
+# ``-net_pnl`` as the run's equity anchor -- and because the contract's
+# reconciliation guard only ran ``if ending_equity is not None``, the same
+# absence also switched off the check that would have caught it.
+
+
+def _summary_without(directory: Path, field: str) -> None:
+    summary = json.loads((directory / "fixed_summary.json").read_text(encoding="utf-8"))
+    del summary[field]
+    (directory / "fixed_summary.json").write_text(json.dumps(summary), encoding="utf-8")
+
+
+def test_a_summary_with_no_ending_equity_is_skipped_with_a_reason(tmp_path):
+    _make_result(tmp_path / "no_ending_equity")
+    _summary_without(tmp_path / "no_ending_equity", "ending_equity")
+    report = backfill([tmp_path], dry_run=False)
+    assert report["published"] == 0
+    assert report["skipped"] == 1
+    assert "ending_equity" in str(report["reasons"])
+    assert not (tmp_path / "no_ending_equity" / "visualization").exists()
+
+
+def test_a_summary_with_no_net_pnl_is_skipped_with_a_reason(tmp_path):
+    """Without net_pnl the same subtraction silently reports a flat run."""
+
+    _make_result(tmp_path / "no_net_pnl")
+    _summary_without(tmp_path / "no_net_pnl", "net_pnl")
+    report = backfill([tmp_path], dry_run=False)
+    assert report["published"] == 0
+    assert report["skipped"] == 1
+    assert "net_pnl" in str(report["reasons"])
+
+
 def test_dry_run_writes_nothing(tmp_path):
     _make_result(tmp_path / "good")
     report = backfill([tmp_path], dry_run=True)
