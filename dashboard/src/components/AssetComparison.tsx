@@ -1,6 +1,6 @@
-import { STRATEGY_04_RESULTS } from '../strategy04Data';
 import type {
   Strategy04Asset,
+  Strategy04Result,
   Strategy04Version,
 } from '../strategy04Data';
 
@@ -8,6 +8,8 @@ interface AssetComparisonProps {
   version: Strategy04Version;
   selectedAsset: Strategy04Asset;
   onSelectAsset: (asset: Strategy04Asset) => void;
+  /** Fetched per version; an asset with no published run is simply absent. */
+  results: Partial<Record<Strategy04Asset, Strategy04Result>>;
 }
 
 const assets: Strategy04Asset[] = ['SPY', 'DIA', 'QQQ'];
@@ -32,14 +34,16 @@ export function AssetComparison({
   version,
   selectedAsset,
   onSelectAsset,
+  results,
 }: AssetComparisonProps) {
-  const rows = assets.map((asset) => {
-    const result = STRATEGY_04_RESULTS[version][asset];
-    const promising =
-      result.fixed.profitFactor >= 1.2 && result.fixed.averageR > 0;
-
-    return { asset, result, promising };
-  });
+  const rows = assets
+    .map((asset) => results[asset])
+    .filter((result): result is Strategy04Result => Boolean(result))
+    .map((result) => ({
+      asset: result.symbol,
+      result,
+      promising: result.fixed.profitFactor >= 1.2 && result.fixed.averageR > 0,
+    }));
 
   return (
     <section className="s4-panel overflow-hidden">

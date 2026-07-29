@@ -12,8 +12,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useStrategy04Audit } from './strategy04Audit';
+import { useStrategy04Results } from './strategy04Summary';
 import {
-  STRATEGY_04_RESULTS,
   STRATEGY_04_SPECS,
   STRATEGY_04_VERSIONS,
 } from './strategy04Data';
@@ -358,13 +358,31 @@ export default function Strategy04Dashboard() {
   const [version, setVersion] = useState<Strategy04Version>('v1_1');
   const [asset, setAsset] = useState<Strategy04Asset>('SPY');
   const [view, setView] = useState<View>('performance');
-  const result = STRATEGY_04_RESULTS[version][asset];
+  const { status: summaryStatus, results } = useStrategy04Results(version);
+  const result = results[asset];
   const { status: auditStatus, trades: auditedTrades } = useStrategy04Audit(version, asset);
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
     [auditedTrades, selectedTradeId],
   );
+
+  if (!result) {
+    return (
+      <section className="s4-panel p-8 text-center">
+        <div className="text-sm font-semibold text-slate-900">
+          {summaryStatus === 'loading'
+            ? `Loading the ${asset} ${version} run…`
+            : 'Catalog API unreachable'}
+        </div>
+        <p className="mt-2 text-xs text-slate-500">
+          {summaryStatus === 'loading'
+            ? 'Summary metrics are read from the published run, not stored in the page.'
+            : 'Start it with python -m ai_trade.server --port 8080, then reload.'}
+        </p>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -485,6 +503,7 @@ export default function Strategy04Dashboard() {
         {view === 'comparison' && (
           <AssetComparison
             version={version}
+            results={results}
             selectedAsset={asset}
             onSelectAsset={(nextAsset) => {
               setAsset(nextAsset);

@@ -3,7 +3,7 @@ import { AlertTriangle } from 'lucide-react';
 import type { CatalogEntry } from '../catalog';
 import { familyOf } from '../strategyDescriptions';
 import { useRunCatalog } from '../hooks/useRunCatalog';
-import type { PerformancePoint, PerformanceSummary } from '../hooks/useRunCatalog';
+import type { CostModel, PerformancePoint, PerformanceSummary } from '../hooks/useRunCatalog';
 
 interface StrategyComparisonProps {
   onSelectRun?: (entry: CatalogEntry) => void;
@@ -80,6 +80,8 @@ interface ComparisonRow {
   period: string;
   /** True while this run's dataset is still in flight. */
   isLoading: boolean;
+  /** The run's declared cost model, if it declared one. */
+  costModel?: CostModel;
 }
 
 /**
@@ -101,6 +103,20 @@ const loadingCell = '…';
  */
 const PERIOD_MISMATCH_LABEL = 'different period';
 
+/**
+ * A run's cost model reduced to a comparable key, or null when it never
+ * recorded one. Slippage and commission are what separate a realistic
+ * result from an optimistic one, so two runs priced differently are not
+ * ranked like for like even over the same instrument and period.
+ */
+function costKeyOf(model: CostModel | undefined): string | null {
+  if (!model || !model.recorded) return null;
+  return `${model.slippage_bps_per_side ?? '?'}/${model.commission_per_share_per_side ?? '?'}`;
+}
+
+const COST_MISMATCH_LABEL = 'different costs';
+const COST_UNKNOWN_LABEL = 'costs not recorded';
+
 /** Symbol used to group a run, or the sentinel key for "not recorded". */
 function symbolKeyOf(entry: CatalogEntry): string {
   const symbol = entry.instrument.symbol;
@@ -108,7 +124,7 @@ function symbolKeyOf(entry: CatalogEntry): string {
 }
 
 export function StrategyComparison({ onSelectRun, refreshToken }: StrategyComparisonProps) {
-  const { status, entries, performance, retry } = useRunCatalog(refreshToken);
+  const { status, entries, performance, costModels, retry } = useRunCatalog(refreshToken);
 
   const groups = useMemo(() => {
     const bySymbol = new Map<string, ComparisonRow[]>();
@@ -124,6 +140,7 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
           typeof summary?.trade_count === 'number' && summary.trade_count < SMALL_SAMPLE_THRESHOLD,
         period: dateRangeLabel(points),
         isLoading: performance[entry.bundle_id]?.status === 'loading',
+        costModel: costModels[entry.bundle_id],
       };
       const list = bySymbol.get(key);
       if (list) {
@@ -155,7 +172,7 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
       if (b === UNKNOWN_SYMBOL_KEY) return -1;
       return a.localeCompare(b);
     });
-  }, [entries, performance]);
+  }, [entries, performance, costModels]);
 
   if (status === 'loading') {
     return (
@@ -223,6 +240,18 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
         const basePeriod =
           Array.from(periodCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? em;
         const mixedPeriods = periodCounts.size > 1;
+
+        // Same treatment for the cost model: the most common recorded model
+        // is the group's baseline, and anything else -- a different model, or
+        // no recorded model at all -- is marked rather than ranked silently.
+        const costCounts = new Map<string, number>();
+        for (const row of rows) {
+          const key = costKeyOf(row.costModel);
+          if (key) costCounts.set(key, (costCounts.get(key) ?? 0) + 1);
+        }
+        const baseCost = Array.from(costCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+        const unknownCosts = rows.filter((row) => !costKeyOf(row.costModel)).length;
+        const mixedCosts = costCounts.size > 1 || (baseCost !== null && unknownCosts > 0);
         return (
           <section key={symbolKey} className="s4-panel overflow-hidden">
             <div className="border-b border-slate-200 px-5 py-4">
@@ -246,6 +275,17 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
                   </span>
                 </p>
               )}
+              {mixedCosts && (
+                <p className="mt-2 flex max-w-3xl items-start gap-2 text-xs text-amber-700">
+                  <AlertTriangle className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>
+                    These runs were not priced the same way. Slippage and commission decide how much
+                    of an edge survives contact with a real broker, so a run with cheaper or
+                    unstated costs can outrank one that priced itself honestly.
+                    {unknownCosts > 0 && ` ${unknownCosts} of ${rows.length} never recorded a cost model.`}
+                  </span>
+                </p>
+              )}
             </div>
             <div className="overflow-x-auto">
               <table className="s4-compare-table min-w-[1080px]">
@@ -262,7 +302,7 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map(({ entry, summary, points, isSmallSample, period, isLoading }) => (
+                  {rows.map(({ entry, summary, points, isSmallSample, period, isLoading, costModel }) => (
                     <tr
                       key={entry.bundle_id}
                       className="s4-row-button hover:bg-indigo-50/50"
@@ -328,6 +368,19 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
                             {PERIOD_MISMATCH_LABEL}
                           </span>
                         )}
+                        {mixedCosts &&
+                          (costKeyOf(costModel) === null ? (
+                            <span className="s4-cohort-flag" title="This run recorded no cost model">
+                              {COST_UNKNOWN_LABEL}
+                            </span>
+                          ) : costKeyOf(costModel) !== baseCost ? (
+                            <span
+                              className="s4-cohort-flag"
+                              title={`Group baseline is ${baseCost} (slippage bps / commission per share)`}
+                            >
+                              {COST_MISMATCH_LABEL}
+                            </span>
+                          ) : null)}
                       </td>
                     </tr>
                   ))}
