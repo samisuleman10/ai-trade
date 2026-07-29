@@ -23,6 +23,7 @@ from ai_trade.market_data import OHLCVBar
 from ai_trade.strategy_01 import load_ohlcv_csv
 from ai_trade.strategy_04_audit import (
     CheckResult,
+    FifteenMinuteBar,
     SignalRecord,
     TradeRecord,
     audit_trade,
@@ -230,7 +231,9 @@ def build_fixture(
 
     hour_bars = load_ohlcv_csv(one_hour_path)
     minute_bars = load_ohlcv_csv(fifteen_minute_path)
-    minute_timestamps = [bar.timestamp for bar in minute_bars]
+    # The audit needs each entry bar's OPEN as well as its timestamp: the
+    # recorded entry_price is only verifiable against the bar it came from.
+    audit_bars = [FifteenMinuteBar(bar.timestamp, bar.open) for bar in minute_bars]
 
     indicator = build_one_hour_indicator(hour_bars, strategy_04_v0_3_parameters())
 
@@ -248,7 +251,7 @@ def build_fixture(
             signal,
             trade,
             selected.qualified_timestamp or "",
-            minute_timestamps,
+            audit_bars,
             max_long_penetration,
             SLIPPAGE_BPS,
         )

@@ -38,6 +38,18 @@ class SignalRecord:
 
 
 @dataclass(frozen=True)
+class FifteenMinuteBar:
+    """The two entry-bar fields the audit needs, and nothing more.
+
+    Deliberately not ``market_data.OHLCVBar``: that module imports the
+    IBKR client, and this one must stay pure and dependency-free.
+    """
+
+    timestamp: str
+    open: float
+
+
+@dataclass(frozen=True)
 class TradeRecord:
     decision_timestamp: str
     entry_timestamp: str
@@ -130,16 +142,55 @@ def check_stop_price(signal: SignalRecord, trade: TradeRecord) -> CheckResult:
 def check_entry_timing(
     trade: TradeRecord,
     signal: SignalRecord,
-    fifteen_minute_timestamps: Sequence[str],
+    fifteen_minute_bars: Sequence[FifteenMinuteBar],
 ) -> CheckResult:
     """Entry is the next 15-minute bar that opens after the trigger bar."""
 
-    ordered = sorted(fifteen_minute_timestamps)
+    ordered = sorted(bar.timestamp for bar in fifteen_minute_bars)
     later = [value for value in ordered if _parse(value) > _parse(signal.trigger_timestamp)]
     if not later:
         return _check("entry_timing", False, "a bar after the trigger", "none available")
     expected = later[0]
     return _check("entry_timing", expected == trade.entry_timestamp, expected, trade.entry_timestamp)
+
+
+def check_entry_price(
+    trade: TradeRecord,
+    fifteen_minute_bars: Sequence[FifteenMinuteBar],
+    slippage_bps: float,
+) -> CheckResult:
+    """The entry fills at the entry bar's open, slipped against the position.
+
+    ``entry_price`` is the anchor for stop distance, target distance and
+    therefore R: every other price check is stated relative to it, so an
+    entry off by any amount silently rescales the whole trade while every
+    downstream check still agrees with itself. Nothing verified it until
+    now.
+
+    ``backtest_strategy_01.run_backtest`` takes the raw entry from the
+    entry bar's OPEN and applies one side of slippage in the direction
+    that costs the position: a long buys in above the open, a short sells
+    in below it. Exact equality within ``TOLERANCE`` is safe -- the
+    producer models no gaps and no partial fills.
+
+    A trade whose entry bar is absent from the supplied series fails
+    rather than passes: an anchor that cannot be verified is not a
+    verified anchor.
+    """
+
+    matches = [bar for bar in fifteen_minute_bars if bar.timestamp == trade.entry_timestamp]
+    if not matches:
+        return _check(
+            "entry_price",
+            False,
+            "a 15-minute bar at " + trade.entry_timestamp,
+            "no such bar in the series",
+        )
+
+    fraction = slippage_bps / 10_000.0
+    bar_open = matches[0].open
+    expected = bar_open * (1 + fraction) if trade.side == "long" else bar_open * (1 - fraction)
+    return _check("entry_price", _close(expected, trade.entry_price), expected, trade.entry_price)
 
 
 def check_target_price(signal: SignalRecord, trade: TradeRecord) -> CheckResult:
@@ -246,7 +297,7 @@ def audit_trade(
     signal: SignalRecord,
     trade: TradeRecord,
     zone_qualified_timestamp: str,
-    fifteen_minute_timestamps: Sequence[str],
+    fifteen_minute_bars: Sequence[FifteenMinuteBar],
     max_long_penetration: Optional[float],
     slippage_bps: float,
 ) -> list[CheckResult]:
@@ -257,7 +308,8 @@ def audit_trade(
         check_causality_zone(signal, zone_qualified_timestamp),
         check_stop_buffer(signal),
         check_stop_price(signal, trade),
-        check_entry_timing(trade, signal, fifteen_minute_timestamps),
+        check_entry_timing(trade, signal, fifteen_minute_bars),
+        check_entry_price(trade, fifteen_minute_bars, slippage_bps),
         check_target_price(signal, trade),
         check_penetration(signal, max_long_penetration),
         check_session(trade),
