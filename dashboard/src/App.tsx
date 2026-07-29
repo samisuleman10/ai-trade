@@ -8,14 +8,24 @@ import type { CatalogEntry } from './catalog';
 
 type Section = 'compare' | 'runs' | 'strategy04';
 
+/**
+ * Per-strategy deep-dives come first, newest leftmost, then the screens that
+ * cut across every strategy. A strategy only earns a slot here once it has a
+ * view of its own -- 01, 02 and 03 have no bespoke screen, so they live in
+ * Compare and All runs rather than taking an empty tab. When Strategy 05 gets
+ * its own view it goes to the front of this list and becomes the landing
+ * screen, since the first entry is what opens.
+ */
 const SECTIONS: Array<{ id: Section; label: string; icon: typeof BarChart3 }> = [
+  { id: 'strategy04', label: 'Strategy 04', icon: Layers3 },
   { id: 'compare', label: 'Compare strategies', icon: BarChart3 },
   { id: 'runs', label: 'All runs', icon: Database },
-  { id: 'strategy04', label: 'Strategy 04', icon: Layers3 },
 ];
 
+const LANDING_SECTION: Section = SECTIONS[0].id;
+
 export default function App() {
-  const [section, setSection] = useState<Section>('compare');
+  const [section, setSection] = useState<Section>(LANDING_SECTION);
   const [selectedRun, setSelectedRun] = useState<CatalogEntry | null>(null);
   const [apiReachable, setApiReachable] = useState(false);
   const [checkingApi, setCheckingApi] = useState(false);
