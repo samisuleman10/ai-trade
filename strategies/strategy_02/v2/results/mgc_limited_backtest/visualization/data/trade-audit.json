@@ -1,0 +1,54 @@
+{
+  "dataset_id": "trade_audit",
+  "kind": "trade_audit",
+  "schema_version": "1.0.0",
+  "summary": {
+    "audit_failed": 0,
+    "audit_passed": 1
+  },
+  "trades": [
+    {
+      "checks": [
+        {
+          "actual": "-148.9204112364596",
+          "check_id": "net_pnl",
+          "expected": "-148.9204112364596",
+          "passed": true
+        },
+        {
+          "actual": "99851.07958876355",
+          "check_id": "equity_chain",
+          "expected": "no predecessor: first ledger row",
+          "passed": true
+        },
+        {
+          "actual": "-1.0112640717751653",
+          "check_id": "result_r",
+          "expected": "-1.0112640717751653",
+          "passed": true
+        },
+        {
+          "actual": "2026-07-21T02:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2026-07-20T15:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "4",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=4046.9143613729775 entry=4010.09895 target=3973.2835386270226",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "mgc_limited_backtest:fixed:000001",
+      "trigger_timestamp": ""
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 {
   "bundle_id": "strategies_strategy_03_v1_results_us30_dia_4h",
   "capabilities": {
-    "has_trade_audit": false,
+    "has_signal_audit": false,
+    "has_trade_audit": true,
     "sizing_variants": [
       "fixed",
       "rrms"
@@ -52,10 +53,19 @@
       "path": "data/run-summary.json",
       "record_count": 0,
       "sha256": "68059667c8e3f5129f2800881200c541b4c1ac504b62db6bce72e4faf99fedaa"
+    },
+    {
+      "dataset_id": "trade_audit",
+      "first_timestamp": null,
+      "kind": "trade_audit",
+      "last_timestamp": null,
+      "path": "data/trade-audit.json",
+      "record_count": 76,
+      "sha256": "987cb52df9bcc8e2aadfe0c1ac73598c7dcd65b58520670cc963a0664fe15d2e"
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T18:35:38Z",
+  "generated_at": "2026-07-29T19:38:28Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

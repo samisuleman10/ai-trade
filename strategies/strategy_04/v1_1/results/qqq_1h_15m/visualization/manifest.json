@@ -1,6 +1,7 @@
 {
   "bundle_id": "strategies_strategy_04_v1_1_results_qqq_1h_15m",
   "capabilities": {
+    "has_signal_audit": true,
     "has_trade_audit": true,
     "sizing_variants": [
       "fixed",
@@ -69,7 +70,7 @@
       "last_timestamp": null,
       "path": "data/trade-audit.json",
       "record_count": 59,
-      "sha256": "b2f9299c3583c41388fb6ac58e3e8e59b7fa3417614440acc8e05cc879a7a409"
+      "sha256": "477d071336bdac14b0c5a742dec6b74fc90b574a77a9a05dc10ad7dff518177a"
     },
     {
       "dataset_id": "audit_windows",
@@ -82,7 +83,7 @@
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T18:39:06Z",
+  "generated_at": "2026-07-29T19:42:30Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

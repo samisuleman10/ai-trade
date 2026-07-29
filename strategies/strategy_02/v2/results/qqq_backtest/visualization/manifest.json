@@ -1,7 +1,8 @@
 {
   "bundle_id": "strategies_strategy_02_v2_results_qqq_backtest",
   "capabilities": {
-    "has_trade_audit": false,
+    "has_signal_audit": false,
+    "has_trade_audit": true,
     "sizing_variants": [
       "fixed",
       "rrms"
@@ -52,10 +53,19 @@
       "path": "data/run-summary.json",
       "record_count": 0,
       "sha256": "7051c646f19d6582daf75a2bfd877479d697626b325877b0547cd06daade427a"
+    },
+    {
+      "dataset_id": "trade_audit",
+      "first_timestamp": null,
+      "kind": "trade_audit",
+      "last_timestamp": null,
+      "path": "data/trade-audit.json",
+      "record_count": 16,
+      "sha256": "2a06a412df98c428ece5b861640d1baf4e8bf89e199bb29f44fceec619559ed2"
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T18:35:37Z",
+  "generated_at": "2026-07-29T19:38:27Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,
