@@ -229,9 +229,11 @@ def build_fixture(
 
     ``max_long_penetration`` is a property of the strategy version being
     audited, not a fixed constant: v1 has no shallow-penetration rule at all
-    (pass ``None``), while v1.1 caps it at 0.25. Passing the wrong value for
-    a version would make the audit report a false violation or silently miss
-    a real one.
+    (``None``), while v1.1 and v1.2 cap it at 0.25. Passing the wrong value
+    for a version would make the audit report a false violation or silently
+    miss a real one, so callers should get it from
+    ``resolve_max_long_penetration`` rather than choosing one, and this
+    function takes it explicitly to stay a pure transformation.
     """
 
     signals = {

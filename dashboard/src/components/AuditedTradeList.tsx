@@ -22,8 +22,10 @@ export function AuditedTradeList({ trades, selectedTradeId, onSelect }: Props) {
           </h2>
         </div>
         <div className="flex gap-2 text-xs">
+          {/* Counts TRADES, not checks: a trade fails when any one of its
+              checks does, so this is trades with a clean audit. */}
           <span className="rounded bg-emerald-50 px-2 py-1 text-emerald-700">
-            {trades.length - failing} checks passed
+            {trades.length - failing} trades passed
           </span>
           {failing > 0 && (
             <span className="rounded bg-rose-50 px-2 py-1 text-rose-700">

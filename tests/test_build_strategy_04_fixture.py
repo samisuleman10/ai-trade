@@ -135,10 +135,29 @@ def test_fixture_reconciles_with_the_backtest_report():
     assert abs(fixture["summary"]["ending_equity"] - summary["ending_equity"]) < 1e-6
 
 
+# Naming the checks, rather than counting them, means a fixture regenerated
+# from an older audit fails here instead of silently shipping a trade whose
+# entry price or R was never verified.
+EXPECTED_CHECK_IDS = [
+    "causality_atr",
+    "causality_zone",
+    "stop_buffer",
+    "stop_price",
+    "entry_timing",
+    "entry_price",
+    "target_price",
+    "penetration",
+    "session",
+    "outcome",
+    "result_r",
+    "side_match",
+]
+
+
 def test_every_trade_carries_zones_and_bar_windows():
     fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
     for trade in fixture["trades"]:
         assert trade["zones"]["selected"]["zone_id"] > 0
         assert len(trade["bars"]["one_hour"]) > 0
         assert len(trade["bars"]["fifteen_minute"]) > 0
-        assert len(trade["audit"]["checks"]) == 10
+        assert [check["check_id"] for check in trade["audit"]["checks"]] == EXPECTED_CHECK_IDS

@@ -51,6 +51,12 @@
             "passed": true
           },
           {
+            "actual": "420.66792899999996",
+            "check_id": "entry_price",
+            "expected": "420.66792899999996",
+            "passed": true
+          },
+          {
             "actual": "420.01002995625026",
             "check_id": "target_price",
             "expected": "420.01002995625026",
@@ -71,7 +77,13 @@
           {
             "actual": "421.367960626554",
             "check_id": "outcome",
-            "expected": "between 421.32582704374965 and 421.367961626554 (stop 421.32582804374965)",
+            "expected": "421.367960626554",
+            "passed": true
+          },
+          {
+            "actual": "-1.0792410071114056",
+            "check_id": "result_r",
+            "expected": "-1.0792410071114056",
             "passed": true
           },
           {
@@ -1716,6 +1728,12 @@
             "passed": true
           },
           {
+            "actual": "437.81377699999996",
+            "check_id": "entry_price",
+            "expected": "437.81377699999996",
+            "passed": true
+          },
+          {
             "actual": "439.7814382763972",
             "check_id": "target_price",
             "expected": "439.7814382763972",
@@ -1736,7 +1754,13 @@
           {
             "actual": "439.73746013256954",
             "check_id": "outcome",
-            "expected": "at or above 439.73745913256954 (target 439.7814382763972 less slippage)",
+            "expected": "439.73746013256954",
+            "passed": true
+          },
+          {
+            "actual": "0.9725673598016434",
+            "check_id": "result_r",
+            "expected": "0.9725673598016434",
             "passed": true
           },
           {
@@ -2821,6 +2845,12 @@
             "passed": true
           },
           {
+            "actual": "440.305965",
+            "check_id": "entry_price",
+            "expected": "440.305965",
+            "passed": true
+          },
+          {
             "actual": "439.49921665687725",
             "check_id": "target_price",
             "expected": "439.49921665687725",
@@ -2841,7 +2871,13 @@
           {
             "actual": "439.5431665785429",
             "check_id": "outcome",
-            "expected": "at or below 439.5431675785429 (target 439.49921665687725 plus slippage)",
+            "expected": "439.5431665785429",
+            "passed": true
+          },
+          {
+            "actual": "0.9331267028614625",
+            "check_id": "result_r",
+            "expected": "0.9331267028614625",
             "passed": true
           },
           {
@@ -3766,6 +3802,12 @@
             "passed": true
           },
           {
+            "actual": "471.037099",
+            "check_id": "entry_price",
+            "expected": "471.037099",
+            "passed": true
+          },
+          {
             "actual": "471.8886924260211",
             "check_id": "target_price",
             "expected": "471.8886924260211",
@@ -3786,7 +3828,13 @@
           {
             "actual": "471.84150355677855",
             "check_id": "outcome",
-            "expected": "at or above 471.8415025567785 (target 471.8886924260211 less slippage)",
+            "expected": "471.84150355677855",
+            "passed": true
+          },
+          {
+            "actual": "0.9328448676385658",
+            "check_id": "result_r",
+            "expected": "0.9328448676385658",
             "passed": true
           },
           {
@@ -4855,6 +4903,12 @@
             "passed": true
           },
           {
+            "actual": "467.656761",
+            "check_id": "entry_price",
+            "expected": "467.656761",
+            "passed": true
+          },
+          {
             "actual": "469.2050545851151",
             "check_id": "target_price",
             "expected": "469.2050545851151",
@@ -4875,7 +4929,13 @@
           {
             "actual": "469.1581340796566",
             "check_id": "outcome",
-            "expected": "at or above 469.1581330796566 (target 469.2050545851151 less slippage)",
+            "expected": "469.1581340796566",
+            "passed": true
+          },
+          {
+            "actual": "0.9632366199758738",
+            "check_id": "result_r",
+            "expected": "0.9632366199758738",
             "passed": true
           },
           {
@@ -6184,6 +6244,12 @@
             "passed": true
           },
           {
+            "actual": "447.18527700000004",
+            "check_id": "entry_price",
+            "expected": "447.18527700000004",
+            "passed": true
+          },
+          {
             "actual": "445.30758458420837",
             "check_id": "target_price",
             "expected": "445.30758458420837",
@@ -6204,7 +6270,13 @@
           {
             "actual": "449.1078757127333",
             "check_id": "outcome",
-            "expected": "between 449.0629684157917 and 449.1078767127333 (stop 449.0629694157917)",
+            "expected": "449.1078757127333",
+            "passed": true
+          },
+          {
+            "actual": "-1.0292413690761097",
+            "check_id": "result_r",
+            "expected": "-1.0292413690761097",
             "passed": true
           },
           {
@@ -7049,6 +7121,12 @@
             "passed": true
           },
           {
+            "actual": "442.094205",
+            "check_id": "entry_price",
+            "expected": "442.094205",
+            "passed": true
+          },
+          {
             "actual": "443.83400373778386",
             "check_id": "target_price",
             "expected": "443.83400373778386",
@@ -7069,7 +7147,13 @@
           {
             "actual": "440.3103708215899",
             "check_id": "outcome",
-            "expected": "between 440.3103698215899 and 440.3544072622161 (stop 440.3544062622161)",
+            "expected": "440.3103708215899",
+            "passed": true
+          },
+          {
+            "actual": "-1.0310584434007768",
+            "check_id": "result_r",
+            "expected": "-1.0310584434007768",
             "passed": true
           },
           {
@@ -8978,6 +9062,12 @@
             "passed": true
           },
           {
+            "actual": "377.117708",
+            "check_id": "entry_price",
+            "expected": "377.117708",
+            "passed": true
+          },
+          {
             "actual": "379.4744886443051",
             "check_id": "target_price",
             "expected": "379.4744886443051",
@@ -8998,7 +9088,13 @@
           {
             "actual": "374.7234512629593",
             "check_id": "outcome",
-            "expected": "between 374.7234502629593 and 374.7609283556949 (stop 374.7609273556949)",
+            "expected": "374.7234512629593",
+            "passed": true
+          },
+          {
+            "actual": "-1.020144468196603",
+            "check_id": "result_r",
+            "expected": "-1.020144468196603",
             "passed": true
           },
           {
@@ -9939,6 +10035,12 @@
             "passed": true
           },
           {
+            "actual": "375.107507",
+            "check_id": "entry_price",
+            "expected": "375.107507",
+            "passed": true
+          },
+          {
             "actual": "377.82954787957107",
             "check_id": "target_price",
             "expected": "377.82954787957107",
@@ -9959,7 +10061,13 @@
           {
             "actual": "377.79176492478314",
             "check_id": "outcome",
-            "expected": "at or above 377.7917639247831 (target 377.82954787957107 less slippage)",
+            "expected": "377.79176492478314",
+            "passed": true
+          },
+          {
+            "actual": "0.9824459084554753",
+            "check_id": "result_r",
+            "expected": "0.9824459084554753",
             "passed": true
           },
           {
@@ -10940,6 +11048,12 @@
             "passed": true
           },
           {
+            "actual": "395.510445",
+            "check_id": "entry_price",
+            "expected": "395.510445",
+            "passed": true
+          },
+          {
             "actual": "394.44110218808254",
             "check_id": "target_price",
             "expected": "394.44110218808254",
@@ -10960,7 +11074,13 @@
           {
             "actual": "396.61944579069865",
             "check_id": "outcome",
-            "expected": "between 396.5797868119175 and 396.61944679069865 (stop 396.57978781191747)",
+            "expected": "396.61944579069865",
+            "passed": true
+          },
+          {
+            "actual": "-1.0464378478330405",
+            "check_id": "result_r",
+            "expected": "-1.0464378478330405",
             "passed": true
           },
           {
@@ -11861,6 +11981,12 @@
             "passed": true
           },
           {
+            "actual": "399.580038",
+            "check_id": "entry_price",
+            "expected": "399.580038",
+            "passed": true
+          },
+          {
             "actual": "397.4622546969313",
             "check_id": "target_price",
             "expected": "397.4622546969313",
@@ -11881,7 +12007,13 @@
           {
             "actual": "397.502000922401",
             "check_id": "outcome",
-            "expected": "at or below 397.502001922401 (target 397.4622546969313 plus slippage)",
+            "expected": "397.502000922401",
+            "passed": true
+          },
+          {
+            "actual": "0.9765102381355061",
+            "check_id": "result_r",
+            "expected": "0.9765102381355061",
             "passed": true
           },
           {
@@ -12862,6 +12994,12 @@
             "passed": true
           },
           {
+            "actual": "362.75372100000004",
+            "check_id": "entry_price",
+            "expected": "362.75372100000004",
+            "passed": true
+          },
+          {
             "actual": "361.69918678932584",
             "check_id": "target_price",
             "expected": "361.69918678932584",
@@ -12882,7 +13020,13 @@
           {
             "actual": "363.8446360361953",
             "check_id": "outcome",
-            "expected": "between 363.80825421067425 and 363.8446370361953 (stop 363.80825521067425)",
+            "expected": "363.8446360361953",
+            "passed": true
+          },
+          {
+            "actual": "-1.0439822862564232",
+            "check_id": "result_r",
+            "expected": "-1.0439822862564232",
             "passed": true
           },
           {
@@ -13823,6 +13967,12 @@
             "passed": true
           },
           {
+            "actual": "391.849181",
+            "check_id": "entry_price",
+            "expected": "391.849181",
+            "passed": true
+          },
+          {
             "actual": "393.7735370909942",
             "check_id": "target_price",
             "expected": "393.7735370909942",
@@ -13843,7 +13993,13 @@
           {
             "actual": "389.8858324265149",
             "check_id": "outcome",
-            "expected": "between 389.88583142651487 and 389.9248259090058 (stop 389.9248249090058)",
+            "expected": "389.8858324265149",
+            "passed": true
+          },
+          {
+            "actual": "-1.0254591562965656",
+            "check_id": "result_r",
+            "expected": "-1.0254591562965656",
             "passed": true
           },
           {
@@ -15688,6 +15844,12 @@
             "passed": true
           },
           {
+            "actual": "395.580438",
+            "check_id": "entry_price",
+            "expected": "395.580438",
+            "passed": true
+          },
+          {
             "actual": "393.83778659233144",
             "check_id": "target_price",
             "expected": "393.83778659233144",
@@ -15708,7 +15870,13 @@
           {
             "actual": "393.87717037099065",
             "check_id": "outcome",
-            "expected": "at or below 393.87717137099065 (target 393.83778659233144 plus slippage)",
+            "expected": "393.87717037099065",
+            "passed": true
+          },
+          {
+            "actual": "0.9716616998431815",
+            "check_id": "result_r",
+            "expected": "0.9716616998431815",
             "passed": true
           },
           {
@@ -16649,6 +16817,12 @@
             "passed": true
           },
           {
+            "actual": "412.168779",
+            "check_id": "entry_price",
+            "expected": "412.168779",
+            "passed": true
+          },
+          {
             "actual": "411.0627365314425",
             "check_id": "target_price",
             "expected": "411.0627365314425",
@@ -16669,7 +16843,13 @@
           {
             "actual": "411.10384280509567",
             "check_id": "outcome",
-            "expected": "at or below 411.10384380509566 (target 411.0627365314425 plus slippage)",
+            "expected": "411.10384280509567",
+            "passed": true
+          },
+          {
+            "actual": "0.953793570223564",
+            "check_id": "result_r",
+            "expected": "0.953793570223564",
             "passed": true
           },
           {
@@ -18186,6 +18366,12 @@
             "passed": true
           },
           {
+            "actual": "412.268769",
+            "check_id": "entry_price",
+            "expected": "412.268769",
+            "passed": true
+          },
+          {
             "actual": "410.74213048230376",
             "check_id": "target_price",
             "expected": "410.74213048230376",
@@ -18206,7 +18392,13 @@
           {
             "actual": "410.78320469535197",
             "check_id": "outcome",
-            "expected": "at or below 410.78320569535197 (target 410.74213048230376 plus slippage)",
+            "expected": "410.78320469535197",
+            "passed": true
+          },
+          {
+            "actual": "0.9665446584399839",
+            "check_id": "result_r",
+            "expected": "0.9665446584399839",
             "passed": true
           },
           {
@@ -19211,6 +19403,12 @@
             "passed": true
           },
           {
+            "actual": "442.115784",
+            "check_id": "entry_price",
+            "expected": "442.115784",
+            "passed": true
+          },
+          {
             "actual": "440.1839696793829",
             "check_id": "target_price",
             "expected": "440.1839696793829",
@@ -19231,7 +19429,13 @@
           {
             "actual": "440.22798807635087",
             "check_id": "outcome",
-            "expected": "at or below 440.22798907635087 (target 440.1839696793829 plus slippage)",
+            "expected": "440.22798807635087",
+            "passed": true
+          },
+          {
+            "actual": "0.9720374797973922",
+            "check_id": "result_r",
+            "expected": "0.9720374797973922",
             "passed": true
           },
           {
@@ -20444,6 +20648,12 @@
             "passed": true
           },
           {
+            "actual": "452.424753",
+            "check_id": "entry_price",
+            "expected": "452.424753",
+            "passed": true
+          },
+          {
             "actual": "451.31890225114563",
             "check_id": "target_price",
             "expected": "451.31890225114563",
@@ -20464,7 +20674,13 @@
           {
             "actual": "451.3640341413707",
             "check_id": "outcome",
-            "expected": "at or below 451.3640351413707 (target 451.31890225114563 plus slippage)",
+            "expected": "451.3640341413707",
+            "passed": true
+          },
+          {
+            "actual": "0.9501452702526015",
+            "check_id": "result_r",
+            "expected": "0.9501452702526015",
             "passed": true
           },
           {
@@ -22365,6 +22581,12 @@
             "passed": true
           },
           {
+            "actual": "447.495246",
+            "check_id": "entry_price",
+            "expected": "447.495246",
+            "passed": true
+          },
+          {
             "actual": "446.1588440496372",
             "check_id": "target_price",
             "expected": "446.1588440496372",
@@ -22385,7 +22607,13 @@
           {
             "actual": "446.20345993404214",
             "check_id": "outcome",
-            "expected": "at or below 446.20346093404214 (target 446.1588440496372 plus slippage)",
+            "expected": "446.20345993404214",
+            "passed": true
+          },
+          {
+            "actual": "0.959132142548789",
+            "check_id": "result_r",
+            "expected": "0.959132142548789",
             "passed": true
           },
           {
@@ -23254,6 +23482,12 @@
             "passed": true
           },
           {
+            "actual": "436.426353",
+            "check_id": "entry_price",
+            "expected": "436.426353",
+            "passed": true
+          },
+          {
             "actual": "435.4106744073018",
             "check_id": "target_price",
             "expected": "435.4106744073018",
@@ -23274,7 +23508,13 @@
           {
             "actual": "435.45421547474257",
             "check_id": "outcome",
-            "expected": "at or below 435.45421647474257 (target 435.4106744073018 plus slippage)",
+            "expected": "435.45421547474257",
+            "passed": true
+          },
+          {
+            "actual": "0.9472854229422039",
+            "check_id": "result_r",
+            "expected": "0.9472854229422039",
             "passed": true
           },
           {
@@ -24271,6 +24511,12 @@
             "passed": true
           },
           {
+            "actual": "470.997095",
+            "check_id": "entry_price",
+            "expected": "470.997095",
+            "passed": true
+          },
+          {
             "actual": "473.3561680482136",
             "check_id": "target_price",
             "expected": "473.3561680482136",
@@ -24291,7 +24537,13 @@
           {
             "actual": "468.59115814959125",
             "check_id": "outcome",
-            "expected": "between 468.59115714959125 and 468.6380229517864 (stop 468.6380219517864)",
+            "expected": "468.59115814959125",
+            "passed": true
+          },
+          {
+            "actual": "-1.0241042990331402",
+            "check_id": "result_r",
+            "expected": "-1.0241042990331402",
             "passed": true
           },
           {
@@ -25160,6 +25412,12 @@
             "passed": true
           },
           {
+            "actual": "531.076887",
+            "check_id": "entry_price",
+            "expected": "531.076887",
+            "passed": true
+          },
+          {
             "actual": "530.5336431495102",
             "check_id": "target_price",
             "expected": "530.5336431495102",
@@ -25180,7 +25438,13 @@
           {
             "actual": "530.5866965138251",
             "check_id": "outcome",
-            "expected": "at or below 530.5866975138251 (target 530.5336431495102 plus slippage)",
+            "expected": "530.5866965138251",
+            "passed": true
+          },
+          {
+            "actual": "0.8839317476708629",
+            "check_id": "result_r",
+            "expected": "0.8839317476708629",
             "passed": true
           },
           {
@@ -26121,6 +26385,12 @@
             "passed": true
           },
           {
+            "actual": "556.445639",
+            "check_id": "entry_price",
+            "expected": "556.445639",
+            "passed": true
+          },
+          {
             "actual": "558.0484249223061",
             "check_id": "target_price",
             "expected": "558.0484249223061",
@@ -26141,7 +26411,13 @@
           {
             "actual": "554.7873687923861",
             "check_id": "outcome",
-            "expected": "between 554.7873677923861 and 554.8428540776939 (stop 554.8428530776939)",
+            "expected": "554.7873687923861",
+            "passed": true
+          },
+          {
+            "actual": "-1.040856538853027",
+            "check_id": "result_r",
+            "expected": "-1.040856538853027",
             "passed": true
           },
           {
@@ -27122,6 +27398,12 @@
             "passed": true
           },
           {
+            "actual": "585.778572",
+            "check_id": "entry_price",
+            "expected": "585.778572",
+            "passed": true
+          },
+          {
             "actual": "587.7970088467806",
             "check_id": "target_price",
             "expected": "587.7970088467806",
@@ -27142,7 +27424,13 @@
           {
             "actual": "587.738229145896",
             "check_id": "outcome",
-            "expected": "at or above 587.738228145896 (target 587.7970088467806 less slippage)",
+            "expected": "587.738229145896",
+            "passed": true
+          },
+          {
+            "actual": "0.9659242740270217",
+            "check_id": "result_r",
+            "expected": "0.9659242740270217",
             "passed": true
           },
           {
@@ -28043,6 +28331,12 @@
             "passed": true
           },
           {
+            "actual": "583.121682",
+            "check_id": "entry_price",
+            "expected": "583.121682",
+            "passed": true
+          },
+          {
             "actual": "580.733926476541",
             "check_id": "target_price",
             "expected": "580.733926476541",
@@ -28063,7 +28357,13 @@
           {
             "actual": "580.7919998691887",
             "check_id": "outcome",
-            "expected": "at or below 580.7920008691887 (target 580.733926476541 plus slippage)",
+            "expected": "580.7919998691887",
+            "passed": true
+          },
+          {
+            "actual": "0.9714906354612703",
+            "check_id": "result_r",
+            "expected": "0.9714906354612703",
             "passed": true
           },
           {
@@ -29292,6 +29592,12 @@
             "passed": true
           },
           {
+            "actual": "607.9392",
+            "check_id": "entry_price",
+            "expected": "607.9392",
+            "passed": true
+          },
+          {
             "actual": "607.3208936977188",
             "check_id": "target_price",
             "expected": "607.3208936977188",
@@ -29312,7 +29618,13 @@
           {
             "actual": "607.3816257870886",
             "check_id": "outcome",
-            "expected": "at or below 607.3816267870886 (target 607.3208936977188 plus slippage)",
+            "expected": "607.3816257870886",
+            "passed": true
+          },
+          {
+            "actual": "0.8856034798467057",
+            "check_id": "result_r",
+            "expected": "0.8856034798467057",
             "passed": true
           },
           {
@@ -31605,6 +31917,12 @@
             "passed": true
           },
           {
+            "actual": "604.589535",
+            "check_id": "entry_price",
+            "expected": "604.589535",
+            "passed": true
+          },
+          {
             "actual": "603.0825760019017",
             "check_id": "target_price",
             "expected": "603.0825760019017",
@@ -31625,7 +31943,13 @@
           {
             "actual": "603.1428842595018",
             "check_id": "outcome",
-            "expected": "at or below 603.1428852595019 (target 603.0825760019017 plus slippage)",
+            "expected": "603.1428842595018",
+            "passed": true
+          },
+          {
+            "actual": "0.9533442796460605",
+            "check_id": "result_r",
+            "expected": "0.9533442796460605",
             "passed": true
           },
           {
@@ -33014,6 +33338,12 @@
             "passed": true
           },
           {
+            "actual": "604.559538",
+            "check_id": "entry_price",
+            "expected": "604.559538",
+            "passed": true
+          },
+          {
             "actual": "603.6491009891174",
             "check_id": "target_price",
             "expected": "603.6491009891174",
@@ -33034,7 +33364,13 @@
           {
             "actual": "603.7094658992163",
             "check_id": "outcome",
-            "expected": "at or below 603.7094668992163 (target 603.6491009891174 plus slippage)",
+            "expected": "603.7094658992163",
+            "passed": true
+          },
+          {
+            "actual": "0.9227130386201317",
+            "check_id": "result_r",
+            "expected": "0.9227130386201317",
             "passed": true
           },
           {
@@ -33920,6 +34256,12 @@
             "passed": true
           },
           {
+            "actual": "610.068987",
+            "check_id": "entry_price",
+            "expected": "610.068987",
+            "passed": true
+          },
+          {
             "actual": "609.0623696562627",
             "check_id": "target_price",
             "expected": "609.0623696562627",
@@ -33940,7 +34282,13 @@
           {
             "actual": "609.1232758932283",
             "check_id": "outcome",
-            "expected": "at or below 609.1232768932283 (target 609.0623696562627 plus slippage)",
+            "expected": "609.1232758932283",
+            "passed": true
+          },
+          {
+            "actual": "0.9295598894587501",
+            "check_id": "result_r",
+            "expected": "0.9295598894587501",
             "passed": true
           },
           {
@@ -34802,6 +35150,12 @@
             "passed": true
           },
           {
+            "actual": "590.719066",
+            "check_id": "entry_price",
+            "expected": "590.719066",
+            "passed": true
+          },
+          {
             "actual": "593.4716708267947",
             "check_id": "target_price",
             "expected": "593.4716708267947",
@@ -34822,7 +35176,13 @@
           {
             "actual": "587.907664527088",
             "check_id": "outcome",
-            "expected": "between 587.907663527088 and 587.9664621732053 (stop 587.9664611732053)",
+            "expected": "587.907664527088",
+            "passed": true
+          },
+          {
+            "actual": "-1.0249932883382518",
+            "check_id": "result_r",
+            "expected": "-1.0249932883382518",
             "passed": true
           },
           {
@@ -35827,6 +36187,12 @@
             "passed": true
           },
           {
+            "actual": "670.877081",
+            "check_id": "entry_price",
+            "expected": "670.877081",
+            "passed": true
+          },
+          {
             "actual": "672.8993226981783",
             "check_id": "target_price",
             "expected": "672.8993226981783",
@@ -35847,7 +36213,13 @@
           {
             "actual": "672.8320327659085",
             "check_id": "outcome",
-            "expected": "at or above 672.8320317659085 (target 672.8993226981783 less slippage)",
+            "expected": "672.8320327659085",
+            "passed": true
+          },
+          {
+            "actual": "0.9617800719175165",
+            "check_id": "result_r",
+            "expected": "0.9617800719175165",
             "passed": true
           },
           {
@@ -37092,6 +37464,12 @@
             "passed": true
           },
           {
+            "actual": "665.996593",
+            "check_id": "entry_price",
+            "expected": "665.996593",
+            "passed": true
+          },
+          {
             "actual": "667.8859229843741",
             "check_id": "target_price",
             "expected": "667.8859229843741",
@@ -37112,7 +37490,13 @@
           {
             "actual": "667.8191343920757",
             "check_id": "outcome",
-            "expected": "at or above 667.8191333920757 (target 667.8859229843741 less slippage)",
+            "expected": "667.8191343920757",
+            "passed": true
+          },
+          {
+            "actual": "0.9593567069101324",
+            "check_id": "result_r",
+            "expected": "0.9593567069101324",
             "passed": true
           },
           {
@@ -38341,6 +38725,12 @@
             "passed": true
           },
           {
+            "actual": "684.1415790000001",
+            "check_id": "entry_price",
+            "expected": "684.1415790000001",
+            "passed": true
+          },
+          {
             "actual": "682.8078195233451",
             "check_id": "target_price",
             "expected": "682.8078195233451",
@@ -38361,7 +38751,13 @@
           {
             "actual": "685.5438860105028",
             "check_id": "outcome",
-            "expected": "between 685.4753374766551 and 685.5438870105028 (stop 685.4753384766551)",
+            "expected": "685.5438860105028",
+            "passed": true
+          },
+          {
+            "actual": "-1.0588918281163073",
+            "check_id": "result_r",
+            "expected": "-1.0588918281163073",
             "passed": true
           },
           {
@@ -39239,6 +39635,12 @@
             "passed": true
           },
           {
+            "actual": "680.971896",
+            "check_id": "entry_price",
+            "expected": "680.971896",
+            "passed": true
+          },
+          {
             "actual": "679.70335903307",
             "check_id": "target_price",
             "expected": "679.70335903307",
@@ -39259,7 +39661,13 @@
           {
             "actual": "682.3086570102267",
             "check_id": "outcome",
-            "expected": "between 682.24043196693 and 682.3086580102267 (stop 682.24043296693)",
+            "expected": "682.3086570102267",
+            "passed": true
+          },
+          {
+            "actual": "-1.0616647723605714",
+            "check_id": "result_r",
+            "expected": "-1.0616647723605714",
             "passed": true
           },
           {
@@ -40304,6 +40712,12 @@
             "passed": true
           },
           {
+            "actual": "693.0106920000001",
+            "check_id": "entry_price",
+            "expected": "693.0106920000001",
+            "passed": true
+          },
+          {
             "actual": "691.0985446409052",
             "check_id": "target_price",
             "expected": "691.0985446409052",
@@ -40324,7 +40738,13 @@
           {
             "actual": "691.1676544953692",
             "check_id": "outcome",
-            "expected": "at or below 691.1676554953692 (target 691.0985446409052 plus slippage)",
+            "expected": "691.1676544953692",
+            "passed": true
+          },
+          {
+            "actual": "0.9586277416916802",
+            "check_id": "result_r",
+            "expected": "0.9586277416916802",
             "passed": true
           },
           {
@@ -41633,6 +42053,12 @@
             "passed": true
           },
           {
+            "actual": "691.5491480000001",
+            "check_id": "entry_price",
+            "expected": "691.5491480000001",
+            "passed": true
+          },
+          {
             "actual": "694.052881477971",
             "check_id": "target_price",
             "expected": "694.052881477971",
@@ -41653,7 +42079,13 @@
           {
             "actual": "688.9765099805769",
             "check_id": "outcome",
-            "expected": "between 688.9765089805769 and 689.0454155220291 (stop 689.0454145220291)",
+            "expected": "688.9765099805769",
+            "passed": true
+          },
+          {
+            "actual": "-1.0315147527268471",
+            "check_id": "result_r",
+            "expected": "-1.0315147527268471",
             "passed": true
           },
           {
@@ -42794,6 +43226,12 @@
             "passed": true
           },
           {
+            "actual": "737.833776",
+            "check_id": "entry_price",
+            "expected": "737.833776",
+            "passed": true
+          },
+          {
             "actual": "740.5367175413495",
             "check_id": "target_price",
             "expected": "740.5367175413495",
@@ -42814,7 +43252,13 @@
           {
             "actual": "740.4626638695954",
             "check_id": "outcome",
-            "expected": "at or above 740.4626628695954 (target 740.5367175413495 less slippage)",
+            "expected": "740.4626638695954",
+            "passed": true
+          },
+          {
+            "actual": "0.9689028895119504",
+            "check_id": "result_r",
+            "expected": "0.9689028895119504",
             "passed": true
           },
           {
@@ -43739,6 +44183,12 @@
             "passed": true
           },
           {
+            "actual": "752.815274",
+            "check_id": "entry_price",
+            "expected": "752.815274",
+            "passed": true
+          },
+          {
             "actual": "755.9399204022882",
             "check_id": "target_price",
             "expected": "755.9399204022882",
@@ -43759,7 +44209,13 @@
           {
             "actual": "749.6156585349521",
             "check_id": "outcome",
-            "expected": "between 749.6156575349521 and 749.6906285977119 (stop 749.6906275977119)",
+            "expected": "749.6156585349521",
+            "passed": true
+          },
+          {
+            "actual": "-1.0271931770255935",
+            "check_id": "result_r",
+            "expected": "-1.0271931770255935",
             "passed": true
           },
           {
