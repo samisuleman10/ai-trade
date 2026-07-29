@@ -45,6 +45,7 @@ class Strategy04IndicatorParameters:
     volume_reference_distance_atr: float = 0.30
     volume_reference_max_age_bars: int = 40
     volume_scoring_kinds: tuple[str, ...] = ("POC", "VAH", "VAL")
+    profile_weighting: str = "volume"
     minimum_confluence_score: int = 2
     invalidation_buffer_atr: float = 0.05
     max_zone_age_bars: int = 240
@@ -67,6 +68,8 @@ class Strategy04IndicatorParameters:
             raise ValueError("Volume value area must be between 0 and 1")
         if self.volume_profile_bins < 4:
             raise ValueError("Volume profile needs at least four bins")
+        if self.profile_weighting not in {"volume", "time"}:
+            raise ValueError("Profile weighting must be 'volume' or 'time'")
         if self.minimum_confluence_score < 1:
             raise ValueError("Minimum confluence score must be positive")
         if min(
@@ -199,9 +202,14 @@ def _level_distance(zone: Zone, price: float) -> float:
 
 
 def _session_profile(
-    rows: list[OHLCVBar], bins: int, value_area_fraction: float
+    rows: list[OHLCVBar], bins: int, value_area_fraction: float, weighting: str = "volume"
 ) -> tuple[float, float, float]:
-    """Return a reproducible bar-volume approximation of POC, VAH and VAL."""
+    """Return a reproducible session profile of POC, VAH and VAL.
+
+    ``volume`` weights each bar by its traded volume; ``time`` weights every
+    bar equally (time-at-price), which is the only sound option for midpoint
+    data that carries no volume.
+    """
     session_low = min(row.low for row in rows)
     session_high = max(row.high for row in rows)
     if session_high <= session_low:
@@ -212,7 +220,8 @@ def _session_profile(
         first = max(0, min(bins - 1, int((row.low - session_low) / step)))
         last = max(0, min(bins - 1, int((row.high - session_low) / step)))
         count = max(last - first + 1, 1)
-        allocation = max(row.volume, 0.0) / count
+        weight = 1.0 if weighting == "time" else max(row.volume, 0.0)
+        allocation = weight / count
         for index in range(first, last + 1):
             profile[index] += allocation
 
@@ -252,7 +261,8 @@ def session_volume_references(
         last_index, last_bar = indexed_rows[-1]
         available = _bar_close_timestamp(last_bar)
         poc, vah, val = _session_profile(
-            session_rows, params.volume_profile_bins, params.volume_value_area
+            session_rows, params.volume_profile_bins, params.volume_value_area,
+            params.profile_weighting,
         )
         for kind, price in (("POC", poc), ("VAH", vah), ("VAL", val)):
             references.append(
