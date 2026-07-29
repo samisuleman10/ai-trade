@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from ai_trade.server import ALLOWED_ORIGINS, create_server
+from ai_trade.server import create_server, is_local_origin
 from ai_trade.visualization_contract import (
     _write_json,
     build_performance,
@@ -137,11 +137,39 @@ def _cors_header_for(url: str, origin: str) -> str:
         return response.headers.get("Access-Control-Allow-Origin") or ""
 
 
-def test_dev_server_origin_is_allowed(running_server):
-    assert _cors_header_for(running_server + "/health", ALLOWED_ORIGINS[0]) == ALLOWED_ORIGINS[0]
+@pytest.mark.parametrize(
+    "origin",
+    [
+        "http://localhost:5173",
+        # Vite picks the next free port when 5173 is taken. Pinning the port
+        # silently broke the dashboard, so any local port must be accepted.
+        "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://localhost",
+    ],
+)
+def test_local_origins_are_allowed(running_server, origin):
+    assert _cors_header_for(running_server + "/health", origin) == origin
 
 
-def test_foreign_origin_gets_no_cors_grant(running_server):
+@pytest.mark.parametrize(
+    "origin",
+    [
+        "https://evil.example",
+        "http://localhost.evil.example",
+        "http://evil.example:5173",
+        "https://localhost:5173",
+        "http://127.0.0.1.evil.example",
+    ],
+)
+def test_foreign_origins_get_no_cors_grant(running_server, origin):
     """A wildcard here would let any open page read every trade ledger."""
 
-    assert _cors_header_for(running_server + "/health", "https://evil.example") == ""
+    assert _cors_header_for(running_server + "/health", origin) == ""
+
+
+def test_origin_matcher_rejects_lookalike_hosts():
+    assert is_local_origin("http://localhost:5174")
+    assert not is_local_origin("http://localhost.evil.example")
+    assert not is_local_origin("http://127.0.0.1.evil.example")
+    assert not is_local_origin(None)

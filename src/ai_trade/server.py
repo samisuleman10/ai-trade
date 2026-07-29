@@ -316,22 +316,28 @@ def load_backtest_report(strategy_id: str, version_id: str, asset: str) -> Dict[
     }
 
 
-# Only the local Vite dev server needs to read this API. A wildcard let any
-# page open in the browser read the whole run catalogue and every trade ledger
-# while the server was running.
-ALLOWED_ORIGINS = (
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-)
+# Only pages served from this machine may read the API. A wildcard let any
+# site open in the browser read the whole run catalogue and every trade
+# ledger while the server was running.
+#
+# The port is deliberately not pinned: Vite picks the next free port when
+# 5173 is taken, and an allowlist of literal origins silently broke the
+# dashboard whenever that happened. Restricting the host is what carries the
+# security property; the port does not.
+LOCAL_ORIGIN_RE = re.compile(r"^http://(?:localhost|127\.0\.0\.1)(?::\d{1,5})?$")
+
+
+def is_local_origin(origin: Optional[str]) -> bool:
+    return bool(origin) and LOCAL_ORIGIN_RE.match(origin or "") is not None
 
 
 class StrategyApiHandler(BaseHTTPRequestHandler):
 
     def _allowed_origin(self) -> Optional[str]:
-        """Echo the request's origin only when it is one we allow."""
+        """Echo the request's origin only when it is served from this machine."""
 
         origin = self.headers.get("Origin")
-        return origin if origin in ALLOWED_ORIGINS else None
+        return origin if is_local_origin(origin) else None
 
     def _set_headers(self, status_code: int = 200, content_type: str = "application/json") -> None:
         self.send_response(status_code)
