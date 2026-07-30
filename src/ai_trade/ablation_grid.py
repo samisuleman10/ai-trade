@@ -1,0 +1,198 @@
+"""Run a strategy version's full ablation grid in gate order, once.
+
+The lifecycle in .claude/skills/strategy-research/SKILL.md is a fixed
+sequence: run the base variant, prove it reproduces the incumbent, only then
+run the filtered variants, verify each one's recorded evidence, sweep the
+threshold, summarise. Doing that by hand for five symbols and four variants
+is twenty commands plus twenty verifications in the right order, and the
+order is the safety property -- reading a filtered result before parity is
+proven is exactly what the spec forbids.
+
+This module owns the order and nothing else. Every stage shells out to the
+CLI that already implements it, so each remains independently runnable and
+this file contains no backtest, verification, or reporting logic. Adding a
+future strategy version means adding one ``GridSpec`` to ``GRIDS``.
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+
+STAGES: tuple[str, ...] = ("base", "parity", "variants", "audit", "sweep", "summary")
+
+
+@dataclass(frozen=True)
+class GridSpec:
+    """Everything needed to drive one strategy version's ablation grid."""
+
+    grid_id: str
+    runner_module: str
+    verifier_module: str
+    sweep_module: str
+    summarizer_module: str
+    inputs_module: str
+    symbols: tuple[str, ...]
+    variants: tuple[str, ...]
+    results_root: str
+    results_dir_template: str
+    incumbent_results_template: str | None
+    incumbent_flag: str
+
+    @property
+    def base_variant(self) -> str:
+        return self.variants[0]
+
+    @property
+    def filtered_variants(self) -> tuple[str, ...]:
+        return self.variants[1:]
+
+    def results_dir(self, symbol: str, variant: str) -> str:
+        return self.results_dir_template.format(symbol=symbol.lower(), variant=variant)
+
+    def incumbent_dir(self, symbol: str) -> str | None:
+        if self.incumbent_results_template is None:
+            return None
+        return self.incumbent_results_template.format(symbol=symbol.lower())
+
+    def one_hour_path(self, symbol: str) -> str:
+        """Resolve a symbol's one-hour cache from the runner's own mapping.
+
+        Imported rather than duplicated: a second copy of these paths could
+        drift from the runs themselves, which is the failure the parity gate
+        exists to catch.
+        """
+        module = importlib.import_module(self.inputs_module)
+        _, one_hour, _, _, _ = module.symbol_run_inputs(symbol)
+        return str(one_hour)
+
+
+GRIDS: dict[str, GridSpec] = {
+    "strategy_04_v1_2": GridSpec(
+        grid_id="strategy_04_v1_2",
+        runner_module="ai_trade.backtest_strategy_04_v1_2_asset",
+        verifier_module="ai_trade.verify_strategy_04_v1_2",
+        sweep_module="ai_trade.sweep_strategy_04_v1_2_risk_ratio",
+        summarizer_module="ai_trade.summarize_strategy_04_v1_2_ablation",
+        inputs_module="ai_trade.backtest_strategy_04_v1_2_asset",
+        symbols=("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD"),
+        variants=("base", "a", "b", "ab"),
+        results_root="strategies/strategy_04/v1_2/results",
+        results_dir_template="strategies/strategy_04/v1_2/results/{symbol}_1h_15m_{variant}",
+        incumbent_results_template="strategies/strategy_04/v1_1/results/{symbol}_1h_15m",
+        incumbent_flag="--v1-1",
+    ),
+}
+
+
+def _run_command(spec: GridSpec, symbol: str, variant: str) -> list[str]:
+    return [
+        sys.executable, "-m", spec.runner_module,
+        "--symbol", symbol,
+        "--variant", variant,
+    ]
+
+
+def _verify_command(spec: GridSpec, symbol: str, variant: str, *, parity: bool) -> list[str]:
+    command = [
+        sys.executable, "-m", spec.verifier_module,
+        "--results", spec.results_dir(symbol, variant),
+        "--one-hour", spec.one_hour_path(symbol),
+        "--variant", variant,
+    ]
+    if parity:
+        incumbent = spec.incumbent_dir(symbol)
+        if incumbent is not None:
+            command.extend((spec.incumbent_flag, incumbent))
+    return command
+
+
+def plan_commands(spec: GridSpec, stages: tuple[str, ...]) -> list[list[str]]:
+    """Return the exact command sequence for the requested stages, in gate order."""
+    unknown = [stage for stage in stages if stage not in STAGES]
+    if unknown:
+        raise ValueError(f"Unknown stage(s) {unknown}; valid stages are {list(STAGES)}")
+
+    commands: list[list[str]] = []
+    if "base" in stages:
+        commands.extend(_run_command(spec, symbol, spec.base_variant) for symbol in spec.symbols)
+    if "parity" in stages:
+        commands.extend(
+            _verify_command(spec, symbol, spec.base_variant, parity=True)
+            for symbol in spec.symbols
+        )
+    if "variants" in stages:
+        commands.extend(
+            _run_command(spec, symbol, variant)
+            for variant in spec.filtered_variants
+            for symbol in spec.symbols
+        )
+    if "audit" in stages:
+        commands.extend(
+            _verify_command(spec, symbol, variant, parity=False)
+            for variant in spec.filtered_variants
+            for symbol in spec.symbols
+        )
+    if "sweep" in stages:
+        commands.append([sys.executable, "-m", spec.sweep_module])
+    if "summary" in stages:
+        commands.append(
+            [sys.executable, "-m", spec.summarizer_module, "--results-root", spec.results_root]
+        )
+    return commands
+
+
+def run_grid(
+    spec: GridSpec,
+    stages: tuple[str, ...] = STAGES,
+    *,
+    root: Path = ROOT,
+    dry_run: bool = False,
+) -> int:
+    """Execute the planned commands in order, stopping at the first failure.
+
+    Because the plan is ordered base -> parity -> filtered variants, stopping
+    at the first failure IS the parity gate: a failed base-parity check exits
+    before any filtered variant runs.
+    """
+    commands = plan_commands(spec, stages)
+    for number, command in enumerate(commands, start=1):
+        printable = " ".join(command)
+        print(f"[{number}/{len(commands)}] {printable}")
+        if dry_run:
+            continue
+        try:
+            subprocess.run(command, cwd=root, check=True)
+        except subprocess.CalledProcessError as error:
+            print(
+                f"STOPPED at step {number}/{len(commands)} (exit {error.returncode}): {printable}\n"
+                "No later stage ran. If this was the base-parity check, the harness is wrong "
+                "and no other result from this grid may be read.",
+                file=sys.stderr,
+            )
+            return error.returncode or 1
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Run a strategy version's ablation grid in gate order."
+    )
+    parser.add_argument("--grid", required=True, choices=tuple(sorted(GRIDS)))
+    parser.add_argument(
+        "--stages", nargs="+", choices=STAGES, default=list(STAGES),
+        help="Subset of stages to run, for resuming a long grid. Order is always the gate order.",
+    )
+    parser.add_argument("--dry-run", action="store_true", help="Print the command sequence only.")
+    args = parser.parse_args()
+    return run_grid(GRIDS[args.grid], tuple(args.stages), dry_run=args.dry_run)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
