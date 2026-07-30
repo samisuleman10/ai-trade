@@ -1,9 +1,13 @@
+import json
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import pytest
 
 from ai_trade.market_data import OHLCVBar
 from ai_trade.strategy_04_audit_datasets import (
+    _auditable_report,
+    _uses_default_indicator_parameters,
     audit_datasets_for,
     load_signals,
     load_trades,
@@ -12,6 +16,7 @@ from ai_trade.strategy_04_audit_datasets import (
     resolve_max_long_penetration,
     window,
 )
+from ai_trade.strategy_04_indicator import strategy_04_v0_3_parameters
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 S4_RESULT = REPO_ROOT / "strategies" / "strategy_04" / "v1_1" / "results" / "spy_1h_15m"
@@ -178,3 +183,99 @@ def test_an_unknown_version_with_an_explicit_flag_is_accepted():
     """Only the silent default is dangerous; a stated value is evidence."""
 
     assert resolve_max_long_penetration("0.25", "v9_9") == 0.25
+
+
+# --- signal audit skips runs whose recorded indicator parameters are not
+# the v0.3 defaults, instead of rebuilding the zone timeline with the wrong
+# parameters and either raising ContractError or (worse) silently matching
+# a wrong zone by id. See docs/superpowers/sdd/final-fixes-report.md finding 1.
+
+
+def _default_indicator_parameters() -> dict:
+    return json.loads(json.dumps(asdict(strategy_04_v0_3_parameters())))
+
+
+def _fx_indicator_parameters() -> dict:
+    return json.loads(
+        json.dumps(
+            asdict(
+                replace(
+                    strategy_04_v0_3_parameters(),
+                    profile_weighting="time",
+                    session_day_boundary="fx_17et",
+                )
+            )
+        )
+    )
+
+
+def test_uses_default_indicator_parameters_is_true_for_the_default_report():
+    report = {"indicator_parameters": _default_indicator_parameters()}
+    assert _uses_default_indicator_parameters(report) is True
+
+
+def test_uses_default_indicator_parameters_is_false_for_fx_parameters():
+    report = {"indicator_parameters": _fx_indicator_parameters()}
+    assert _uses_default_indicator_parameters(report) is False
+
+
+def test_uses_default_indicator_parameters_treats_a_missing_field_as_default():
+    """Old reports predate profile_weighting/session_day_boundary entirely;
+    their absence describes the same behaviour the current defaults do, not
+    a mismatch."""
+
+    params = _default_indicator_parameters()
+    del params["profile_weighting"]
+    del params["session_day_boundary"]
+    report = {"indicator_parameters": params}
+    assert _uses_default_indicator_parameters(report) is True
+
+
+def test_uses_default_indicator_parameters_treats_a_missing_block_as_default():
+    assert _uses_default_indicator_parameters({}) is True
+
+
+def _write_minimal_strategy_04_report(result_dir: Path, indicator_parameters: dict) -> None:
+    result_dir.mkdir(parents=True, exist_ok=True)
+    report = {
+        "strategy_id": "strategy_04_v1_1_shallow_long_penetration",
+        "indicator_parameters": indicator_parameters,
+        "data": {
+            "one_hour_file": "does/not/exist_1h.csv",
+            "fifteen_minute_file": "does/not/exist_15m.csv",
+        },
+    }
+    (result_dir / "backtest_report.json").write_text(json.dumps(report), encoding="utf-8")
+    (result_dir / "candidate_signals.csv").write_text("", encoding="utf-8")
+    (result_dir / "fixed_trades.csv").write_text("", encoding="utf-8")
+
+
+def test_auditable_report_is_none_when_indicator_parameters_are_not_default(tmp_path):
+    _write_minimal_strategy_04_report(tmp_path, _fx_indicator_parameters())
+    assert _auditable_report(tmp_path) is None
+
+
+def test_auditable_report_is_kept_when_indicator_parameters_are_default(tmp_path):
+    _write_minimal_strategy_04_report(tmp_path, _default_indicator_parameters())
+    assert _auditable_report(tmp_path) is not None
+
+
+def test_audit_datasets_for_skips_without_raising_when_parameters_do_not_match(tmp_path):
+    """This is the honest-skip path: a run whose recorded indicator
+    parameters differ from the v0.3 defaults must not raise ContractError
+    and must not be audited against the wrong zone geometry.
+    """
+
+    _write_minimal_strategy_04_report(tmp_path, _fx_indicator_parameters())
+    assert audit_datasets_for(tmp_path, REPO_ROOT) == []
+
+
+def test_audit_datasets_for_the_real_fx_run_does_not_raise():
+    """Reproduces finding 1: before the fix, this raised ContractError
+    because the rebuilt zone timeline used the wrong indicator parameters.
+    """
+
+    fx_dir = REPO_ROOT / "strategies" / "strategy_04" / "v1_1" / "results" / "eurusd_1h_15m"
+    if not fx_dir.is_dir():
+        pytest.skip("FX baseline results not present in this checkout")
+    assert audit_datasets_for(fx_dir, REPO_ROOT) == []

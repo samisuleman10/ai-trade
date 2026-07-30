@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import csv
 import json
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -298,6 +299,42 @@ def _version_from_path(result_dir: Path) -> str:
     return "unknown"
 
 
+def _default_indicator_parameters() -> Dict[str, Any]:
+    """The v0.3 defaults, JSON-normalized.
+
+    Round-tripping through JSON turns dataclass tuple fields (like
+    ``volume_scoring_kinds``) into lists, matching how a report on disk
+    stores them. Comparing the dataclass's ``asdict()`` directly against a
+    loaded report would report a spurious mismatch on type alone.
+    """
+
+    return json.loads(json.dumps(asdict(strategy_04_v0_3_parameters())))
+
+
+def _uses_default_indicator_parameters(report: Dict[str, Any]) -> bool:
+    """True unless the report recorded a non-default indicator parameter.
+
+    The zone timeline rebuild always uses ``strategy_04_v0_3_parameters()``
+    (see ``_indicator_for``), so a run recorded with different parameters
+    -- the FX runs' ``profile_weighting="time"``,
+    ``session_day_boundary="fx_17et"`` -- would be audited against a
+    differently-shaped timeline. Zone ids are stable within a run but not
+    across parameter sets, so some ids would resolve to geometrically
+    different zones (including demand/supply flips) rather than raising.
+
+    Reports older than the ``profile_weighting`` / ``session_day_boundary``
+    fields simply omit them; that absence describes the same behaviour the
+    current defaults encode, not a mismatch, so a missing key reads as a
+    match. Only a recorded value that disagrees with the default counts.
+    """
+
+    recorded = report.get("indicator_parameters")
+    if not isinstance(recorded, dict):
+        return True
+    default = _default_indicator_parameters()
+    return all(recorded.get(key, value) == value for key, value in default.items())
+
+
 def _auditable_report(result_dir: Path) -> Optional[Dict[str, Any]]:
     report_path = result_dir / REPORT_FILENAME
     if not report_path.is_file():
@@ -311,6 +348,14 @@ def _auditable_report(result_dir: Path) -> Optional[Dict[str, Any]]:
     if not isinstance(report, dict):
         return None
     if not str(report.get("strategy_id", "")).startswith("strategy_04"):
+        return None
+    if not _uses_default_indicator_parameters(report):
+        # Honest skip: the signal audit's rebuilt zone timeline always uses
+        # the v0.3 defaults, which do not describe this run. Returning None
+        # here (rather than raising) means audit_datasets_for returns []
+        # for this directory -- the bundle still publishes with its ledger
+        # audit, just without has_signal_audit / audit windows, exactly as
+        # a non-strategy-04 run is treated.
         return None
     return report
 
