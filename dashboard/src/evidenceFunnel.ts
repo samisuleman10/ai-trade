@@ -15,12 +15,42 @@ import type { PerformanceState, PerformanceSummary } from './hooks/useRunCatalog
  */
 
 /**
- * How many standard errors from zero a result must sit before this chart
- * calls it conclusive. Two is the conventional ~95% two-sided threshold.
- * The drawn boundary and each dot's verdict both read this constant, so
- * they cannot drift apart.
+ * Two-sided 95% critical values of Student's t, by degrees of freedom.
+ *
+ * A flat 2.0 is the large-sample limit and is wrong for small runs: at 4
+ * trades (3 df) the bar is 3.182, not 2.0. Using 2.0 there marked a
+ * four-trade run as conclusive — in a chart whose entire purpose is to
+ * stop small samples being over-read. The threshold has to widen as the
+ * sample shrinks, which is exactly what these values do.
  */
-export const SIGMA = 2;
+const T_TABLE: Array<[df: number, critical: number]> = [
+  [1, 12.706], [2, 4.303], [3, 3.182], [4, 2.776], [5, 2.571],
+  [6, 2.447], [7, 2.365], [8, 2.306], [9, 2.262], [10, 2.228],
+  [12, 2.179], [15, 2.131], [20, 2.086], [25, 2.06], [30, 2.042],
+  [40, 2.021], [60, 2.0], [120, 1.98],
+];
+
+/** The large-sample limit the table converges to. */
+export const SIGMA_LIMIT = 1.96;
+
+/**
+ * Critical |t| for `df` degrees of freedom, interpolated in 1/df because
+ * the curve is close to linear in that space and badly non-linear in df.
+ */
+export function criticalT(df: number): number {
+  if (df < 1) return T_TABLE[0][1];
+  if (df >= 120) return SIGMA_LIMIT;
+  for (let i = 0; i < T_TABLE.length - 1; i += 1) {
+    const [dfLow, tLow] = T_TABLE[i];
+    const [dfHigh, tHigh] = T_TABLE[i + 1];
+    if (df === dfLow) return tLow;
+    if (df < dfHigh) {
+      const weight = (1 / df - 1 / dfLow) / (1 / dfHigh - 1 / dfLow);
+      return tLow + weight * (tHigh - tLow);
+    }
+  }
+  return SIGMA_LIMIT;
+}
 
 /** A run reduced to the published numbers the funnel needs. */
 export interface FunnelPoint {
@@ -89,7 +119,7 @@ export function toFunnelPoints(
       averageR,
       resultRSd,
       t,
-      isConclusive: t !== null && Math.abs(t) >= SIGMA,
+      isConclusive: t !== null && Math.abs(t) >= criticalT(tradeCount - 1),
     });
   }
 

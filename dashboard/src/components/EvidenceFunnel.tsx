@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { CatalogEntry } from '../catalog';
 import type { PerformanceState } from '../hooks/useRunCatalog';
-import { SIGMA, medianRecordedSd, toFunnelPoints } from '../evidenceFunnel';
+import { criticalT, medianRecordedSd, toFunnelPoints } from '../evidenceFunnel';
 import type { FunnelPoint } from '../evidenceFunnel';
 
 /**
@@ -86,15 +86,16 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
     const yScale = (averageR: number) =>
       MARGIN.top + ((yBound - averageR) / (2 * yBound)) * PLOT_HEIGHT;
 
-    // Sample the boundary across the plot: |avg R| = SIGMA * sd / sqrt(n),
-    // which on a log x-axis is a smooth curve rather than a straight line.
+    // Sample the boundary: |avg R| = criticalT(n-1) * sd / sqrt(n). The
+    // critical value widens as n shrinks, so the funnel flares at the low-n
+    // end rather than closing on a flat 2 standard errors.
     const upperXY: Array<[number, number]> = [];
     const lowerXY: Array<[number, number]> = [];
     if (medianSd !== null) {
       const steps = 120;
       for (let step = 0; step <= steps; step += 1) {
         const n = 10 ** (xMin + ((xMax - xMin) * step) / steps);
-        const halfWidth = (SIGMA * medianSd) / Math.sqrt(n);
+        const halfWidth = (criticalT(Math.max(1, n - 1)) * medianSd) / Math.sqrt(n);
         const x = MARGIN.left + (step / steps) * PLOT_WIDTH;
         upperXY.push([x, yScale(halfWidth)]);
         lowerXY.push([x, yScale(-halfWidth)]);
@@ -329,7 +330,7 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
             <span className="s4-funnel-key is-line" aria-hidden="true" />
             {model.medianSd === null
               ? 'Funnel boundary (no dispersion recorded)'
-              : `Funnel boundary, |avg R| = ${SIGMA} × SD / √trades, drawn at the median recorded SD of ${model.medianSd.toFixed(
+              : `Funnel boundary, |avg R| = t₉₅(n−1) × SD / √trades, drawn at the median recorded SD of ${model.medianSd.toFixed(
                   3,
                 )}`}
           </li>
@@ -365,10 +366,11 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
           <>
             <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-600">
               These are the only runs whose result is too large to be sample noise. A negative
-              average R here is a measured losing edge, not an unlucky sample. The {SIGMA}-SD
-              boundary is a large-sample rule: a run of only a handful of trades can cross it on a
-              spread that is itself barely measured, so read the trade count alongside the verdict
-              rather than the verdict alone.
+              average R here is a measured losing edge, not an unlucky sample. The boundary uses
+              the 95% critical value of Student&rsquo;s t for each run&rsquo;s own degrees of
+              freedom, so it widens as the sample shrinks — at four trades the bar is 3.18 standard
+              errors, not 2. Read the trade count alongside the verdict all the same: a spread
+              measured from a handful of trades is itself uncertain.
             </p>
             <div className="mt-3 overflow-x-auto">
               <table className="s4-compare-table min-w-[720px]">
