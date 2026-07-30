@@ -145,6 +145,59 @@ def test_performance_rejects_a_null_ending_equity():
         build_performance(_rows(), bad, "fixed", 100000.0)
 
 
+def test_performance_publishes_result_r_dispersion():
+    """The summary must carry the dispersion of ``result_r``, not just its mean.
+
+    Without it no consumer can tell an average R of -0.25 over 148 trades
+    from noise: the t-statistic needs a standard deviation, and a consumer
+    that assumes one is inventing producer data. Measured across this
+    repository's ledgers the value ranges 0.672 to 1.096, so assuming 1.0
+    is wrong by up to a third.
+    """
+
+    perf = build_performance(_rows(), _summary(), "fixed", 100000.0)
+    summary = perf.payload["summary"]
+    # Sample standard deviation (n-1), the divisor the t-statistic is
+    # defined with: mean -0.0535, deviations +/-1.0255.
+    assert summary["result_r_sd"] == pytest.approx(1.4502760, rel=1e-6)
+
+
+def test_performance_dispersion_is_omitted_when_undefined():
+    """One trade has no sample standard deviation. Publishing 0.0 would
+    read as 'perfectly consistent' and make any t-statistic infinite, so
+    the field is absent instead and consumers render it as unknown.
+    """
+
+    rows = _rows()[:1]
+    summary = dict(
+        _summary(),
+        trade_count=1,
+        ending_equity=99838.83,
+        net_pnl=-161.17,
+        wins=0,
+        average_r=-1.079,
+    )
+    perf = build_performance(rows, summary, "fixed", 100000.0)
+    assert "result_r_sd" not in perf.payload["summary"]
+
+
+def test_performance_dispersion_comes_from_the_ledger_not_the_summary():
+    """A summary that already states a dispersion does not get to override
+    the ledger it is published beside: the ledger is the evidence.
+    """
+
+    claimed = dict(_summary(), result_r_sd=0.01)
+    perf = build_performance(_rows(), claimed, "fixed", 100000.0)
+    assert perf.payload["summary"]["result_r_sd"] == pytest.approx(1.4502760, rel=1e-6)
+
+
+def test_performance_rejects_a_row_with_an_unreadable_result_r():
+    bad = _rows()
+    bad[1]["result_r"] = "not-a-number"
+    with pytest.raises(ContractError):
+        build_performance(bad, _summary(), "fixed", 100000.0)
+
+
 def test_publish_writes_manifest_last_and_hashes_every_sidecar(tmp_path):
     datasets = [
         build_trade_ledger(_rows(), "fixed", "demo_run"),

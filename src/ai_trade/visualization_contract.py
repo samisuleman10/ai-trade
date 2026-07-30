@@ -148,6 +148,24 @@ def build_trade_ledger(rows: Sequence[Mapping[str, Any]], variant: str, run_id: 
     )
 
 
+def _result_r_sd(rows: Sequence[Mapping[str, Any]]) -> Optional[float]:
+    """Sample standard deviation (n-1) of the ledger's ``result_r`` column.
+
+    This is the dispersion a t-statistic is defined against, so it uses the
+    n-1 divisor rather than n. Returns ``None`` for fewer than two trades,
+    where the quantity does not exist: publishing 0.0 there would read as
+    "perfectly consistent" and make any downstream t infinite.
+    """
+
+    values = [_row_float(row, "result_r", index) for index, row in enumerate(rows, start=1)]
+    count = len(values)
+    if count < 2:
+        return None
+    mean = sum(values) / count
+    variance = sum((value - mean) ** 2 for value in values) / (count - 1)
+    return math.sqrt(variance)
+
+
 def build_performance(
     rows: Sequence[Mapping[str, Any]],
     summary: Mapping[str, Any],
@@ -221,13 +239,24 @@ def build_performance(
             f"summary ending_equity {ending_equity!r} disagrees with final ledger equity {equity!r}"
         )
 
+    # ``average_r`` alone cannot be read for significance -- a mean of -0.25
+    # over 148 trades is either an edge or noise depending entirely on the
+    # spread around it. The dispersion is derived from the ledger rather
+    # than copied from the summary: the ledger is the evidence, and a
+    # summary that states its own value does not get to override it.
+    published_summary = dict(summary)
+    published_summary.pop("result_r_sd", None)
+    result_r_sd = _result_r_sd(rows)
+    if result_r_sd is not None:
+        published_summary["result_r_sd"] = result_r_sd
+
     dataset_id = f"performance_{variant}"
     payload = {
         "schema_version": SCHEMA_VERSION,
         "dataset_id": dataset_id,
         "kind": "performance",
         "variant": variant,
-        "summary": dict(summary),
+        "summary": published_summary,
         "points": points,
     }
     return Dataset(
