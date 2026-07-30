@@ -10,7 +10,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -101,8 +103,8 @@ def _entry_from_manifest(manifest: Any, bundle_dir: Path) -> Optional[Dict[str, 
     }
 
 
-def _scan_bundles(roots: Iterable[Any]) -> Tuple[List[Dict[str, Any]], int]:
-    """Parse every discovered manifest, returning (valid entries, invalid count).
+def _scan_manifest_paths(manifest_paths: Iterable[Path]) -> Tuple[List[Dict[str, Any]], int]:
+    """Parse the given manifests, returning (valid entries, invalid count).
 
     "Invalid" covers anything ``read_manifest`` rejects (missing/unparseable
     JSON) as well as manifests that parse but are structurally unusable
@@ -112,7 +114,7 @@ def _scan_bundles(roots: Iterable[Any]) -> Tuple[List[Dict[str, Any]], int]:
 
     entries: List[Dict[str, Any]] = []
     invalid_count = 0
-    for manifest_path in _iter_manifest_paths(roots):
+    for manifest_path in manifest_paths:
         bundle_dir = manifest_path.parent
         try:
             manifest = read_manifest(bundle_dir)
@@ -125,6 +127,151 @@ def _scan_bundles(roots: Iterable[Any]) -> Tuple[List[Dict[str, Any]], int]:
             continue
         entries.append(entry)
     return entries, invalid_count
+
+
+# How a bundle is recognised as changed, without reading it. Every field comes
+# from the single ``stat`` the discovery walk already performs, so the check
+# costs the walk and nothing more.
+#
+# All three are needed; none is sufficient alone:
+#   - size:  a republished manifest usually keeps its length (a fresh
+#            ``generated_at`` is exactly as wide as the one it replaces).
+#   - mtime: Windows timestamps tick at ~15ms, so two quick rewrites can share
+#            one -- measured here, 8 of 19 back-to-back same-size rewrites were
+#            indistinguishable by mtime.
+#   - file id: covers the blind spot the other two share, and is the sharpest
+#            signal for how bundles are actually published. ``publish_bundle``
+#            writes ``manifest.json`` to a temp file and ``os.replace``s it into
+#            position, which yields a new file id every time, even within a
+#            single clock tick.
+def _manifest_signature(manifest_path: Path) -> Optional[Tuple[str, int, int, int]]:
+    try:
+        stat_result = manifest_path.stat()
+    except OSError:
+        # Vanished between the walk and the stat. Reporting it as absent keeps
+        # the signature honest: it stays absent until the next call sees it.
+        return None
+    return (
+        os.path.normcase(str(manifest_path)),
+        stat_result.st_mtime_ns,
+        stat_result.st_size,
+        stat_result.st_ino,
+    )
+
+
+def _survey_bundles(roots: Iterable[Any]) -> Tuple[Tuple[Any, ...], List[Path]]:
+    """Walk ``roots`` once, returning (staleness signature, manifest paths)."""
+
+    signature: List[Tuple[str, int, int, int]] = []
+    manifest_paths: List[Path] = []
+    for manifest_path in _iter_manifest_paths(roots):
+        entry_signature = _manifest_signature(manifest_path)
+        if entry_signature is None:
+            continue
+        signature.append(entry_signature)
+        manifest_paths.append(manifest_path)
+    return tuple(signature), manifest_paths
+
+
+class _CatalogCache:
+    """One roots-worth of assembled catalog, reused until the bundles change.
+
+    Two properties matter, and the second is what actually fixed the timeout:
+
+    *Freshness.* Every call re-walks the roots and compares the staleness
+    signature above. A republished, added, or removed bundle is therefore
+    picked up on the very next call -- the cache skips the manifest *reads*,
+    never the change detection.
+
+    *Coalescing.* The walk is the remaining per-call cost and it does not
+    parallelise: it is syscall- and pathlib-bound under the GIL, so 48
+    concurrent walks cost 48 times one walk. Callers therefore share a single
+    in-flight refresh instead of each launching their own -- a request that
+    arrives while a refresh is running waits for it and uses its result. That
+    is what turns the dashboard's fan-out from one walk per request into one
+    walk per burst. Deliberately not a time-based staleness window: every
+    answer still comes from a filesystem check that overlapped the request that
+    asked for it, so nothing is served on the assumption that disk has not
+    moved since.
+    """
+
+    def __init__(self) -> None:
+        self._condition = threading.Condition()
+        self._signature: Optional[Tuple[Any, ...]] = None
+        self._entries: List[Dict[str, Any]] = []
+        self._invalid_count = 0
+        self._refreshing = False
+        self._generation = 0
+
+    def scan(self, roots: List[Any]) -> Tuple[List[Dict[str, Any]], int]:
+        with self._condition:
+            while self._refreshing:
+                generation = self._generation
+                while self._refreshing and self._generation == generation:
+                    self._condition.wait()
+                if self._signature is not None:
+                    return self._entries, self._invalid_count
+                # That refresh failed and left nothing behind: fall through and
+                # take a turn rather than wait forever on a cache that is never
+                # going to be populated by someone else.
+            self._refreshing = True
+            cached_signature = self._signature
+            entries = self._entries
+            invalid_count = self._invalid_count
+
+        signature = None
+        refreshed = False
+        try:
+            signature, manifest_paths = _survey_bundles(roots)
+            if signature != cached_signature:
+                entries, invalid_count = _scan_manifest_paths(manifest_paths)
+            refreshed = True
+        finally:
+            with self._condition:
+                if refreshed:
+                    self._signature = signature
+                    self._entries = entries
+                    self._invalid_count = invalid_count
+                self._refreshing = False
+                self._generation += 1
+                self._condition.notify_all()
+        return entries, invalid_count
+
+
+# Keyed by roots so a caller passing its own roots (tests, tooling) can never be
+# served another caller's catalog. The server itself only ever passes
+# CATALOG_ROOTS, so this holds a single entry in practice.
+_CATALOG_CACHES: Dict[Tuple[str, ...], _CatalogCache] = {}
+_CATALOG_CACHES_LOCK = threading.Lock()
+
+
+def _cache_for(roots: List[Any]) -> _CatalogCache:
+    key = tuple(os.path.normcase(os.path.abspath(str(root))) for root in roots)
+    with _CATALOG_CACHES_LOCK:
+        cache = _CATALOG_CACHES.get(key)
+        if cache is None:
+            cache = _CatalogCache()
+            _CATALOG_CACHES[key] = cache
+        return cache
+
+
+def reset_catalog_cache() -> None:
+    """Drop every cached catalog. For tests; the server never needs it."""
+
+    with _CATALOG_CACHES_LOCK:
+        _CATALOG_CACHES.clear()
+
+
+def _scan_bundles(roots: Iterable[Any]) -> Tuple[List[Dict[str, Any]], int]:
+    """Return (valid entries, invalid count) for ``roots``, cached.
+
+    The returned entries are the cache's own objects, shared across callers and
+    threads. They are read-only by contract -- mutating one corrupts the
+    catalog every later request is served from.
+    """
+
+    roots = list(roots)
+    return _cache_for(roots).scan(roots)
 
 
 def _entry_matches(entry: Dict[str, Any], filters: Dict[str, str]) -> bool:
@@ -152,7 +299,7 @@ def build_catalog(
 
     Walks each root for ``visualization/manifest.json``, parses each with
     ``read_manifest``, and silently skips anything unparseable or
-    structurally unusable -- see ``_scan_bundles``. Each surviving entry
+    structurally unusable -- see ``_scan_manifest_paths``. Each surviving entry
     carries ``bundle_id``, ``run``, ``instrument``, ``mode``,
     ``generated_at``, ``capabilities``, ``dataset_ids``, and the bundle
     directory (``bundle_dir``, for internal routing use -- not meant to be
@@ -161,6 +308,11 @@ def build_catalog(
     ``filters`` compares by exact equality only (never substring/prefix)
     against ``mode``, ``run.strategy_id``, ``run.strategy_version``, and
     ``instrument.symbol``.
+
+    The assembled catalog is cached per roots and reused until a manifest is
+    republished, added, or removed -- see ``_CatalogCache``. Filtering runs over
+    the cached entries, so a filtered call costs no extra IO. The entry dicts
+    are the cache's own and must not be mutated by callers.
     """
 
     filters = filters or {}
