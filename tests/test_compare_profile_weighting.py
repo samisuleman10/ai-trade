@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from ai_trade.compare_profile_weighting import compare_symbol
+from ai_trade.compare_profile_weighting import compare_symbol, report_markdown
 from ai_trade.market_data import OHLCVBar
 
 
@@ -38,3 +38,19 @@ def test_report_shape():
         assert key in result
     assert set(result["qualified_zones"]) >= {"volume", "time", "shared"}
     assert set(result["signals"]) >= {"volume", "time", "shared", "volume_only", "time_only"}
+
+
+def test_report_markdown_caveats_session_length_and_bar_scale():
+    """This bridge report only measures TPO-vs-volume weighting divergence on
+    equities; it says nothing about the FX session-length / bar-scale
+    mismatch (v0.3's bar-count parameters were tuned on ~7-bars/session
+    equity RTH data, and FX sessions run ~24 bars/session). Without this
+    caveat, a reader could mistake "weighting divergence is small" for
+    "the FX runs are fully validated."
+    """
+
+    markdown = report_markdown({"SPY": {"qualified_zones": {"volume": 10, "time": 9, "shared": 8},
+                                          "signals": {"volume": 4, "time": 4, "shared": 4}}})
+    lowered = markdown.lower()
+    assert "session-length" in lowered or "session length" in lowered
+    assert "bar-scale" in lowered or "bar scale" in lowered

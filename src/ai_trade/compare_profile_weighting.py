@@ -16,7 +16,7 @@ from typing import Iterable
 
 from ai_trade.market_data import OHLCVBar
 from ai_trade.strategy_01 import load_ohlcv_csv
-from ai_trade.strategy_04_indicator import build_one_hour_indicator, strategy_04_v0_3_parameters
+from ai_trade.strategy_04_indicator import strategy_04_v0_3_parameters
 from ai_trade.strategy_04_v1_1 import Strategy04V11ExecutionParameters, candidate_signals_v1_1
 
 DATA = {
@@ -77,21 +77,19 @@ def compare_symbol(fifteen: Iterable[OHLCVBar], hours: Iterable[OHLCVBar]) -> di
     }
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Compare TPO vs volume profile weighting on cached equities.")
-    parser.add_argument("--symbols", nargs="+", choices=tuple(DATA), default=tuple(DATA))
-    parser.add_argument("--output", type=Path, default=Path("strategies/strategy_04/analysis/tpo_vs_volume"))
-    args = parser.parse_args()
+def report_markdown(report: dict[str, object]) -> str:
+    """Render the TPO-vs-volume bridge report table plus its caveats.
 
-    report: dict[str, object] = {}
-    for symbol in args.symbols:
-        fifteen_path, hours_path = DATA[symbol]
-        result = compare_symbol(load_ohlcv_csv(Path(fifteen_path)), load_ohlcv_csv(Path(hours_path)))
-        report[symbol] = result
-        print(f"{symbol}: {json.dumps(result)}")
-
-    args.output.mkdir(parents=True, exist_ok=True)
-    (args.output / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    The caveat paragraph exists because this report answers exactly one
+    question -- how far TPO weighting diverges from volume weighting, on
+    equities where both can be computed -- and nothing else. It cannot
+    speak to the FX session-length / bar-scale mismatch: v0.3's bar-count
+    parameters (volume_reference_max_age_bars, max_zone_age_bars,
+    broken_retest_window_bars, etc.) were tuned on ~7-bars/session equity
+    RTH data, while FX sessions run ~24 bars/session, roughly 3.4x tighter
+    in wall-clock terms. A reader who saw only "weighting divergence is
+    small" could mistake that for "the FX runs are fully validated."
+    """
 
     lines = [
         "# TPO vs volume profile weighting - equity bridge report",
@@ -110,7 +108,38 @@ def main() -> int:
             f"| {symbol} | {zones['volume']} | {zones['time']} | {zones['shared']} "
             f"| {signals['volume']} | {signals['time']} | {signals['shared']} |"
         )
-    (args.output / "REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    lines.extend(
+        [
+            "",
+            "**Caveat:** this report measures profile-weighting divergence only, on "
+            "equity data where both weightings can be computed. It cannot cover the "
+            "FX session-length / bar-scale mismatch: v0.3's bar-count parameters "
+            "(`volume_reference_max_age_bars`, `max_zone_age_bars`, "
+            "`broken_retest_window_bars`, etc.) were tuned on ~7-bars/session equity "
+            "RTH data, while FX sessions run ~24 bars/session -- roughly 3.4x tighter "
+            "in wall-clock terms. A small weighting divergence here does not mean the "
+            "FX runs are validated against that separate, unmeasured mismatch.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Compare TPO vs volume profile weighting on cached equities.")
+    parser.add_argument("--symbols", nargs="+", choices=tuple(DATA), default=tuple(DATA))
+    parser.add_argument("--output", type=Path, default=Path("strategies/strategy_04/analysis/tpo_vs_volume"))
+    args = parser.parse_args()
+
+    report: dict[str, object] = {}
+    for symbol in args.symbols:
+        fifteen_path, hours_path = DATA[symbol]
+        result = compare_symbol(load_ohlcv_csv(Path(fifteen_path)), load_ohlcv_csv(Path(hours_path)))
+        report[symbol] = result
+        print(f"{symbol}: {json.dumps(result)}")
+
+    args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    (args.output / "REPORT.md").write_text(report_markdown(report), encoding="utf-8")
     print(f"Saved TPO bridge report to {args.output}")
     return 0
 

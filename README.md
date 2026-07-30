@@ -75,6 +75,20 @@ evidence. Read the full [Trading System Blueprint](docs/TRADING_SYSTEM_BLUEPRINT
 
 ## Setup
 
+This project depends on `ibapi` 10.19–10.30, which PyPI does not carry (it
+only has 9.81) — TWS builds now reject historical-data requests from
+pre-163 API clients (error 10285), so the older PyPI package will not work.
+Before installing the project, download the TWS API 10.19–10.30 package
+from <https://interactivebrokers.github.io> (on Windows, grab the
+`twsapi_macunix.<ver>.zip` build — its Python client is platform-independent
+despite the name), extract it, and install the client it ships:
+
+```powershell
+python -m pip install <extracted>/IBJts/source/pythonclient
+```
+
+Then set up the project as usual:
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1

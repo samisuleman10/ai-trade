@@ -1,6 +1,8 @@
 {
   "cost_model": {
+    "commission_bps_per_side": 0.2,
     "commission_per_share_per_side": 0.005,
+    "min_commission_per_order": 2.0,
     "recorded": true,
     "slippage_bps_per_side": 0.7
   },

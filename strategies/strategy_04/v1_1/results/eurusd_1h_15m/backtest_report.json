@@ -339,5 +339,5 @@
       }
     }
   },
-  "warning": "Historical research only. Spot-FX midpoint data: zones are TPO-qualified (time-at-price, no volume exists), fills assume a fixed modelled half-spread, and commission is IBKR IDEALPRO tier-1 bps of notional. Read the TPO-vs-volume bridge report (strategies/strategy_04/analysis/tpo_vs_volume) before comparing against any equity result."
+  "warning": "Historical research only. Spot-FX midpoint data: zones are TPO-qualified (time-at-price, no volume exists), fills assume a fixed modelled half-spread, and commission is IBKR IDEALPRO tier-1 bps of notional. Read the TPO-vs-volume bridge report (strategies/strategy_04/analysis/tpo_vs_volume) before comparing against any equity result. The indicator's bar-count parameters (volume_reference_max_age_bars, max_zone_age_bars, broken_retest_window_bars, etc.) were tuned on ~7-bars/session equity RTH data; FX sessions run ~24 bars/session, so those windows are roughly 3.4x tighter in wall-clock terms here and have not been re-tuned for FX bar scale."
 }

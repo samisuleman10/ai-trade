@@ -52,3 +52,10 @@ def test_fx_runner_writes_contract_files(tmp_path, monkeypatch):
     assert report["indicator_parameters"]["session_day_boundary"] == "fx_17et"
     assert report["backtest_configuration"]["commission_bps_per_side"] == 0.20
     assert "TPO" in report["warning"]
+    # v0.3's bar-count parameters (e.g. volume_reference_max_age_bars=40,
+    # max_zone_age_bars=240, broken_retest_window_bars=40) were tuned on
+    # ~7-bars/session equity RTH data. FX sessions run ~24 bars, so those
+    # windows are roughly 3.4x tighter in wall-clock terms on FX, and
+    # nothing before this warned about it.
+    assert "bar" in report["warning"].lower()
+    assert "session" in report["warning"].lower()
