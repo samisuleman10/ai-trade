@@ -11,7 +11,9 @@ from ai_trade.market_data import us_etf_contract
 
 
 class _DelayedQuoteClient(_QuoteClient):
-    def error(self, reqId: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = "") -> None:  # noqa: N802
+    def error(  # noqa: N802
+        self, reqId: int, errorTime: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = ""
+    ) -> None:
         if errorCode not in {2104, 2106, 2107, 2108, 2119, 2158}:
             self.errors.append(f"IBKR {errorCode} (request {reqId}): {errorString}")
             if errorCode in {10089, 10168, 354}:

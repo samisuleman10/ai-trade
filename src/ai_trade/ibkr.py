@@ -45,7 +45,9 @@ class _PortfolioClient(EWrapper, EClient):
     def nextValidId(self, orderId: int) -> None:  # noqa: N802 - IBKR callback name
         self.connected.set()
 
-    def error(self, reqId: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = "") -> None:  # noqa: N802
+    def error(  # noqa: N802
+        self, reqId: int, errorTime: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = ""
+    ) -> None:
         # 2104/2106/2158 are routine market-data status messages, unrelated to this read-only sync.
         if errorCode not in {2104, 2106, 2158}:
             self.errors.append(f"IBKR {errorCode} (request {reqId}): {errorString}")

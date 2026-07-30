@@ -10,7 +10,11 @@ readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ name = "Sami" }]
 dependencies = [
-    "ibapi>=9.81.1",
+    # TWS builds reject historical-data requests from pre-163 API versions
+    # (error 10285), which forces the 10.x client. PyPI still only carries
+    # 9.81, so the 10.x client must be installed from IBKR's official TWS
+    # API distribution (interactivebrokers.github.io/#tws-api), not PyPI.
+    "ibapi>=10.19",
     # Windows ships no system tz database, so zoneinfo.ZoneInfo("America/New_York")
     # raises ZoneInfoNotFoundError without this. Session rules depend on it, so it
     # is a runtime dependency rather than a dev one.
