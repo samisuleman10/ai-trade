@@ -372,6 +372,30 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
               errors, not 2. Read the trade count alongside the verdict all the same: a spread
               measured from a handful of trades is itself uncertain.
             </p>
+
+            {/* Without this, the FX rows read as eight unlucky runs. They are
+                the recorded outcome of a test whose pass/fail rule was
+                committed to git before the result existed, which is the only
+                reason the verdict carries weight. */}
+            <aside className="s4-verdict mt-3 max-w-3xl">
+              <div className="s4-eyebrow">Strategy 04 v1.3 — out-of-sample verdict</div>
+              <p className="mt-1 text-xs leading-5 text-slate-700">
+                The EURUSD and GBPUSD rows below are not incidental. Strategy 04&rsquo;s filters
+                were designed on SPY and fixed in git <strong>before any FX data existed</strong>,
+                which makes FX a genuine holdout. Judged against a decision rule committed before
+                the result, the <strong>abandon condition fired five times and the accept condition
+                never fired</strong>.
+              </p>
+              <p className="mt-1.5 text-xs leading-5 text-slate-700">
+                Note which configurations fire: unfiltered v1.1 does not (GBPUSD t&nbsp;=&nbsp;−1.91,
+                EURUSD −1.13, both inconclusive). Every firing run has v1.2 filters applied. The
+                filters make FX conclusively worse on instruments they never saw.
+              </p>
+              <p className="mt-1.5 text-[11px] text-slate-500">
+                Full method, provenance chain and caveats:{' '}
+                <code>strategies/strategy_04/v1_3/results/HOLDOUT_RESULT.md</code>
+              </p>
+            </aside>
             <div className="mt-3 overflow-x-auto">
               <table className="s4-compare-table min-w-[720px]">
                 <thead>

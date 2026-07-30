@@ -788,3 +788,12 @@ button:focus-visible {
   background: transparent;
   opacity: 1;
 }
+
+/* Verdict callout: an out-of-sample conclusion sitting beside the numbers it
+   judged, so the conclusive rows are not read as eight unlucky runs. */
+.s4-verdict {
+  border-left: 3px solid #d03b3b;
+  border-radius: 0;
+  background: rgb(208 59 59 / 0.05);
+  padding: 0.65rem 0.9rem;
+}
