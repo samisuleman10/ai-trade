@@ -1,0 +1,78 @@
+{
+  "bundle_id": "strategies_strategy_04_v1_1_results_gbpusd_1h_15m",
+  "capabilities": {
+    "has_signal_audit": false,
+    "has_trade_audit": true,
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-27T11:45:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 260,
+      "sha256": "55f4741285b06c30917625c1386110d44ec29bd3e47edddc8d9405a64d4c1889"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-27T12:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 261,
+      "sha256": "dde20550f8d656576b990260e7bf83ae8ff22b891eeabdf8e3f7bba91a289b60"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-27T11:45:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 260,
+      "sha256": "bb9e3f606cbe826353982722eab754780fe00e2a37f3559a85df8e17404184fa"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-27T12:30:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 261,
+      "sha256": "c00a60fb48ea23be257fada88dba8fa3e03c5675d2b843f6531e15564faf850c"
+    },
+    {
+      "dataset_id": "trade_audit",
+      "first_timestamp": null,
+      "kind": "trade_audit",
+      "last_timestamp": null,
+      "path": "data/trade-audit.json",
+      "record_count": 260,
+      "sha256": "28419e9cf0552f50aa5d37f3a2123c2ac37a86fe62b4eb23a9bc73d7b0c5f552"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-30T02:59:45Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "GBPUSD"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "gbpusd_1h_15m",
+    "strategy_id": "strategy_04_v1_1_shallow_long_penetration",
+    "strategy_version": "v1_1"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}
