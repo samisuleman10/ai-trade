@@ -2,120 +2,117 @@
 
 ## Purpose
 
-Test whether the directional-body requirement on the trigger candle is
-symbol-dependent.
+Establish whether Strategy 04 has an edge worth tuning, before tuning it
+further.
 
-Version 1.3 asks a question; it does not propose a change. The null hypothesis
-is that the rule stays on everywhere, and the burden of evidence is on any
-symbol that wants it off.
+This version adds no rule and tests no filter. It exists because three filters
+have now been evaluated against baselines that were never shown to differ from
+zero, and a fourth would add another measurement of the same kind.
 
-## The rule under test
+## Why this replaces the original v1.3
 
-`_reaction_matches` in `src/ai_trade/strategy_04_v1.py` requires the trigger
-candle's body to point in the trade's direction:
+The first draft of this document asked whether the directional-body
+requirement is symbol-dependent. That question assumed the underlying edge was
+real and asked only how to shape it. The assumption does not hold.
 
-```
-demand / long  -> bar.close > bar.open
-supply / short -> bar.close < bar.open
-```
+Per-trade R on the recorded v1.1 fixed-risk ledgers:
 
-It is already parameterised as
-`Strategy04ExecutionParameters.require_directional_body`, default `True`. No
-new rule needs writing — this version measures what the existing switch is
-worth, per symbol.
+| Symbol | Trades | Average R | SD | t |
+| --- | ---: | ---: | ---: | ---: |
+| SPY | 38 | +0.2184 | 0.9734 | 1.38 |
+| DIA | 49 | +0.1770 | 0.9864 | 1.26 |
+| QQQ | 59 | +0.0190 | 1.0079 | 0.15 |
+| EURUSD | 243 | −0.0728 | 1.0038 | −1.13 |
+| GBPUSD | 260 | −0.1192 | 1.0057 | −1.91 |
 
-Note what the rule is not. A trigger can contact the zone, penetrate it only
-shallowly, and close back outside it — satisfying every other Version 1.1
-condition — and still be rejected because the candle itself closed against the
-trade. The rejected reaction does not consume the zone, so a later valid
-reaction may still qualify.
+No symbol reaches the conventional bar of |t| ≈ 2. SPY, the strongest result,
+would need roughly **79 trades** for its observed average to clear it and has
+38. The t-test assumes independent trades, which holds approximately here since
+only one position is open at a time; it is a guide, not a formal result, and it
+makes no adjustment for the several filters already examined, which would make
+the picture more pessimistic rather than less.
 
-## Motivating observation
+Three consequences:
 
-Trade 43 of the QQQ v1.1 sample (demand 485.67–486.33, trigger
-`2024-09-30T15:15:00Z`) fired once out of 43 zone touches in the preceding
-eight days, and lost. Two of the rejected touches penetrated only 17% and 12%
-and closed back above demand; both were rejected solely by the
-directional-body rule. Simulated under the same execution rules, one would
-have lost 1.04R and the other won 0.95R.
+1. **The filter comparisons compare noise to noise.** A filter that moves SPY
+   by −$1,638 is moving a figure that is not itself distinguishable from zero.
+2. **The symbol-dependence story is probably an artifact.** SPY and QQQ are
+   highly correlated. A real market-structure effect should appear in both;
+   opposite signs on instruments that move together is what sampling noise
+   looks like.
+3. **Every filter was discovered on SPY** — the 25% rule from the SPY long-loss
+   review, v1.2's Filter A from SPY trade 21, Filter B from a SPY trade 1
+   observation. Filters found on SPY improving SPY is the expected signature of
+   fitting, and QQQ has been acting as an unacknowledged out-of-sample check
+   that they keep failing.
 
-That is an anecdote, not evidence, and it is recorded here only to explain
-where the question came from.
+## The decision rule, declared before running
 
-An exploratory ablation across SPY, QQQ and DIA at fixed risk suggested the
-rule is strongly positive on SPY and DIA and negative on QQQ. **Those figures
-are deliberately omitted from this document.** They were produced before
-commits `2cf1982` and `10f2994` changed the cost model, so they no longer
-describe the code as it stands. Implementing this version means measuring
-again, not reusing them.
+Fill these in and commit them **before** any run. A threshold chosen after
+seeing results is not a threshold.
 
-## Required ablation
+- **Accept** and continue development when: `________`
+- **Abandon** or fundamentally rethink when: `________`
+- **Judged on**: out-of-sample average R and its t, on the frozen configuration
+  below, per symbol.
 
-| Variant | `require_directional_body` |
-| --- | --- |
-| v1.3-base | `True` (reproduces Version 1.1 exactly) |
-| v1.3-off | `False` |
+The values are the researcher's call, not this document's. What matters is that
+they exist in git before the first result does.
 
-`v1.3-base` must reproduce the current Version 1.1 fixed-risk result for each
-symbol, trade for trade. If it does not, the harness is wrong and no other
-number in the run may be read.
+## Method
 
-Run both variants on every symbol with cached one-hour and fifteen-minute
-data: SPY, QQQ, DIA, EURUSD, GBPUSD. FX pairs are included because Version 1.1
-baselines now exist for them (`d722519`), and a rule that behaves differently
-on a 24-hour instrument than on a US-session ETF is exactly the kind of split
-this version exists to detect.
+**1. Freeze.** Take v1.1 as shipped plus every filter examined to date — the
+25% penetration limit, v1.2 Filter A, v1.2 Filter B, and the directional-body
+requirement — at their current settings. No parameter is tuned during this
+version.
 
-Fixed 0.15% risk only. RRMS is not evaluated until a fixed-risk edge is
-accepted for that exact symbol and variant, per the existing RRMS policy.
+**2. Strict chronological holdout.** Follow the precedent in
+`strategies/strategy_02/v1_5/results/validation/out_of_sample_report.json`: a
+single split timestamp, training range and holdout range recorded, and results
+reported separately for each. The holdout period must not have been inspected
+while the filters were being designed.
 
-## Relationship to Version 1.2
+**3. FX first.** EURUSD and GBPUSD carry 243 and 260 trades against 38–59 for
+the equities. They are the only samples with enough weight to say anything, and
+both currently point negative. If the strategy cannot work where the evidence
+is strongest, per-symbol tuning on 38 SPY trades is beside the point.
 
-Version 1.2 tests two other filters — trigger distance from the stop, and
-one-hour direction agreement — with its own four-cell ablation.
+**4. Report power, not just outcome.** Every result states its trade count and
+t. A holdout that produces nine trades has not validated anything, which is the
+limitation of the Strategy 02 precedent and must not be repeated silently.
 
-**These must not be combined into one run.** Three independently togglable
-filters produce eight cells, and an effect could no longer be attributed to a
-single rule. Version 1.2's four-cell matrix exists precisely to avoid that.
+## Explicit non-goals
 
-Both versions also modify the same trigger evaluation in `_reaction_matches`.
-Version 1.3 should therefore be implemented after Version 1.2 has reported,
-and rebased onto whatever Version 1.2 leaves behind, rather than developed
-alongside it.
+- No new filter is proposed, implemented, or measured.
+- No parameter is optimised.
+- No symbol is made rule-conditional.
 
-## Rules retained unchanged
+The directional-body question is deferred, not abandoned. It becomes worth
+asking once a baseline exists that is distinguishable from zero. If no such
+baseline emerges, the question was never answerable.
 
-Everything else in Version 1.1 stands: one-hour v0.3 zones for location, the
-25% long penetration limit, the fifteen-minute reaction, entry at the next
-fifteen-minute open, stop beyond the zone by 0.05 × latest completed one-hour
-ATR(14), 1R target, session and Friday controls, and fixed 0.15% risk.
+## Addressing the power problem
 
-## Research warning
+The 38-trade SPY sample cannot settle this. Three ways forward, to be chosen
+explicitly rather than by default:
 
-The exploratory measurement that motivated this version was in-sample, on the
-same data the rules were developed against, and ran one variant per symbol.
-It indicates a direction worth testing. It is not a result.
-
-Version 1.1's own history is the governing precedent. Its 25% penetration rule
-improved SPY and DIA and reduced QQQ, and was therefore never made universal —
-see `results/cross_market/FILTER_VALIDATION_DECISION.md`. If the
-directional-body rule splits the same way, that would be **two independent
-filters preferring the same instruments**, which is a more interesting finding
-than either filter alone and deserves its own investigation before either is
-made symbol-conditional.
-
-Two filters agreeing is also the point at which the tempting conclusion —
-"QQQ needs its own rule set" — becomes most dangerous, because it can be
-reached from a handful of in-sample runs. It requires out-of-sample support.
+- **Extend history.** More years of cached bars raise the trade count directly.
+- **Widen the instrument set.** More symbols under identical rules pool
+  evidence, provided results are not cherry-picked afterwards.
+- **Accept the limit.** State plainly that equity conclusions are provisional
+  and that the strategy is not ready for a promotion decision.
 
 ## Promotion criteria
 
-Version 1.3 may change the rule for a symbol only when, for that exact symbol:
+Version 1.3 does not promote anything. It produces one of two outcomes:
 
-1. Fixed-risk performance beats the incumbent version.
-2. The improvement survives out-of-sample testing.
-3. Cost and slippage stress does not erase the edge.
-4. The result holds after the cost-model change of `2cf1982` and `10f2994`,
-   not merely before it.
+1. A frozen configuration with out-of-sample evidence meeting the pre-declared
+   accept rule, at which point tuning questions such as the directional-body
+   split become worth asking.
+2. Evidence that no such configuration exists, at which point the honest step
+   is to stop adding filters to Strategy 04.
+
+Strategy 02 v1.5 reached outcome 2 and was recorded as failing its own gate.
+That is the standard this version is held to.
 
 No configuration is approved for paper or live execution by this document.
