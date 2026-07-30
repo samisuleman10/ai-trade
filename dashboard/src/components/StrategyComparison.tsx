@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import type { CatalogEntry } from '../catalog';
 import { familyOf } from '../strategyDescriptions';
+import { EvidenceFunnel } from './EvidenceFunnel';
 import { useRunCatalog } from '../hooks/useRunCatalog';
 import type { CostModel, PerformancePoint, PerformanceSummary } from '../hooks/useRunCatalog';
 
@@ -220,6 +221,12 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
 
   return (
     <div className="space-y-5">
+      {/* Above the per-symbol tables on purpose: those tables rank runs
+          against each other, and a rank invites reading the top row as the
+          best result. The funnel answers the prior question -- which of
+          these runs has enough evidence to be read at all. */}
+      <EvidenceFunnel entries={entries} performance={performance} onSelectRun={onSelectRun} />
+
       <section className="s4-panel flex items-start gap-3 p-5">
         <div className="s4-evidence-icon">
           <AlertTriangle size={18} />

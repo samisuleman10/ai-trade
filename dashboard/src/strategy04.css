@@ -570,3 +570,199 @@ button:focus-visible {
     padding: 11px 13px;
   }
 }
+
+/* -- Evidence funnel -------------------------------------------------
+   Colours go through custom properties with a prefers-color-scheme
+   override so the plot stays legible on a dark surface: an SVG that
+   hardcodes slate-500 text and a near-white band disappears entirely
+   against one. The accent is deliberately NOT the positive green used
+   elsewhere in the dashboard -- it marks "conclusive", and every run
+   that currently qualifies concludes a loss. */
+.s4-funnel-wrap {
+  --funnel-grid: #e8edf4;
+  --funnel-zero: #94a3b8;
+  --funnel-text: #64748b;
+  --funnel-band: rgba(148, 163, 184, 0.14);
+  --funnel-boundary: #64748b;
+  --funnel-dot: #94a3b8;
+  --funnel-dot-conclusive: #7c3aed;
+  --funnel-dot-unknown: #cbd5e1;
+  --funnel-tooltip-bg: #0f172a;
+  --funnel-tooltip-text: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .s4-funnel-wrap {
+    --funnel-grid: #27354a;
+    --funnel-zero: #64748b;
+    --funnel-text: #94a3b8;
+    --funnel-band: rgba(148, 163, 184, 0.16);
+    --funnel-boundary: #94a3b8;
+    --funnel-dot: #64748b;
+    --funnel-dot-conclusive: #a78bfa;
+    --funnel-dot-unknown: #475569;
+    --funnel-tooltip-bg: #e2e8f0;
+    --funnel-tooltip-text: #0f172a;
+  }
+}
+
+.s4-funnel-svg {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+
+.s4-funnel-grid {
+  stroke: var(--funnel-grid);
+  stroke-width: 1;
+}
+
+.s4-funnel-zero {
+  stroke: var(--funnel-zero);
+  stroke-width: 1.5;
+}
+
+.s4-funnel-band {
+  fill: var(--funnel-band);
+  stroke: none;
+}
+
+.s4-funnel-boundary {
+  fill: none;
+  stroke: var(--funnel-boundary);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+
+.s4-funnel-tick {
+  fill: var(--funnel-text);
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.s4-funnel-axis-label {
+  fill: var(--funnel-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.s4-funnel-axis-note {
+  fill: var(--funnel-zero);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.s4-funnel-dot {
+  fill: var(--funnel-dot);
+  fill-opacity: 0.75;
+  stroke: none;
+  cursor: pointer;
+  transition: r 90ms ease-out;
+}
+
+.s4-funnel-dot.is-conclusive {
+  fill: var(--funnel-dot-conclusive);
+  fill-opacity: 0.95;
+}
+
+.s4-funnel-dot.is-unknown {
+  fill: none;
+  stroke: var(--funnel-dot-unknown);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
+.s4-funnel-dot:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.s4-funnel-tooltip {
+  position: absolute;
+  top: 14px;
+  right: 26px;
+  z-index: 5;
+  max-width: 20rem;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--funnel-tooltip-bg);
+  color: var(--funnel-tooltip-text);
+  font-size: 11px;
+  line-height: 1.45;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+}
+
+.s4-funnel-tooltip-sub {
+  margin-top: 1px;
+  opacity: 0.72;
+}
+
+.s4-funnel-tooltip-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1px 12px;
+  margin-top: 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.s4-funnel-tooltip-grid dt {
+  opacity: 0.72;
+}
+
+.s4-funnel-tooltip-grid dd {
+  margin: 0;
+  text-align: right;
+}
+
+.s4-funnel-tooltip-verdict {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.s4-funnel-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--funnel-text);
+}
+
+.s4-funnel-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.s4-funnel-key {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--funnel-dot);
+  opacity: 0.75;
+}
+
+.s4-funnel-key.is-conclusive {
+  background: var(--funnel-dot-conclusive);
+  opacity: 1;
+}
+
+.s4-funnel-key.is-unknown {
+  background: transparent;
+  border: 1.5px dashed var(--funnel-dot-unknown);
+}
+
+.s4-funnel-key.is-line {
+  width: 18px;
+  height: 0;
+  border-radius: 0;
+  border-top: 1.5px dashed var(--funnel-boundary);
+  background: transparent;
+  opacity: 1;
+}

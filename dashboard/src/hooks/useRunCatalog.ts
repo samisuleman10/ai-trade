@@ -16,6 +16,15 @@ export interface PerformanceSummary {
   max_drawdown?: number;
   net_pnl?: number;
   profit_factor?: number;
+  /**
+   * Sample standard deviation (n-1) of `result_r` across the run's trades,
+   * as recorded by the producer. Absent on bundles published before the
+   * producer began emitting it, and on runs with fewer than two trades --
+   * in both cases the dashboard must say so rather than assume a value,
+   * because the measured range across this repository's runs is 0.672 to
+   * 1.096 and any assumed constant is wrong for most of them.
+   */
+  result_r_sd?: number;
   short_trades?: number;
   trade_count?: number;
   win_rate?: number;
@@ -54,6 +63,7 @@ export interface CostModel {
 
 interface RunSummaryDataset {
   cost_model?: CostModel;
+  condition?: string | null;
 }
 
 export type FetchStatus = 'loading' | 'loaded' | 'error';
