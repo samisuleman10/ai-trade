@@ -433,6 +433,23 @@ button:focus-visible {
   border-bottom: 0;
 }
 
+/*
+ * The condition column is prose, not a metric. Every rule above is written
+ * for numbers -- nowrap, right-aligned, monospace -- and a sentence
+ * inheriting them renders as one unwrapped line that overruns the cells
+ * beside it. This opts that one column back into normal text.
+ */
+.s4-compare-table td.s4-condition-cell {
+  white-space: normal;
+  text-align: left;
+  font-family: inherit;
+  font-weight: 400;
+  color: #475569;
+  min-width: 220px;
+  max-width: 340px;
+  line-height: 1.45;
+}
+
 .s4-stat-card {
   min-height: 112px;
   border-radius: 13px;

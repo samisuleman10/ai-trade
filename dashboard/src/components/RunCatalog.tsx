@@ -159,7 +159,7 @@ export function RunCatalog({ onSelectRun, refreshToken }: RunCatalogProps) {
                         <div className="font-semibold text-slate-950">{entry.run.strategy_version}</div>
                         <div className="mt-0.5 text-[11px] font-normal text-slate-500">{entry.run.strategy_id}</div>
                       </td>
-                      <td className="max-w-xs text-xs text-slate-600">
+                      <td className="s4-condition-cell">
                         {conditionsFor(entry.run.strategy_id, conditions[entry.bundle_id]) ?? em}
                       </td>
                       <td>{entry.instrument.symbol || em}</td>
