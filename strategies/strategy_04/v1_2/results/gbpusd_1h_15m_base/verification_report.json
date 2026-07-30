@@ -1,0 +1,14 @@
+{
+  "results_dir": "strategies\\strategy_04\\v1_2\\results\\gbpusd_1h_15m_base",
+  "column_audit": {
+    "rows": 310,
+    "failures": []
+  },
+  "parity": {
+    "v1_2_signal_count": 310,
+    "v1_1_signal_count": 310,
+    "signals_match": true,
+    "trades_match": true
+  },
+  "passed": true
+}
