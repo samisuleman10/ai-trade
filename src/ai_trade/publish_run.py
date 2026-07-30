@@ -21,13 +21,15 @@ from pathlib import Path
 from typing import Any, Optional
 
 from ai_trade.backfill_visualization_bundles import (
+    REPORT_FILENAME,
     REQUIRED_FILES,
     _build_variant_datasets,
+    _read_json,
     bundle_id_for,
     run_identity,
 )
 from ai_trade.ledger_audit_datasets import ledger_audit_entries, merge_audit_datasets
-from ai_trade.visualization_contract import publish_bundle
+from ai_trade.visualization_contract import build_run_summary, publish_bundle
 
 
 def publish_result_directory(result_dir: Any) -> Optional[Path]:
@@ -71,6 +73,13 @@ def publish_result_directory(result_dir: Any) -> Optional[Path]:
         if has_rrms:
             datasets.extend(_build_variant_datasets(result_dir, "rrms", run_id))
             variants.append("rrms")
+
+        # Run metadata the dashboard would otherwise hardcode: signal
+        # counts, bar counts, starting equity and the cost model. Same call
+        # backfill() makes -- without it, the dashboard's "All runs" table
+        # has no trade counts, P&L, win rate, profit factor, or max
+        # drawdown for a run published this way.
+        datasets.append(build_run_summary(_read_json(result_dir / REPORT_FILENAME)))
 
         # A live run publishes the same ledger audit the backfill does.
         # Without this, re-running a backtest would replace an audited

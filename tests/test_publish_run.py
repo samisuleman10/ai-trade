@@ -45,3 +45,22 @@ def test_a_live_publish_carries_the_same_ledger_audit_as_the_backfill(tmp_path):
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
     assert "trade_audit" in [d["dataset_id"] for d in manifest["datasets"]]
     assert manifest["capabilities"]["has_trade_audit"] is True
+
+
+def test_a_live_publish_carries_the_same_run_summary_as_the_backfill(tmp_path):
+    """backfill() appends a run_summary dataset built from
+    backtest_report.json (see backfill_visualization_bundles.backfill,
+    which calls build_run_summary(_read_json(result_dir /
+    REPORT_FILENAME))). A live single-run publish must do the same --
+    otherwise the dashboard's "All runs" table has no trade counts, P&L,
+    win rate, profit factor, or max drawdown for runs published this way,
+    even though the same numbers are sitting right there in
+    fixed_summary.json / backtest_report.json.
+    """
+
+    _make_result(tmp_path / "run")
+    bundle = publish_result_directory(tmp_path / "run")
+    manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
+    dataset_ids = [d["dataset_id"] for d in manifest["datasets"]]
+    assert "run_summary" in dataset_ids
+    assert (bundle / "data" / "run-summary.json").exists()

@@ -46,6 +46,15 @@
       "sha256": "c00a60fb48ea23be257fada88dba8fa3e03c5675d2b843f6531e15564faf850c"
     },
     {
+      "dataset_id": "run_summary",
+      "first_timestamp": "2021-05-18T21:15:00Z",
+      "kind": "run_summary",
+      "last_timestamp": "2026-07-30T02:30:00Z",
+      "path": "data/run-summary.json",
+      "record_count": 2,
+      "sha256": "7f6cdc2abf59fcc5729d5f00b22bc38e5dc76646565040c556fdf6c7168d4c4b"
+    },
+    {
       "dataset_id": "trade_audit",
       "first_timestamp": null,
       "kind": "trade_audit",
@@ -56,7 +65,7 @@
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-30T02:59:45Z",
+  "generated_at": "2026-07-30T03:08:10Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,
