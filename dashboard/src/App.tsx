@@ -6,8 +6,9 @@ import { RunDetail } from './components/RunDetail';
 import Strategy04Dashboard from './Strategy04Dashboard';
 import { clearCatalogCache, fetchHealth } from './catalog';
 import type { CatalogEntry, HealthReport } from './catalog';
+import { DEEP_DIVES } from './deepdive/registry';
 
-type Section = 'compare' | 'runs' | 'strategy04';
+type Section = string;
 
 /**
  * Per-strategy deep-dives come first, newest leftmost, then the screens that
@@ -15,10 +16,12 @@ type Section = 'compare' | 'runs' | 'strategy04';
  * view of its own -- 01, 02 and 03 have no bespoke screen, so they live in
  * Compare and All runs rather than taking an empty tab. When Strategy 05 gets
  * its own view it goes to the front of this list and becomes the landing
- * screen, since the first entry is what opens.
+ * screen, since the first entry is what opens. The ordering now comes from
+ * the deep-dive registry: every entry there gets a tab ahead of the
+ * cross-strategy screens.
  */
 const SECTIONS: Array<{ id: Section; label: string; icon: typeof BarChart3 }> = [
-  { id: 'strategy04', label: 'Strategy 04', icon: Layers3 },
+  ...DEEP_DIVES.map((entry) => ({ id: entry.id, label: entry.label, icon: Layers3 })),
   { id: 'compare', label: 'Compare strategies', icon: BarChart3 },
   { id: 'runs', label: 'All runs', icon: Database },
 ];
@@ -71,6 +74,8 @@ export default function App() {
     setSelectedRun(null);
   };
 
+  const deepDiveEntry = DEEP_DIVES.find((entry) => entry.id === section);
+
   const footerLabel = selectedRun
     ? `${selectedRun.run.strategy_id} / ${selectedRun.run.strategy_version} / ${
         selectedRun.instrument.symbol || 'unknown symbol'
@@ -79,7 +84,7 @@ export default function App() {
       ? 'cross-strategy comparison · ranked by average R'
       : section === 'runs'
         ? 'all discovered runs'
-        : 'strategy_04 deep dive';
+        : (deepDiveEntry?.footerLabel ?? '');
 
   return (
     <div className="s4-app min-h-screen">
@@ -148,7 +153,7 @@ export default function App() {
             ) : (
               <RunCatalog onSelectRun={setSelectedRun} refreshToken={refreshToken} />
             ))}
-          {section === 'strategy04' && <Strategy04Dashboard />}
+          {deepDiveEntry && <Strategy04Dashboard />}
         </div>
 
         <footer className="mt-8 flex flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
