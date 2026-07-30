@@ -3,6 +3,7 @@ import pytest
 from ai_trade.backtest_strategy_01 import BacktestConfig, run_backtest
 from ai_trade.fx_config import FX_HALF_SPREAD_BPS, fx_backtest_config
 from ai_trade.market_data import OHLCVBar
+from ai_trade.rrms_five_loss_reset import run_backtest_five_loss_reset
 
 
 def _fx_bars() -> list[OHLCVBar]:
@@ -61,6 +62,27 @@ def test_bps_commission_without_minimum():
 def test_per_share_commission_still_default():
     config = BacktestConfig(entry_window_start=(18, 0), entry_window_end=(17, 0))
     trades = run_backtest(_fx_bars(), [_signal("2026-07-27T23:00:00Z")], "fixed", config)
+    trade = trades[0]
+    assert trade.costs == pytest.approx(trade.quantity * 0.005 * 2)
+
+
+def test_five_loss_reset_bps_commission_with_binding_minimum():
+    config = fx_backtest_config("EURUSD")
+    trades = run_backtest_five_loss_reset(_fx_bars(), [_signal("2026-07-27T23:00:00Z")], config)
+    assert len(trades) == 1
+    trade = trades[0]
+    assert trade.exit_reason == "target"
+    assert trade.net_pnl > 0
+    # ~73k units at ~1.10: 0.20 bps per side is well under the $2 minimum,
+    # so the $2 per-order minimum binds on both sides.
+    per_side_entry = trade.entry_price * trade.quantity * 0.20 / 10_000
+    assert per_side_entry < 2.0
+    assert trade.costs == pytest.approx(4.0)
+
+
+def test_five_loss_reset_per_share_commission_still_default():
+    config = BacktestConfig()
+    trades = run_backtest_five_loss_reset(_fx_bars(), [_signal("2026-07-27T23:00:00Z")], config)
     trade = trades[0]
     assert trade.costs == pytest.approx(trade.quantity * 0.005 * 2)
 

@@ -138,6 +138,23 @@ def _exit_trade(
     return None
 
 
+def trade_costs(entry_price: float, exit_price: float, quantity: int, config: BacktestConfig) -> float:
+    """Round-trip commission for one simulated trade under the config's cost model."""
+    if config.commission_bps_per_side is not None:
+        # Spot FX: commission is charged in bps of traded notional with a
+        # per-order minimum, on each side at that side's fill price.
+        fraction = config.commission_bps_per_side / 10_000
+        entry_commission = max(entry_price * quantity * fraction, config.min_commission_per_order)
+        exit_commission = max(exit_price * quantity * fraction, config.min_commission_per_order)
+        return entry_commission + exit_commission
+    commission = (
+        config.commission_per_contract_per_side
+        if config.commission_per_contract_per_side is not None
+        else config.commission_per_share_per_side
+    )
+    return quantity * commission * 2
+
+
 def run_backtest(
     entry_bars: Iterable[OHLCVBar],
     signals: Iterable[dict[str, object]],
@@ -185,20 +202,7 @@ def run_backtest(
         exit_index, exit_price, exit_reason = exit_result
         direction = 1 if side == "long" else -1
         gross_pnl = quantity * (exit_price - entry) * direction * config.contract_multiplier
-        if config.commission_bps_per_side is not None:
-            # Spot FX: commission is charged in bps of traded notional with a
-            # per-order minimum, on each side at that side's fill price.
-            fraction = config.commission_bps_per_side / 10_000
-            entry_commission = max(entry * quantity * fraction, config.min_commission_per_order)
-            exit_commission = max(exit_price * quantity * fraction, config.min_commission_per_order)
-            costs = entry_commission + exit_commission
-        else:
-            commission = (
-                config.commission_per_contract_per_side
-                if config.commission_per_contract_per_side is not None
-                else config.commission_per_share_per_side
-            )
-            costs = quantity * commission * 2
+        costs = trade_costs(entry, exit_price, quantity, config)
         net_pnl = gross_pnl - costs
         planned_risk = quantity * risk_per_unit
         result_r = net_pnl / planned_risk

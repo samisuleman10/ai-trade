@@ -13,6 +13,7 @@ from ai_trade.backtest_strategy_01 import (
     _exit_trade,
     _fill,
     _timestamp,
+    trade_costs,
 )
 from ai_trade.market_data import OHLCVBar
 
@@ -72,8 +73,7 @@ def run_backtest_weekly_reset(
         exit_index, exit_price, exit_reason = exit_result
         direction = 1 if side == "long" else -1
         gross_pnl = quantity * (exit_price - entry) * direction * config.contract_multiplier
-        commission = config.commission_per_contract_per_side if config.commission_per_contract_per_side is not None else config.commission_per_share_per_side
-        costs = quantity * commission * 2
+        costs = trade_costs(entry, exit_price, quantity, config)
         net_pnl = gross_pnl - costs
         planned_risk = quantity * risk_per_unit
         result_r = net_pnl / planned_risk

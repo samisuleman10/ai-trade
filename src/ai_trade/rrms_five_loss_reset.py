@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from ai_trade.backtest_strategy_01 import BacktestConfig, Trade, _entry_allowed, _exit_trade, _fill
+from ai_trade.backtest_strategy_01 import BacktestConfig, Trade, _entry_allowed, _exit_trade, _fill, trade_costs
 from ai_trade.market_data import OHLCVBar
 
 
@@ -55,8 +55,7 @@ def run_backtest_five_loss_reset(
         exit_index, exit_price, exit_reason = exit_result
         direction = 1 if side == "long" else -1
         gross_pnl = quantity * (exit_price - entry) * direction * config.contract_multiplier
-        commission = config.commission_per_contract_per_side if config.commission_per_contract_per_side is not None else config.commission_per_share_per_side
-        costs = quantity * commission * 2
+        costs = trade_costs(entry, exit_price, quantity, config)
         net_pnl = gross_pnl - costs
         planned_risk = quantity * risk_per_unit
         result_r = net_pnl / planned_risk
