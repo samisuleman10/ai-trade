@@ -1,7 +1,7 @@
 /**
  * Plain-language descriptions of what each strategy does.
  *
- * The catalog lists 48 runs across four strategies and seventeen strategy ids.
+ * The catalog lists 70 runs across four strategies and eighteen strategy ids.
  * Without these, a row is an opaque identifier. Family summaries answer "what
  * is this strategy?", condition lines answer "what does this version change?".
  *
@@ -76,6 +76,8 @@ export const STRATEGY_CONDITIONS: Record<string, string> = {
     'Qualified one-hour zones with a fifteen-minute rejection entry. No limit on how deep the trigger cuts into the zone.',
   strategy_04_v1_1_shallow_long_penetration:
     'Adds one rule to v1: a long trigger may cut no more than 25% into the demand zone.',
+  strategy_04_v1_2_rejection_filters:
+    'Two independently switchable filters over v1.1 — A caps trigger risk at max_risk_zone_ratio zone-widths, B requires one-hour candle direction agreement — run as a base/A/B/AB ablation.',
 };
 
 /** Leading `strategy_NN` of a compound strategy id, used to group the catalog. */
