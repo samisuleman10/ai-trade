@@ -1,0 +1,785 @@
+{
+  "dataset_id": "trade_audit",
+  "kind": "trade_audit",
+  "schema_version": "1.0.0",
+  "summary": {
+    "audit_failed": 0,
+    "audit_passed": 18
+  },
+  "trades": [
+    {
+      "checks": [
+        {
+          "actual": "145.20648308197846",
+          "check_id": "net_pnl",
+          "expected": "145.20648308197846",
+          "passed": true
+        },
+        {
+          "actual": "100145.20648308197",
+          "check_id": "equity_chain",
+          "expected": "no predecessor: first ledger row",
+          "passed": true
+        },
+        {
+          "actual": "0.9681273521126603",
+          "check_id": "result_r",
+          "expected": "0.9681273521126603",
+          "passed": true
+        },
+        {
+          "actual": "2021-06-17T16:15:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2021-06-17T16:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "92",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=422.87816409563806 entry=421.24787100000003 target=419.617577904362",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000001",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "139.81520199302236",
+          "check_id": "net_pnl",
+          "expected": "139.81520199302236",
+          "passed": true
+        },
+        {
+          "actual": "100285.021685075",
+          "check_id": "equity_chain",
+          "expected": "100285.021685075",
+          "passed": true
+        },
+        {
+          "actual": "0.9328448676385658",
+          "check_id": "result_r",
+          "expected": "0.9328448676385658",
+          "passed": true
+        },
+        {
+          "actual": "2021-11-22T20:00:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2021-11-22T18:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "176",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=470.1855055739789 entry=471.037099 target=471.8886924260211",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000002",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-151.4681744335627",
+          "check_id": "net_pnl",
+          "expected": "-151.4681744335627",
+          "passed": true
+        },
+        {
+          "actual": "100133.55351064143",
+          "check_id": "equity_chain",
+          "expected": "100133.55351064143",
+          "passed": true
+        },
+        {
+          "actual": "-1.020144468196603",
+          "check_id": "result_r",
+          "expected": "-1.020144468196603",
+          "passed": true
+        },
+        {
+          "actual": "2022-06-22T19:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2022-06-22T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "63",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=374.7609273556949 entry=377.117708 target=379.4744886443051",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000003",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "147.08418586307266",
+          "check_id": "net_pnl",
+          "expected": "147.08418586307266",
+          "passed": true
+        },
+        {
+          "actual": "100280.6376965045",
+          "check_id": "equity_chain",
+          "expected": "100280.6376965045",
+          "passed": true
+        },
+        {
+          "actual": "0.9824459084554753",
+          "check_id": "result_r",
+          "expected": "0.9824459084554753",
+          "passed": true
+        },
+        {
+          "actual": "2022-07-05T17:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2022-07-05T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "55",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=372.38546612042893 entry=375.107507 target=377.82954787957107",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000004",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-156.3299351397283",
+          "check_id": "net_pnl",
+          "expected": "-156.3299351397283",
+          "passed": true
+        },
+        {
+          "actual": "100124.30776136478",
+          "check_id": "equity_chain",
+          "expected": "100124.30776136478",
+          "passed": true
+        },
+        {
+          "actual": "-1.0439822862564232",
+          "check_id": "result_r",
+          "expected": "-1.0439822862564232",
+          "passed": true
+        },
+        {
+          "actual": "2022-09-29T15:45:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2022-09-29T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "142",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=363.80825521067425 entry=362.75372100000004 target=361.69918678932584",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000005",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-152.17605217729798",
+          "check_id": "net_pnl",
+          "expected": "-152.17605217729798",
+          "passed": true
+        },
+        {
+          "actual": "99972.13170918748",
+          "check_id": "equity_chain",
+          "expected": "99972.13170918748",
+          "passed": true
+        },
+        {
+          "actual": "-1.0228558009437205",
+          "check_id": "result_r",
+          "expected": "-1.0228558009437205",
+          "passed": true
+        },
+        {
+          "actual": "2022-11-07T19:15:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2022-11-07T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "71",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=378.9277449040631 entry=376.832313 target=374.7368810959369",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000006",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-150.12368309228088",
+          "check_id": "net_pnl",
+          "expected": "-150.12368309228088",
+          "passed": true
+        },
+        {
+          "actual": "99822.0080260952",
+          "check_id": "equity_chain",
+          "expected": "99822.0080260952",
+          "passed": true
+        },
+        {
+          "actual": "-1.0184034782250078",
+          "check_id": "result_r",
+          "expected": "-1.0184034782250078",
+          "passed": true
+        },
+        {
+          "actual": "2023-03-02T14:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2023-03-01T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "55",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=393.24939242847404 entry=395.92958899999996 target=398.6097855715259",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000007",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "142.38389607444327",
+          "check_id": "net_pnl",
+          "expected": "142.38389607444327",
+          "passed": true
+        },
+        {
+          "actual": "99964.39192216964",
+          "check_id": "equity_chain",
+          "expected": "99964.39192216964",
+          "passed": true
+        },
+        {
+          "actual": "0.9534158248156974",
+          "check_id": "result_r",
+          "expected": "0.9534158248156974",
+          "passed": true
+        },
+        {
+          "actual": "2023-10-17T17:45:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2023-10-17T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "130",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=437.44514149808435 entry=436.296366 target=435.1475905019156",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000008",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "143.820292110301",
+          "check_id": "net_pnl",
+          "expected": "143.820292110301",
+          "passed": true
+        },
+        {
+          "actual": "100108.21221427995",
+          "check_id": "equity_chain",
+          "expected": "100108.21221427995",
+          "passed": true
+        },
+        {
+          "actual": "0.9714906354612703",
+          "check_id": "result_r",
+          "expected": "0.9714906354612703",
+          "passed": true
+        },
+        {
+          "actual": "2025-01-14T16:00:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-01-14T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "62",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=585.5094375234589 entry=583.121682 target=580.733926476541",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000009",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-157.33600022840278",
+          "check_id": "net_pnl",
+          "expected": "-157.33600022840278",
+          "passed": true
+        },
+        {
+          "actual": "99950.87621405155",
+          "check_id": "equity_chain",
+          "expected": "99950.87621405155",
+          "passed": true
+        },
+        {
+          "actual": "-1.0523772516595122",
+          "check_id": "result_r",
+          "expected": "-1.0523772516595122",
+          "passed": true
+        },
+        {
+          "actual": "2025-02-11T19:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-02-11T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "111",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=605.4664767958195 entry=604.1195819999999 target=602.7726872041803",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000010",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-152.35567953725084",
+          "check_id": "net_pnl",
+          "expected": "-152.35567953725084",
+          "passed": true
+        },
+        {
+          "actual": "99798.52053451429",
+          "check_id": "equity_chain",
+          "expected": "99798.52053451429",
+          "passed": true
+        },
+        {
+          "actual": "-1.0249932883382518",
+          "check_id": "result_r",
+          "expected": "-1.0249932883382518",
+          "passed": true
+        },
+        {
+          "actual": "2025-05-21T17:15:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-05-21T15:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "54",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=587.9664611732053 entry=590.719066 target=593.4716708267947",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000011",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "140.84412719848322",
+          "check_id": "net_pnl",
+          "expected": "140.84412719848322",
+          "passed": true
+        },
+        {
+          "actual": "99939.36466171277",
+          "check_id": "equity_chain",
+          "expected": "99939.36466171277",
+          "passed": true
+        },
+        {
+          "actual": "0.9490818442434017",
+          "check_id": "result_r",
+          "expected": "0.9490818442434017",
+          "passed": true
+        },
+        {
+          "actual": "2025-10-21T17:00:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-10-21T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "98",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=674.0770268161315 entry=672.562737 target=671.0484471838685",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000012",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-152.5252044975609",
+          "check_id": "net_pnl",
+          "expected": "-152.5252044975609",
+          "passed": true
+        },
+        {
+          "actual": "99786.8394572152",
+          "check_id": "equity_chain",
+          "expected": "99786.8394572152",
+          "passed": true
+        },
+        {
+          "actual": "-1.031160145607051",
+          "check_id": "result_r",
+          "expected": "-1.031160145607051",
+          "passed": true
+        },
+        {
+          "actual": "2025-11-13T14:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-11-12T18:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "59",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=681.2013111735315 entry=683.708364 target=686.2154168264684",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000013",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-158.17838517630037",
+          "check_id": "net_pnl",
+          "expected": "-158.17838517630037",
+          "passed": true
+        },
+        {
+          "actual": "99628.6610720389",
+          "check_id": "equity_chain",
+          "expected": "99628.6610720389",
+          "passed": true
+        },
+        {
+          "actual": "-1.0588918281163076",
+          "check_id": "result_r",
+          "expected": "-1.0588918281163076",
+          "passed": true
+        },
+        {
+          "actual": "2025-12-10T19:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-12-10T19:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "112",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=685.4753384766551 entry=684.1415790000001 target=682.8078195233451",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000014",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-157.57103819652664",
+          "check_id": "net_pnl",
+          "expected": "-157.57103819652664",
+          "passed": true
+        },
+        {
+          "actual": "99471.09003384237",
+          "check_id": "equity_chain",
+          "expected": "99471.09003384237",
+          "passed": true
+        },
+        {
+          "actual": "-1.0616647723605714",
+          "check_id": "result_r",
+          "expected": "-1.0616647723605714",
+          "passed": true
+        },
+        {
+          "actual": "2025-12-15T16:15:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2025-12-15T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "117",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=682.24043296693 entry=680.971896 target=679.70335903307",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000015",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "142.97692536120573",
+          "check_id": "net_pnl",
+          "expected": "142.97692536120573",
+          "passed": true
+        },
+        {
+          "actual": "99614.06695920357",
+          "check_id": "equity_chain",
+          "expected": "99614.06695920357",
+          "passed": true
+        },
+        {
+          "actual": "0.9586277416916801",
+          "check_id": "result_r",
+          "expected": "0.9586277416916801",
+          "passed": true
+        },
+        {
+          "actual": "2026-02-12T15:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2026-02-12T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "78",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=694.922839359095 entry=693.0106920000001 target=691.0985446409052",
+          "check_id": "level_sides",
+          "expected": "target < entry < stop",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000016",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "-151.30164528132218",
+          "check_id": "net_pnl",
+          "expected": "-151.30164528132218",
+          "passed": true
+        },
+        {
+          "actual": "99462.76531392225",
+          "check_id": "equity_chain",
+          "expected": "99462.76531392225",
+          "passed": true
+        },
+        {
+          "actual": "-1.0203995771702672",
+          "check_id": "result_r",
+          "expected": "-1.0203995771702672",
+          "passed": true
+        },
+        {
+          "actual": "2026-03-11T14:15:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2026-03-10T18:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "39",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=675.5859612299354 entry=679.3879320000001 target=683.1899027700648",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000017",
+      "trigger_timestamp": ""
+    },
+    {
+      "checks": [
+        {
+          "actual": "144.03883282775104",
+          "check_id": "net_pnl",
+          "expected": "144.03883282775104",
+          "passed": true
+        },
+        {
+          "actual": "99606.80414675",
+          "check_id": "equity_chain",
+          "expected": "99606.80414675",
+          "passed": true
+        },
+        {
+          "actual": "0.9689028895119504",
+          "check_id": "result_r",
+          "expected": "0.9689028895119504",
+          "passed": true
+        },
+        {
+          "actual": "2026-06-29T17:30:00Z",
+          "check_id": "exit_after_entry",
+          "expected": "exit at or after 2026-06-29T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "55",
+          "check_id": "quantity",
+          "expected": "a positive quantity",
+          "passed": true
+        },
+        {
+          "actual": "stop=735.1308344586504 entry=737.833776 target=740.5367175413495",
+          "check_id": "level_sides",
+          "expected": "stop < entry < target",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "trade_id": "spy_1h_15m_b:fixed:000018",
+      "trigger_timestamp": ""
+    }
+  ]
+}

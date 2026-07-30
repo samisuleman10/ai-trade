@@ -1,0 +1,87 @@
+{
+  "bundle_id": "strategies_strategy_04_v1_2_results_gbpusd_1h_15m_b",
+  "capabilities": {
+    "has_signal_audit": false,
+    "has_trade_audit": true,
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-28T17:00:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 175,
+      "sha256": "f84b9c071cca13398320eadd31919f4fc2eb123ba596b2dec0eef9c8739d6d99"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-28T18:00:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 176,
+      "sha256": "c6b7d1a3ec9e49d5eaee6707909709facd512077e51da1c6e6828f3d0ac3ee6e"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-07-28T17:00:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 175,
+      "sha256": "a9306c287f91fc9fa29217badb3f034f959951400b3d29fc9a5a979f3759be3f"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2021-05-23T22:00:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-07-28T18:00:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 176,
+      "sha256": "632a1d0072ab762ca31e12393f09ea61b07cac15d743cbcef57935d505565550"
+    },
+    {
+      "dataset_id": "run_summary",
+      "first_timestamp": "2021-05-18T21:15:00Z",
+      "kind": "run_summary",
+      "last_timestamp": "2026-07-30T02:30:00Z",
+      "path": "data/run-summary.json",
+      "record_count": 2,
+      "sha256": "c0c13d8263044ff598dcdf51f2a6e5a08464697aa335afa71990f16d9de41912"
+    },
+    {
+      "dataset_id": "trade_audit",
+      "first_timestamp": null,
+      "kind": "trade_audit",
+      "last_timestamp": null,
+      "path": "data/trade-audit.json",
+      "record_count": 175,
+      "sha256": "02abfa7a57535524afe8f6f76886c1bdd510c553edeb3a47048f20e9db237768"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-30T06:05:19Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "GBPUSD"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "gbpusd_1h_15m_b",
+    "strategy_id": "strategy_04_v1_2_rejection_filters",
+    "strategy_version": "v1_2"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

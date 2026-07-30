@@ -1,0 +1,181 @@
+{
+  "cost_model": {
+    "commission_bps_per_side": null,
+    "commission_per_share_per_side": 0.005,
+    "min_commission_per_order": 0.0,
+    "recorded": true,
+    "slippage_bps_per_side": 1.0
+  },
+  "data": {
+    "execution_bar_count": 34200,
+    "first_timestamp": "2021-04-14T13:30:00Z",
+    "last_timestamp": "2026-07-16T19:45:00Z",
+    "setup_bar_count": 9189
+  },
+  "dataset_id": "run_summary",
+  "kind": "run_summary",
+  "schema_version": "1.0.0",
+  "signals": {
+    "candidate": 79,
+    "eligible": 35
+  },
+  "starting_equity": 100000.0,
+  "variants": {
+    "fixed": {
+      "average_holding_hours": 5.9338235294117645,
+      "average_r": 0.241935735843862,
+      "breakeven": 0,
+      "exit_reasons": {
+        "stop": {
+          "average_r": -1.0471121706195736,
+          "breakeven": 0,
+          "losses": 12,
+          "net_pnl": -1886.714057038593,
+          "trades": 12,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "target": {
+          "average_r": 0.9450527757330087,
+          "breakeven": 0,
+          "losses": 0,
+          "net_pnl": 3119.243904506044,
+          "trades": 22,
+          "win_rate": 1.0,
+          "wins": 22
+        }
+      },
+      "long": {
+        "average_r": 0.1549839464645711,
+        "breakeven": 0,
+        "losses": 6,
+        "net_pnl": 350.59608812773774,
+        "trades": 15,
+        "win_rate": 0.6,
+        "wins": 9
+      },
+      "losses": 12,
+      "maximum_consecutive_losses": 3,
+      "maximum_rrms_tier": 0,
+      "net_pnl": 1232.5298474674512,
+      "short": {
+        "average_r": 0.31058188535382847,
+        "breakeven": 0,
+        "losses": 6,
+        "net_pnl": 881.9337593397136,
+        "trades": 19,
+        "win_rate": 0.6842105263157895,
+        "wins": 13
+      },
+      "stop": {
+        "average_r": -1.0471121706195736,
+        "breakeven": 0,
+        "losses": 12,
+        "net_pnl": -1886.714057038593,
+        "trades": 12,
+        "win_rate": 0.0,
+        "wins": 0
+      },
+      "target": {
+        "average_r": 0.9450527757330087,
+        "breakeven": 0,
+        "losses": 0,
+        "net_pnl": 3119.243904506044,
+        "trades": 22,
+        "win_rate": 1.0,
+        "wins": 22
+      },
+      "total_costs": 43.65000000000001,
+      "trades": 34,
+      "weekend_close": {
+        "average_r": null,
+        "breakeven": 0,
+        "losses": 0,
+        "net_pnl": 0,
+        "trades": 0,
+        "win_rate": null,
+        "wins": 0
+      },
+      "win_rate": 0.6470588235294118,
+      "wins": 22
+    },
+    "rrms": {
+      "average_holding_hours": 5.9338235294117645,
+      "average_r": 0.241935735843862,
+      "breakeven": 0,
+      "exit_reasons": {
+        "stop": {
+          "average_r": -1.0471121706195736,
+          "breakeven": 0,
+          "losses": 12,
+          "net_pnl": -3116.484756986187,
+          "trades": 12,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "target": {
+          "average_r": 0.9450527757330087,
+          "breakeven": 0,
+          "losses": 0,
+          "net_pnl": 6291.16434143196,
+          "trades": 22,
+          "win_rate": 1.0,
+          "wins": 22
+        }
+      },
+      "long": {
+        "average_r": 0.1549839464645711,
+        "breakeven": 0,
+        "losses": 6,
+        "net_pnl": 1053.81260338758,
+        "trades": 15,
+        "win_rate": 0.6,
+        "wins": 9
+      },
+      "losses": 12,
+      "maximum_consecutive_losses": 3,
+      "maximum_rrms_tier": 3,
+      "net_pnl": 3174.679584445774,
+      "short": {
+        "average_r": 0.31058188535382847,
+        "breakeven": 0,
+        "losses": 6,
+        "net_pnl": 2120.8669810581937,
+        "trades": 19,
+        "win_rate": 0.6842105263157895,
+        "wins": 13
+      },
+      "stop": {
+        "average_r": -1.0471121706195736,
+        "breakeven": 0,
+        "losses": 12,
+        "net_pnl": -3116.484756986187,
+        "trades": 12,
+        "win_rate": 0.0,
+        "wins": 0
+      },
+      "target": {
+        "average_r": 0.9450527757330087,
+        "breakeven": 0,
+        "losses": 0,
+        "net_pnl": 6291.16434143196,
+        "trades": 22,
+        "win_rate": 1.0,
+        "wins": 22
+      },
+      "total_costs": 74.61,
+      "trades": 34,
+      "weekend_close": {
+        "average_r": null,
+        "breakeven": 0,
+        "losses": 0,
+        "net_pnl": 0,
+        "trades": 0,
+        "win_rate": null,
+        "wins": 0
+      },
+      "win_rate": 0.6470588235294118,
+      "wins": 22
+    }
+  }
+}
