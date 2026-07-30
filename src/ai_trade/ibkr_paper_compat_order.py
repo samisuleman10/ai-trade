@@ -33,9 +33,7 @@ class _Client(EWrapper, EClient):
         self.accounts = [item.strip() for item in accountsList.split(",") if item.strip()]
         self.accounts_ready.set()
 
-    def error(  # noqa: N802
-        self, reqId: int, errorTime: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = ""
-    ) -> None:
+    def error(self, reqId: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = "") -> None:  # noqa: N802
         if errorCode not in {2104, 2106, 2107, 2108, 2158}:
             self.errors.append(f"IBKR {errorCode} (request {reqId}): {errorString}")
             self.acknowledged.set()

@@ -16,10 +16,10 @@ from ai_trade.strategy_01 import load_ohlcv_csv
 _original_error = market_data._HistoricalDataClient.error
 
 
-def _gateway_error(self, req_id, error_time, error_code, error_string, advanced_order_reject_json=""):  # noqa: N802
+def _gateway_error(self, req_id, error_code, error_string, advanced_order_reject_json=""):  # noqa: N802
     if error_code == 2107:  # IBKR says its historical farm is dormant but available on demand.
         return
-    return _original_error(self, req_id, error_time, error_code, error_string, advanced_order_reject_json)
+    return _original_error(self, req_id, error_code, error_string, advanced_order_reject_json)
 
 
 market_data._HistoricalDataClient.error = _gateway_error

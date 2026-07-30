@@ -72,9 +72,7 @@ class _PaperClient(EWrapper, EClient):
         self.accounts = [value.strip() for value in accountsList.split(",") if value.strip()]
         self.accounts_received.set()
 
-    def error(  # noqa: N802
-        self, reqId: int, errorTime: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = ""
-    ) -> None:
+    def error(self, reqId: int, errorCode: int, errorString: str, advancedOrderRejectJson: str = "") -> None:  # noqa: N802
         if errorCode not in {2104, 2106, 2107, 2108, 2158}:
             detail = f"IBKR {errorCode} (request {reqId}): {errorString}"
             if advancedOrderRejectJson:

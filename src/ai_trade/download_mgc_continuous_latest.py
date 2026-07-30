@@ -19,10 +19,10 @@ def _ignore_dormant_hmds_farm() -> None:
     """Do not fail a request simply because IBKR reports its HMDS farm dormant."""
     original_error = market_data._HistoricalDataClient.error
 
-    def error(self, req_id, error_time, error_code, error_string, advanced_order_reject_json=""):
+    def error(self, req_id, error_code, error_string, advanced_order_reject_json=""):
         if error_code == 2107:
             return
-        return original_error(self, req_id, error_time, error_code, error_string, advanced_order_reject_json)
+        return original_error(self, req_id, error_code, error_string, advanced_order_reject_json)
 
     market_data._HistoricalDataClient.error = error
 

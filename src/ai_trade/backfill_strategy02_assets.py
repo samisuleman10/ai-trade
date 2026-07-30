@@ -16,10 +16,10 @@ from ai_trade.strategy_01 import load_ohlcv_csv
 _original_error = market_data._HistoricalDataClient.error
 
 
-def _gateway_error(self, reqId, errorTime, errorCode, errorString, advancedOrderRejectJson="") -> None:  # noqa: N802
+def _gateway_error(self, reqId, errorCode, errorString, advancedOrderRejectJson="") -> None:  # noqa: N802
     if errorCode == 2107:  # Historical-data farm available on demand.
         return
-    _original_error(self, reqId, errorTime, errorCode, errorString, advancedOrderRejectJson)
+    _original_error(self, reqId, errorCode, errorString, advancedOrderRejectJson)
 
 
 market_data._HistoricalDataClient.error = _gateway_error
