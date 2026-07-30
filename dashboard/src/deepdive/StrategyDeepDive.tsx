@@ -253,14 +253,9 @@ function PerformanceOverview({ result }: { result: Strategy04Result }) {
   );
 }
 
-const CHANGE_FROM_LABEL: Record<string, string> = {
-  v1: 'Change from v1.0:',
-  v1_1: 'Change from v1.0:',
-  v1_2: 'Change from v1.1:',
-};
-
 function RulesView({ version, config }: { version: string; config: DeepDiveConfig }) {
   const spec = config.specs[version];
+  const changeFromLabel = config.changeFromLabels[version];
 
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -271,7 +266,7 @@ function RulesView({ version, config }: { version: string; config: DeepDiveConfi
           <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">{spec.hypothesis}</p>
           {spec.changeFromPrior && (
             <div className="mt-5 rounded-xl border border-indigo-200 bg-indigo-50 p-4 text-sm leading-6 text-indigo-950">
-              <strong>{CHANGE_FROM_LABEL[version]}</strong> {spec.changeFromPrior}
+              {changeFromLabel && <strong>{changeFromLabel}</strong>} {spec.changeFromPrior}
             </div>
           )}
         </section>
@@ -355,11 +350,9 @@ function RulesView({ version, config }: { version: string; config: DeepDiveConfi
  * one strategy's data module directly.
  */
 export default function StrategyDeepDive({ config }: { config: DeepDiveConfig }) {
-  const [version, setVersion] = useState(config.versions[0].id);
+  const [version, setVersion] = useState(config.defaultVersionId);
   const [asset, setAsset] = useState(config.assets[0]);
-  const [variant, setVariant] = useState(
-    config.variantsByVersion[config.versions[0].id]?.[0]?.id ?? 'base',
-  );
+  const [variant, setVariant] = useState(config.defaultVariantId);
   const [view, setView] = useState<View>('performance');
   const { status: summaryStatus, results } = useStrategy04Results(version, variant, config.familyId);
   const result = (results as Record<string, Strategy04Result | undefined>)[asset];

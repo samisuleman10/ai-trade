@@ -23,6 +23,25 @@ export interface DeepDiveConfig {
   variantsByVersion: Record<string, Array<{ id: string; label: string; description: string }>>;
   assets: string[];
   specs: Record<string, Strategy04Spec>;
+  /**
+   * Which version/variant the deep dive should land on. Declared explicitly
+   * rather than left to fall out of `versions[0]`/`variantsByVersion[...][0]`
+   * order, so a reorder of either array can't silently change the first
+   * paint. Strategy 04 opens on its newest version (matching the repo's
+   * newest-first convention for both tabs and version chips) with the Base
+   * variant, since v1.2/Base reproduces the previous incumbent (v1.1)
+   * exactly -- a returning user sees the same numbers as before.
+   */
+  defaultVersionId: string;
+  defaultVariantId: string;
+  /**
+   * Human-readable "change from" prefixes, keyed by version id. Populated
+   * per strategy rather than hard-coded in the shared component so a second
+   * strategy family with different version ids renders its own labels
+   * instead of `undefined`. Versions with no entry simply render their
+   * change text without a prefix.
+   */
+  changeFromLabels: Record<string, string>;
 }
 
 /**
@@ -38,4 +57,11 @@ export const strategy04Config: DeepDiveConfig = {
   variantsByVersion: { v1_2: STRATEGY_04_VARIANTS },
   assets: STRATEGY_04_ASSETS,
   specs: STRATEGY_04_SPECS,
+  defaultVersionId: 'v1_2',
+  defaultVariantId: 'base',
+  changeFromLabels: {
+    v1: 'Change from v1.0:',
+    v1_1: 'Change from v1.0:',
+    v1_2: 'Change from v1.1:',
+  },
 };
