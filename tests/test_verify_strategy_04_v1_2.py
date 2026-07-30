@@ -100,3 +100,21 @@ def test_parity_fails_on_any_shared_column_difference(tmp_path):
     (v12 / "fixed_trades.csv").write_text("a,b\n1,2\n", encoding="utf-8")
     report = parity_against_v1_1(v12, v11)
     assert report["signals_match"] is False
+
+
+def test_parity_fails_on_empty_vs_nonempty_signals(tmp_path):
+    v12 = tmp_path / "v12"
+    v11 = tmp_path / "v11"
+    v12.mkdir()
+    v11.mkdir()
+    # v1.2 has empty signals, v1.1 has one signal
+    (v12 / "candidate_signals.csv").write_text("", encoding="utf-8")
+    old_row = {k: v for k, v in _SIGNAL_ROW.items()
+               if k not in ("risk_zone_ratio", "one_hour_reference_open", "one_hour_reference_close")}
+    _write_signals(v11 / "candidate_signals.csv", [old_row])
+    # Both have identical fixed_trades content
+    (v11 / "fixed_trades.csv").write_text("a,b\n1,2\n", encoding="utf-8")
+    (v12 / "fixed_trades.csv").write_text("a,b\n1,2\n", encoding="utf-8")
+    report = parity_against_v1_1(v12, v11)
+    assert report["signals_match"] is False
+    assert report["trades_match"] is True

@@ -87,8 +87,8 @@ def parity_against_v1_1(results_dir: Path, v1_1_dir: Path) -> dict:
     ]
     signals_match = stripped == v11_signals
     trades_match = (
-        (Path(results_dir) / "fixed_trades.csv").read_text(encoding="utf-8")
-        == (Path(v1_1_dir) / "fixed_trades.csv").read_text(encoding="utf-8")
+        (Path(results_dir) / "fixed_trades.csv").read_bytes()
+        == (Path(v1_1_dir) / "fixed_trades.csv").read_bytes()
     )
     return {
         "v1_2_signal_count": len(v12_signals),
