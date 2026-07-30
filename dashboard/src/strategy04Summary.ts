@@ -6,6 +6,7 @@ import type {
   PerformanceMetrics,
   Strategy04Asset,
   Strategy04Result,
+  Strategy04Variant,
   Strategy04Version,
 } from './strategy04Data';
 
@@ -101,12 +102,15 @@ const toDirection = (side: RunSummaryVariant['long']): DirectionMetrics => ({
 async function loadResult(
   version: Strategy04Version,
   asset: Strategy04Asset,
+  variant: Strategy04Variant,
 ): Promise<Strategy04Result | null> {
   const runs = await fetchRuns({ strategy_version: version, symbol: asset });
-  const entry = runs.find(
-    (run) =>
-      familyOf(run.run.strategy_id) === 'strategy_04' && run.dataset_ids.includes('run_summary'),
-  );
+  const entry = runs.find((run) => {
+    if (familyOf(run.run.strategy_id) !== 'strategy_04') return false;
+    if (!run.dataset_ids.includes('run_summary')) return false;
+    if (version === 'v1_2') return run.bundle_id.endsWith(`_${variant}`);
+    return true;
+  });
   if (!entry) return null;
 
   const [summary, fixed, rrms] = await Promise.all([
@@ -148,16 +152,21 @@ async function loadResult(
 
 export type SummaryStatus = 'loading' | 'loaded' | 'error';
 
-export const STRATEGY_04_ASSETS: Strategy04Asset[] = ['SPY', 'QQQ', 'DIA'];
+export const STRATEGY_04_ASSETS: Strategy04Asset[] = ['SPY', 'QQQ', 'DIA', 'EURUSD', 'GBPUSD'];
 
 /**
  * Every asset's result for one version, keyed by symbol.
  *
  * Fetched as a set because the deep-dive's asset picker and its Compare
- * assets tab both need all three, and the catalog layer caches per URL, so
- * the second consumer costs nothing.
+ * assets tab both need all five, and the catalog layer caches per URL, so
+ * the second consumer costs nothing. `variant` only disambiguates v1_2
+ * results (see loadResult); other versions ignore it, but it is still a
+ * dependency here so switching variants while on v1_2 refetches.
  */
-export function useStrategy04Results(version: Strategy04Version): {
+export function useStrategy04Results(
+  version: Strategy04Version,
+  variant: Strategy04Variant,
+): {
   status: SummaryStatus;
   results: Partial<Record<Strategy04Asset, Strategy04Result>>;
 } {
@@ -170,7 +179,7 @@ export function useStrategy04Results(version: Strategy04Version): {
     let cancelled = false;
     setState({ status: 'loading', results: {} });
 
-    Promise.all(STRATEGY_04_ASSETS.map((asset) => loadResult(version, asset)))
+    Promise.all(STRATEGY_04_ASSETS.map((asset) => loadResult(version, asset, variant)))
       .then((loaded) => {
         if (cancelled) return;
         const results: Partial<Record<Strategy04Asset, Strategy04Result>> = {};
@@ -187,7 +196,7 @@ export function useStrategy04Results(version: Strategy04Version): {
     return () => {
       cancelled = true;
     };
-  }, [version]);
+  }, [version, variant]);
 
   return state;
 }

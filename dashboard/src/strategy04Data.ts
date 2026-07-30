@@ -1,6 +1,7 @@
-export type Strategy04Version = 'v1' | 'v1_1';
-export type Strategy04Asset = 'SPY' | 'QQQ' | 'DIA';
+export type Strategy04Version = 'v1' | 'v1_1' | 'v1_2';
+export type Strategy04Asset = 'SPY' | 'QQQ' | 'DIA' | 'EURUSD' | 'GBPUSD';
 export type Strategy04Timeframe = '15m' | '1h';
+export type Strategy04Variant = 'base' | 'a' | 'b' | 'ab';
 
 export interface PerformanceMetrics {
   trades: number;
@@ -137,6 +138,40 @@ export const STRATEGY_04_SPECS: Record<Strategy04Version, Strategy04Spec> = {
       ...sharedExecutionRules.slice(1),
     ],
   },
+  v1_2: {
+    versionId: 'v1_2',
+    title: 'Strategy 04 v1.2 — Rejection filters (experiment)',
+    hypothesis:
+      'The v1.1 trade audit surfaced two independent rejection patterns worth testing: triggers whose close sits far from the zone that produced them, and triggers that fire against the prevailing one-hour candle. This experiment tests each filter alone and together against the v1.1 baseline.',
+    changeFromPrior:
+      'Two independently switchable filters over v1.1. Filter A rejects a trigger whose close sits more than max_risk_zone_ratio (2.5 — in-sample, unvalidated) zone-widths from its stop. Filter B rejects a trigger opposing the latest completed one-hour candle (doji passes both directions). A rejected reaction does not consume its zone. The base variant reproduces v1.1 exactly.',
+    riskPolicy:
+      'Fixed risk uses 0.15% of current equity. RRMS uses 0.15%, 0.35%, 0.70%, 1.50%, and 1.50% tiers, resetting after profit or the fifth negative exit.',
+    ruleGroups: [
+      sharedExecutionRules[0],
+      {
+        title: '15-minute reaction',
+        subtitle: 'Defines when the setup becomes executable.',
+        rules: [
+          'The trigger candle contacts the zone from its valid side and closes back outside it.',
+          'Long triggers require a bullish close and no more than 25% demand-zone penetration.',
+          'Short triggers require a bearish close below supply; v1 short logic is unchanged.',
+          'One price reaction consumes its overlapping zones only once.',
+        ],
+      },
+      ...sharedExecutionRules.slice(1),
+      {
+        title: 'Rejection filters (v1.2 ablation)',
+        subtitle: 'Two independently switchable filters layered over v1.1.',
+        rules: [
+          'Filter A rejects a trigger whose close sits more than max_risk_zone_ratio (2.5, in-sample and unvalidated) zone-widths from its stop.',
+          'Filter B rejects a trigger that opposes the latest completed one-hour candle; a one-hour doji passes both directions.',
+          'A rejected reaction does not consume its zone, so a later reaction may still qualify against it.',
+          'Variants enable the filters independently: base is neither, a is Filter A only, b is Filter B only, ab is both.',
+        ],
+      },
+    ],
+  },
 };
 
 export const STRATEGY_04_VERSIONS: Array<{
@@ -144,6 +179,11 @@ export const STRATEGY_04_VERSIONS: Array<{
   label: string;
   description: string;
 }> = [
+  {
+    id: 'v1_2',
+    label: 'v1.2',
+    description: 'Rejection filters ablation',
+  },
   {
     id: 'v1_1',
     label: 'v1.1',
@@ -154,4 +194,15 @@ export const STRATEGY_04_VERSIONS: Array<{
     label: 'v1.0',
     description: 'Baseline causal zone reaction',
   },
+];
+
+export const STRATEGY_04_VARIANTS: Array<{
+  id: Strategy04Variant;
+  label: string;
+  description: string;
+}> = [
+  { id: 'base', label: 'Base', description: 'Filters off — must equal v1.1' },
+  { id: 'a', label: 'Filter A', description: 'Filter A: risk ≤ 2.5× zone width' },
+  { id: 'b', label: 'Filter B', description: 'Filter B: 1-hour candle agreement' },
+  { id: 'ab', label: 'A + B', description: 'Both filters' },
 ];

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchDataset, fetchRuns } from './catalog';
 import { familyOf } from './strategyDescriptions';
 import type { Bar, ExitReason, TradeSide } from './types';
-import type { Strategy04Asset, Strategy04Version } from './strategy04Data';
+import type { Strategy04Asset, Strategy04Variant, Strategy04Version } from './strategy04Data';
 import type { AuditCheck } from './ledgerAudit';
 
 /**
@@ -140,6 +140,7 @@ export type AuditStatus = 'loading' | 'loaded' | 'absent' | 'error';
 export function useStrategy04Audit(
   version: Strategy04Version,
   asset: Strategy04Asset,
+  variant: Strategy04Variant,
 ): { status: AuditStatus; trades: AuditedTrade[] } {
   const [state, setState] = useState<{ status: AuditStatus; trades: AuditedTrade[] }>({
     status: 'loading',
@@ -155,12 +156,26 @@ export function useStrategy04Audit(
       // producer's full id (`strategy_04_v1_1_shallow_long_penetration`), so
       // filtering on the family name server-side matches nothing. Narrow by
       // version and symbol, then pick the Strategy 04 family here.
+      //
+      // `trade_audit` alone is not enough: bundles published through the
+      // lightweight per-run path (every FX v1.1 run, every v1.2 run so far)
+      // carry ledger checks in `trade_audit` but never publish `zones` or
+      // `audit_windows` -- those need the repository's bar caches, which
+      // only the full backfill pass can reach. Without this check the
+      // dataset fetch below 404s on `zones`/`audit_windows` and the whole
+      // panel reports "Catalog API unreachable", which is false: the
+      // server is fine, this run's chart-capable audit just was never
+      // published.
       const runs = await fetchRuns({ strategy_version: version, symbol: asset });
-      const entry = runs.find(
-        (run) =>
-          familyOf(run.run.strategy_id) === 'strategy_04' &&
-          run.dataset_ids.includes('trade_audit'),
-      );
+      const entry = runs.find((run) => {
+        if (familyOf(run.run.strategy_id) !== 'strategy_04') return false;
+        if (!run.dataset_ids.includes('trade_audit')) return false;
+        if (!run.dataset_ids.includes('zones') || !run.dataset_ids.includes('audit_windows')) {
+          return false;
+        }
+        if (version === 'v1_2') return run.bundle_id.endsWith(`_${variant}`);
+        return true;
+      });
       if (!entry) {
         if (!cancelled) setState({ status: 'absent', trades: [] });
         return;
@@ -185,7 +200,7 @@ export function useStrategy04Audit(
     return () => {
       cancelled = true;
     };
-  }, [version, asset]);
+  }, [version, asset, variant]);
 
   return state;
 }

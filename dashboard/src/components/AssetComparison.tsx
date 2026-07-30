@@ -12,12 +12,20 @@ interface AssetComparisonProps {
   results: Partial<Record<Strategy04Asset, Strategy04Result>>;
 }
 
-const assets: Strategy04Asset[] = ['SPY', 'DIA', 'QQQ'];
+const assets: Strategy04Asset[] = ['SPY', 'QQQ', 'DIA', 'EURUSD', 'GBPUSD'];
 
 const labels: Record<Strategy04Asset, string> = {
   SPY: 'SPY / US500 proxy',
-  DIA: 'DIA / US30 proxy',
   QQQ: 'QQQ / US100 proxy',
+  DIA: 'DIA / US30 proxy',
+  EURUSD: 'EURUSD spot FX',
+  GBPUSD: 'GBPUSD spot FX',
+};
+
+const VERSION_LABELS: Record<Strategy04Version, string> = {
+  v1: 'v1.0',
+  v1_1: 'v1.1',
+  v1_2: 'v1.2',
 };
 
 const money = (value: number) =>
@@ -51,7 +59,7 @@ export function AssetComparison({
         <div>
           <div className="s4-eyebrow">Cross-asset summary</div>
           <h2 className="mt-1 text-base font-semibold text-slate-950">
-            Strategy 04 · {version === 'v1_1' ? 'v1.1' : 'v1.0'}
+            Strategy 04 · {VERSION_LABELS[version]}
           </h2>
           <p className="mt-1 text-xs text-slate-500">
             Same 1H-zone and 15M-entry profile across every instrument.

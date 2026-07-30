@@ -12,15 +12,17 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useStrategy04Audit } from './strategy04Audit';
-import { useStrategy04Results } from './strategy04Summary';
+import { STRATEGY_04_ASSETS, useStrategy04Results } from './strategy04Summary';
 import {
   STRATEGY_04_SPECS,
+  STRATEGY_04_VARIANTS,
   STRATEGY_04_VERSIONS,
 } from './strategy04Data';
 import type {
   PerformanceMetrics,
   Strategy04Asset,
   Strategy04Result,
+  Strategy04Variant,
   Strategy04Version,
 } from './strategy04Data';
 import { AssetComparison } from './components/AssetComparison';
@@ -261,6 +263,12 @@ function PerformanceOverview({ result }: { result: Strategy04Result }) {
   );
 }
 
+const CHANGE_FROM_LABEL: Record<Strategy04Version, string> = {
+  v1: 'Change from v1.0:',
+  v1_1: 'Change from v1.0:',
+  v1_2: 'Change from v1.1:',
+};
+
 function RulesView({ version }: { version: Strategy04Version }) {
   const spec = STRATEGY_04_SPECS[version];
 
@@ -273,7 +281,7 @@ function RulesView({ version }: { version: Strategy04Version }) {
           <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">{spec.hypothesis}</p>
           {spec.changeFromPrior && (
             <div className="mt-5 rounded-xl border border-indigo-200 bg-indigo-50 p-4 text-sm leading-6 text-indigo-950">
-              <strong>Change from v1.0:</strong> {spec.changeFromPrior}
+              <strong>{CHANGE_FROM_LABEL[version]}</strong> {spec.changeFromPrior}
             </div>
           )}
         </section>
@@ -357,10 +365,11 @@ function RulesView({ version }: { version: Strategy04Version }) {
 export default function Strategy04Dashboard() {
   const [version, setVersion] = useState<Strategy04Version>('v1_1');
   const [asset, setAsset] = useState<Strategy04Asset>('SPY');
+  const [variant, setVariant] = useState<Strategy04Variant>('base');
   const [view, setView] = useState<View>('performance');
-  const { status: summaryStatus, results } = useStrategy04Results(version);
+  const { status: summaryStatus, results } = useStrategy04Results(version, variant);
   const result = results[asset];
-  const { status: auditStatus, trades: auditedTrades } = useStrategy04Audit(version, asset);
+  const { status: auditStatus, trades: auditedTrades } = useStrategy04Audit(version, asset, variant);
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
@@ -368,17 +377,22 @@ export default function Strategy04Dashboard() {
   );
 
   if (!result) {
+    const label = version === 'v1_2' ? `${version} (${variant})` : version;
     return (
       <section className="s4-panel p-8 text-center">
         <div className="text-sm font-semibold text-slate-900">
           {summaryStatus === 'loading'
-            ? `Loading the ${asset} ${version} run…`
-            : 'Catalog API unreachable'}
+            ? `Loading the ${asset} ${label} run…`
+            : summaryStatus === 'error'
+              ? 'Catalog API unreachable'
+              : `No published run for ${asset} ${label}.`}
         </div>
         <p className="mt-2 text-xs text-slate-500">
           {summaryStatus === 'loading'
             ? 'Summary metrics are read from the published run, not stored in the page.'
-            : 'Start it with python -m ai_trade.server --port 8080, then reload.'}
+            : summaryStatus === 'error'
+              ? 'Start it with python -m ai_trade.server --port 8080, then reload.'
+              : 'Pick a different asset, version, or variant -- this combination has no published bundle.'}
         </p>
       </section>
     );
@@ -415,10 +429,30 @@ export default function Strategy04Dashboard() {
           </div>
         </div>
 
+        {version === 'v1_2' && (
+          <div>
+            <div className="s4-control-label">Variant</div>
+            <div className="s4-segment mt-1.5">
+              {STRATEGY_04_VARIANTS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-pressed={variant === item.id}
+                  onClick={() => setVariant(item.id)}
+                  className={variant === item.id ? 'is-active' : ''}
+                  title={item.description}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div>
           <div className="s4-control-label">Asset</div>
           <div className="s4-segment mt-1.5">
-            {(['SPY', 'QQQ', 'DIA'] as Strategy04Asset[]).map((item) => (
+            {STRATEGY_04_ASSETS.map((item) => (
               <button
                 key={item}
                 type="button"
@@ -517,7 +551,7 @@ export default function Strategy04Dashboard() {
             {auditStatus === 'loading' ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
-                  Loading the {asset} {version} audit…
+                  Loading the {asset} {version === 'v1_2' ? `${version} (${variant})` : version} audit…
                 </div>
                 <p className="mt-2 text-xs text-slate-500">
                   Each audit carries a bar window per trade, so it is fetched on demand
@@ -535,7 +569,7 @@ export default function Strategy04Dashboard() {
             ) : auditedTrades.length === 0 ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
-                  No published audit for {asset} {version}
+                  No published audit for {asset} {version === 'v1_2' ? `${version} (${variant})` : version}
                 </div>
                 <p className="mt-2 text-xs text-slate-500">
                   Run <code>python -m ai_trade.backfill_visualization_bundles</code> to publish
