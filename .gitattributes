@@ -1,0 +1,24 @@
+# Line endings are normalised here, not left to each machine's git config.
+#
+# Without this, files bounced between CRLF and LF depending on which tool
+# wrote them last, and a sixteen-line edit could land as a 372-line diff of
+# pure line-ending churn -- noise that hides real changes in review and
+# conflicts between concurrent sessions.
+#
+# text=auto: git decides text vs binary by content, stores text as LF.
+# eol=lf: text files are checked out as LF on every platform, including
+# Windows, so a file written by one tool matches what git has.
+* text=auto eol=lf
+
+# Binary formats git must never inspect or convert. text=auto's heuristic
+# usually gets these right, but a .docx or .pdf silently rewritten as text
+# is corrupted beyond repair, so they are declared rather than guessed.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.zip binary
