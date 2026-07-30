@@ -1,152 +1,167 @@
 {
   "SPY": {
-    "base": {
-      "candidates": 93,
-      "trades": 38,
-      "win_rate": 0.631578947368421,
-      "average_r": 0.21836272265930692,
-      "net_pnl": 1244.915542666029
-    },
-    "a": {
-      "candidates": 79,
-      "trades": 34,
-      "win_rate": 0.6470588235294118,
-      "average_r": 0.241935735843862,
-      "net_pnl": 1232.5298474674512
-    },
-    "b": {
-      "candidates": 54,
-      "trades": 18,
-      "win_rate": 0.4444444444444444,
-      "average_r": -0.14832976849683413,
-      "net_pnl": -393.19585324997576
-    },
-    "ab": {
-      "candidates": 43,
-      "trades": 14,
-      "win_rate": 0.5,
-      "average_r": -0.03697507896590212,
-      "net_pnl": -73.95192434151534
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 93,
+        "trades": 38,
+        "win_rate": 0.631578947368421,
+        "average_r": 0.21836272265930692,
+        "net_pnl": 1244.915542666029
+      },
+      "a": {
+        "candidates": 79,
+        "trades": 34,
+        "win_rate": 0.6470588235294118,
+        "average_r": 0.241935735843862,
+        "net_pnl": 1232.5298474674512
+      },
+      "b": {
+        "candidates": 54,
+        "trades": 18,
+        "win_rate": 0.4444444444444444,
+        "average_r": -0.14832976849683413,
+        "net_pnl": -393.19585324997576
+      },
+      "ab": {
+        "candidates": 43,
+        "trades": 14,
+        "win_rate": 0.5,
+        "average_r": -0.03697507896590212,
+        "net_pnl": -73.95192434151534
+      }
     }
   },
   "QQQ": {
-    "base": {
-      "candidates": 113,
-      "trades": 59,
-      "win_rate": 0.5254237288135594,
-      "average_r": 0.019032088930013263,
-      "net_pnl": 163.05917709490518
-    },
-    "a": {
-      "candidates": 105,
-      "trades": 61,
-      "win_rate": 0.5245901639344263,
-      "average_r": 0.01396307965402063,
-      "net_pnl": 119.77238671654297
-    },
-    "b": {
-      "candidates": 64,
-      "trades": 35,
-      "win_rate": 0.6571428571428571,
-      "average_r": 0.2849778756484778,
-      "net_pnl": 1490.7728304960929
-    },
-    "ab": {
-      "candidates": 51,
-      "trades": 32,
-      "win_rate": 0.625,
-      "average_r": 0.21574291657875325,
-      "net_pnl": 1032.4503566489986
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 113,
+        "trades": 59,
+        "win_rate": 0.5254237288135594,
+        "average_r": 0.019032088930013263,
+        "net_pnl": 163.05917709490518
+      },
+      "a": {
+        "candidates": 105,
+        "trades": 61,
+        "win_rate": 0.5245901639344263,
+        "average_r": 0.01396307965402063,
+        "net_pnl": 119.77238671654297
+      },
+      "b": {
+        "candidates": 64,
+        "trades": 35,
+        "win_rate": 0.6571428571428571,
+        "average_r": 0.2849778756484778,
+        "net_pnl": 1490.7728304960929
+      },
+      "ab": {
+        "candidates": 51,
+        "trades": 32,
+        "win_rate": 0.625,
+        "average_r": 0.21574291657875325,
+        "net_pnl": 1032.4503566489986
+      }
     }
   },
   "DIA": {
-    "base": {
-      "candidates": 95,
-      "trades": 49,
-      "win_rate": 0.6122448979591837,
-      "average_r": 0.176997840467742,
-      "net_pnl": 1295.2251842197009
-    },
-    "a": {
-      "candidates": 85,
-      "trades": 51,
-      "win_rate": 0.5882352941176471,
-      "average_r": 0.12478035527136166,
-      "net_pnl": 950.6410012861261
-    },
-    "b": {
-      "candidates": 56,
-      "trades": 31,
-      "win_rate": 0.6774193548387096,
-      "average_r": 0.3066011307954384,
-      "net_pnl": 1427.535854761811
-    },
-    "ab": {
-      "candidates": 43,
-      "trades": 27,
-      "win_rate": 0.7037037037037037,
-      "average_r": 0.35693051868239245,
-      "net_pnl": 1445.3237822540723
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 95,
+        "trades": 49,
+        "win_rate": 0.6122448979591837,
+        "average_r": 0.176997840467742,
+        "net_pnl": 1295.2251842197009
+      },
+      "a": {
+        "candidates": 85,
+        "trades": 51,
+        "win_rate": 0.5882352941176471,
+        "average_r": 0.12478035527136166,
+        "net_pnl": 950.6410012861261
+      },
+      "b": {
+        "candidates": 56,
+        "trades": 31,
+        "win_rate": 0.6774193548387096,
+        "average_r": 0.3066011307954384,
+        "net_pnl": 1427.535854761811
+      },
+      "ab": {
+        "candidates": 43,
+        "trades": 27,
+        "win_rate": 0.7037037037037037,
+        "average_r": 0.35693051868239245,
+        "net_pnl": 1445.3237822540723
+      }
     }
   },
   "EURUSD": {
-    "base": {
-      "candidates": 291,
-      "trades": 243,
-      "win_rate": 0.51440329218107,
-      "average_r": -0.07277930784021798,
-      "net_pnl": -2644.782264589895
-    },
-    "a": {
-      "candidates": 259,
-      "trades": 218,
-      "win_rate": 0.5091743119266054,
-      "average_r": -0.09279873563490647,
-      "net_pnl": -3012.9609506593347
-    },
-    "b": {
-      "candidates": 181,
-      "trades": 141,
-      "win_rate": 0.46099290780141844,
-      "average_r": -0.17970377274636273,
-      "net_pnl": -3745.106081281912
-    },
-    "ab": {
-      "candidates": 152,
-      "trades": 119,
-      "win_rate": 0.453781512605042,
-      "average_r": -0.20163210419705596,
-      "net_pnl": -3548.4671375424737
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 291,
+        "trades": 243,
+        "win_rate": 0.51440329218107,
+        "average_r": -0.07277930784021798,
+        "net_pnl": -2644.782264589895
+      },
+      "a": {
+        "candidates": 259,
+        "trades": 218,
+        "win_rate": 0.5091743119266054,
+        "average_r": -0.09279873563490647,
+        "net_pnl": -3012.9609506593347
+      },
+      "b": {
+        "candidates": 181,
+        "trades": 141,
+        "win_rate": 0.46099290780141844,
+        "average_r": -0.17970377274636273,
+        "net_pnl": -3745.106081281912
+      },
+      "ab": {
+        "candidates": 152,
+        "trades": 119,
+        "win_rate": 0.453781512605042,
+        "average_r": -0.20163210419705596,
+        "net_pnl": -3548.4671375424737
+      }
     }
   },
   "GBPUSD": {
-    "base": {
-      "candidates": 310,
-      "trades": 260,
-      "win_rate": 0.49615384615384617,
-      "average_r": -0.11924648035115093,
-      "net_pnl": -4572.6398818899015
-    },
-    "a": {
-      "candidates": 281,
-      "trades": 231,
-      "win_rate": 0.46320346320346323,
-      "average_r": -0.19544027507970385,
-      "net_pnl": -6572.910667812509
-    },
-    "b": {
-      "candidates": 205,
-      "trades": 175,
-      "win_rate": 0.45714285714285713,
-      "average_r": -0.196623728960568,
-      "net_pnl": -5049.758340696992
-    },
-    "ab": {
-      "candidates": 170,
-      "trades": 148,
-      "win_rate": 0.43243243243243246,
-      "average_r": -0.25346721602383326,
-      "net_pnl": -5487.939788188399
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 310,
+        "trades": 260,
+        "win_rate": 0.49615384615384617,
+        "average_r": -0.11924648035115093,
+        "net_pnl": -4572.6398818899015
+      },
+      "a": {
+        "candidates": 281,
+        "trades": 231,
+        "win_rate": 0.46320346320346323,
+        "average_r": -0.19544027507970385,
+        "net_pnl": -6572.910667812509
+      },
+      "b": {
+        "candidates": 205,
+        "trades": 175,
+        "win_rate": 0.45714285714285713,
+        "average_r": -0.196623728960568,
+        "net_pnl": -5049.758340696992
+      },
+      "ab": {
+        "candidates": 170,
+        "trades": 148,
+        "win_rate": 0.43243243243243246,
+        "average_r": -0.25346721602383326,
+        "net_pnl": -5487.939788188399
+      }
     }
   }
 }

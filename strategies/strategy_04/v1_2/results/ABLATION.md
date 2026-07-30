@@ -6,6 +6,10 @@ promotion additionally requires out-of-sample confirmation, parameter
 sensitivity, and cost stress. This table attributes effects; it does
 not approve anything.
 
+Filter A rows use max_risk_zone_ratio = 2.5, an in-sample, unvalidated threshold -- see the sweep.
+
+FX rows (EURUSD/GBPUSD) are TPO-zone, midpoint-data, modelled-spread runs with equity-tuned bar-count windows and are not comparable 1:1 with equity rows.
+
 ## SPY
 
 | Variant | Candidates | Trades | Win rate | Avg R | Net P&L | dNet vs base |

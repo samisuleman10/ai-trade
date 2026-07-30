@@ -8,7 +8,8 @@
     "v1_2_signal_count": 95,
     "v1_1_signal_count": 95,
     "signals_match": true,
-    "trades_match": true
+    "trades_match": true,
+    "non_empty": true
   },
   "passed": true
 }
