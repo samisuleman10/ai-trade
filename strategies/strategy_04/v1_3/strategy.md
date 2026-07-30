@@ -83,11 +83,16 @@ abandon bar is currently met in-sample by pooled FX (t = −2.16, 503 trades).
 requirement — at their current settings. No parameter is tuned during this
 version.
 
-**2. Strict chronological holdout.** Follow the precedent in
-`strategies/strategy_02/v1_5/results/validation/out_of_sample_report.json`: a
-single split timestamp, training range and holdout range recorded, and results
-reported separately for each. The holdout period must not have been inspected
-while the filters were being designed.
+**2. Holdout.** A strict chronological split was specified here and then
+abandoned before running, because it is provably underpowered: every symbol's
+holdout would need a larger effect than the one under test, so the answer would
+have been "inconclusive" by construction. A **cross-instrument** holdout was
+used instead — FX, which no filter was ever fitted to. The arithmetic and the
+provenance evidence are recorded in `results/HOLDOUT_RESULT.md`.
+
+A chronological test remains desirable and is not possible at current trade
+counts. Revisit it when a holdout can detect an effect the size of the one
+claimed.
 
 **3. FX first.** EURUSD and GBPUSD carry 243 and 260 trades against 38–59 for
 the equities. They are the only samples with enough weight to say anything, and
