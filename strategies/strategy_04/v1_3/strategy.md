@@ -48,16 +48,33 @@ Three consequences:
 
 ## The decision rule, declared before running
 
-Fill these in and commit them **before** any run. A threshold chosen after
-seeing results is not a threshold.
+Committed 30 July 2026, before any holdout run existed. A threshold chosen
+after seeing results is not a threshold.
 
-- **Accept** and continue development when: `________`
-- **Abandon** or fundamentally rethink when: `________`
+- **Accept** and continue development when: out-of-sample average R is
+  **positive** with **|t| ≥ 2** on **any single symbol**.
+- **Abandon** or fundamentally rethink when: out-of-sample average R is
+  **negative** with **|t| ≥ 2** on **any single symbol**.
 - **Judged on**: out-of-sample average R and its t, on the frozen configuration
   below, per symbol.
 
-The values are the researcher's call, not this document's. What matters is that
-they exist in git before the first result does.
+Notes that bind the interpretation:
+
+- **|t| is compared against Student's t at that run's own degrees of freedom**,
+  not a flat 2.0. At small n the 95% two-sided critical value is much larger —
+  3.182 at four trades — and a flat 2.0 marked a four-trade run as conclusive
+  during dashboard work. The stated "|t| ≥ 2" is shorthand for "clears the 95%
+  two-sided critical value".
+- **Both rules can fire at once**, on different symbols. That is not a
+  contradiction to be resolved by picking the favourable one: it is the
+  symbol-dependence claim finally being tested out-of-sample, and it must be
+  reported as such.
+- **Neither firing is also an outcome.** If the holdout settles nothing, the
+  honest report is that the available data cannot validate this strategy — not
+  that the question remains open pending another filter.
+
+For reference, no sample has ever cleared the accept bar in this project. The
+abandon bar is currently met in-sample by pooled FX (t = −2.16, 503 trades).
 
 ## Method
 
