@@ -1,7 +1,7 @@
 {
   "bundle_id": "strategies_strategy_04_v1_2_results_dia_1h_15m_ab",
   "capabilities": {
-    "has_signal_audit": false,
+    "has_signal_audit": true,
     "has_trade_audit": true,
     "sizing_variants": [
       "fixed",
@@ -25,7 +25,7 @@
       "last_timestamp": "2026-07-23T18:00:00Z",
       "path": "data/performance-fixed.json",
       "record_count": 28,
-      "sha256": "aa29d2ca324846a0a894870359dd86400e27469c4c296a4a4b077995f0ea1110"
+      "sha256": "09eabf0d00ad7ac67d467a343e09c3216562c6e792ee15319d717b4f5e814bbe"
     },
     {
       "dataset_id": "trades_rrms",
@@ -43,7 +43,7 @@
       "last_timestamp": "2026-07-23T18:00:00Z",
       "path": "data/performance-rrms.json",
       "record_count": 28,
-      "sha256": "89ef7aca6c5056cef8baf614823406010283c5a1f1257efa60b8e19648af25bf"
+      "sha256": "2f3f99e82e8fb5832bd42bcc918aacc4a95463544664bd190067962d6e78aa8e"
     },
     {
       "dataset_id": "run_summary",
@@ -52,7 +52,16 @@
       "last_timestamp": "2026-07-23T19:45:00Z",
       "path": "data/run-summary.json",
       "record_count": 2,
-      "sha256": "322fc0b814da6f2474886da78cccb64c9df83b6031a890a8b8eecf3011c1a570"
+      "sha256": "91b322fb8685552216f23494d986c08ff1b9833a4d958d3402ec7b42600179da"
+    },
+    {
+      "dataset_id": "zones",
+      "first_timestamp": null,
+      "kind": "zones",
+      "last_timestamp": null,
+      "path": "data/zones.json",
+      "record_count": 27,
+      "sha256": "164359aab96b28359aa4f410afe98ac2d6826c604a8b1b9aeceeb15b8318a485"
     },
     {
       "dataset_id": "trade_audit",
@@ -61,11 +70,20 @@
       "last_timestamp": null,
       "path": "data/trade-audit.json",
       "record_count": 27,
-      "sha256": "90fcdaae6ebe02d34bce9c10cc7f3bd0f8cb989a20f0bae2e6f9f4da4d6bdf47"
+      "sha256": "1d70c69ce314441bd8819e86fd5a027f4f643d0c537b9bdeaaab54044370f545"
+    },
+    {
+      "dataset_id": "audit_windows",
+      "first_timestamp": "2021-05-06T14:00:00Z",
+      "kind": "candles",
+      "last_timestamp": "2026-07-23T19:45:00Z",
+      "path": "data/audit-windows.json",
+      "record_count": 27,
+      "sha256": "4edc2a054e8b13e0b3f71de52e94af44bcdb5c24f87073b28a99e5dcd71751df"
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-30T06:05:33Z",
+  "generated_at": "2026-07-30T13:23:19Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

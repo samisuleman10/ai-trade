@@ -1,4 +1,5 @@
 {
+  "condition": "Filter A rejects reactions whose trigger close sits more than max_risk_zone_ratio zone-widths from the stop; Filter B rejects reactions opposing the latest completed one-hour candle. Both are independently switchable; this run is the 'ab' ablation variant.",
   "cost_model": {
     "commission_bps_per_side": null,
     "commission_per_share_per_side": 0.005,

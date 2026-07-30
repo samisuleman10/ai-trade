@@ -25,7 +25,7 @@
       "last_timestamp": "2026-07-16T17:00:00Z",
       "path": "data/performance-fixed.json",
       "record_count": 254,
-      "sha256": "59d0bb28dbf5e414c9c05e076033283d28bb5da64783bb66265c9c3c9e011bd7"
+      "sha256": "4e049dd84e81541a28cc684c700970a0d2d2302c0c0cd9d2c65543d9dd294c72"
     },
     {
       "dataset_id": "trades_rrms",
@@ -43,7 +43,7 @@
       "last_timestamp": "2022-01-12T14:30:00Z",
       "path": "data/performance-rrms.json",
       "record_count": 42,
-      "sha256": "8d4bb4d263b1402647e220dd8230af998e54aa7c482bf5e29087c3cec3bc520a"
+      "sha256": "2877140cdf0c34821dcb54597b7c73d1d6d51e35439d3b3290f9c14206849a9b"
     },
     {
       "dataset_id": "run_summary",
@@ -52,7 +52,7 @@
       "last_timestamp": null,
       "path": "data/run-summary.json",
       "record_count": 0,
-      "sha256": "2a05155cb22d2920a7b85bb861881b38d01fe5129544ae097cf0a64c34b15c54"
+      "sha256": "6ee9f0c9a0e09752e62081647e6fe3b971469289501e410b2ca59f920991f91f"
     },
     {
       "dataset_id": "trade_audit",
@@ -65,7 +65,7 @@
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T19:38:27Z",
+  "generated_at": "2026-07-30T13:14:24Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

@@ -1,6 +1,9 @@
 {
+  "condition": null,
   "cost_model": {
+    "commission_bps_per_side": null,
     "commission_per_share_per_side": 0.005,
+    "min_commission_per_order": null,
     "recorded": true,
     "slippage_bps_per_side": 1.0
   },

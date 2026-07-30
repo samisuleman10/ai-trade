@@ -25,7 +25,7 @@
       "last_timestamp": "2026-07-23T17:30:00Z",
       "path": "data/performance-fixed.json",
       "record_count": 50,
-      "sha256": "63c53ace3dedd0d82218c4b9a702d8296b5eddf3e1334d8109b56ada9a46e210"
+      "sha256": "ee58b8a897f7d2e3575b4c1344278460ddc45b5f9de3e94e4a4a7572a38c4f7d"
     },
     {
       "dataset_id": "trades_rrms",
@@ -43,7 +43,7 @@
       "last_timestamp": "2026-07-23T17:30:00Z",
       "path": "data/performance-rrms.json",
       "record_count": 50,
-      "sha256": "2eec4a47a7b41b0c13eb0dd193a09bc70687f3496c5d423edfc846f77b3c1a6f"
+      "sha256": "7dccd9aafa02749c9604f7a06e28e5d44fab2d2d019facdf230b7ddc07467c67"
     },
     {
       "dataset_id": "run_summary",
@@ -52,7 +52,7 @@
       "last_timestamp": "2026-07-23T19:45:00Z",
       "path": "data/run-summary.json",
       "record_count": 2,
-      "sha256": "3ece66019a0ddb8c3fe836ad1edb28c073c75321eebd1dbf54c3aa0fed35be8c"
+      "sha256": "0b17eff7c40a5e4ef69ef949b63ce3fdb16a91cea1bcb58027c3f795f3ca1948"
     },
     {
       "dataset_id": "zones",
@@ -83,7 +83,7 @@
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-29T19:41:35Z",
+  "generated_at": "2026-07-30T13:20:00Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,

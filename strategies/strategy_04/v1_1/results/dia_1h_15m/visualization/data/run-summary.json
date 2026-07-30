@@ -1,6 +1,9 @@
 {
+  "condition": "Long trigger low may penetrate no more than 25% of demand-zone width. Shorts and every other rule are unchanged.",
   "cost_model": {
+    "commission_bps_per_side": null,
     "commission_per_share_per_side": 0.005,
+    "min_commission_per_order": null,
     "recorded": true,
     "slippage_bps_per_side": 1.0
   },

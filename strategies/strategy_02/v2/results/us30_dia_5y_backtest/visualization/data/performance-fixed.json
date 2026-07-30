@@ -265,6 +265,7 @@
     "max_drawdown": 724.4214414241869,
     "net_pnl": 428.3796689431266,
     "profit_factor": 1.3127980981371277,
+    "result_r_sd": 0.8065673194248002,
     "short_trades": 16,
     "trade_count": 30,
     "win_rate": 0.5333333333333333,
