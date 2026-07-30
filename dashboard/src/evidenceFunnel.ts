@@ -9,9 +9,9 @@ import type { PerformanceState, PerformanceSummary } from './hooks/useRunCatalog
  * default for a missing one -- in particular, a run whose bundle records
  * no `result_r_sd` gets no t-statistic and no verdict, rather than being
  * judged against an assumed dispersion. The measured spread across this
- * repository's runs is 0.672 to 1.096, so any assumed constant is simply
- * wrong for most runs; that it happens to sort the current catalog
- * correctly is luck and not something to build on.
+ * published catalog is 0.539 to 1.096, so any assumed constant is simply
+ * wrong for most runs -- and an assumed 1.0 puts one run on the wrong side
+ * of the boundary outright.
  */
 
 /**
@@ -37,18 +37,25 @@ export interface FunnelPoint {
 
 export interface FunnelPoints {
   points: FunnelPoint[];
-  /** Runs with no trade count or no average R: placeable on neither axis. */
+  /** Runs whose dataset has arrived but records no trade count or average R. */
   unplottable: number;
+  /** Runs whose dataset request is still in flight. NOT the same as unplottable. */
+  pending: number;
 }
 
 /**
  * Reduce the catalog to plottable points.
  *
- * A run missing `trade_count` or `average_r` cannot be placed on either
- * axis and is counted as unplottable rather than silently dropped. A run
- * with a position but no recorded dispersion IS plotted -- its coordinates
- * are real -- but never classified, because classifying would require a
- * standard deviation nobody recorded.
+ * A run whose dataset has arrived but records no `trade_count` or
+ * `average_r` cannot be placed on either axis and is counted as
+ * unplottable rather than silently dropped. A run still being fetched is
+ * counted separately: the catalog fans out one request per run, so for the
+ * first seconds most runs have no numbers yet, and reporting those as
+ * "published nothing" would be a false statement about the producer.
+ *
+ * A run with a position but no recorded dispersion IS plotted -- its
+ * coordinates are real -- but never classified, because classifying would
+ * require a standard deviation nobody recorded.
  */
 export function toFunnelPoints(
   entries: CatalogEntry[],
@@ -56,9 +63,15 @@ export function toFunnelPoints(
 ): FunnelPoints {
   const points: FunnelPoint[] = [];
   let unplottable = 0;
+  let pending = 0;
 
   for (const entry of entries) {
-    const summary: PerformanceSummary | undefined = performance[entry.bundle_id]?.summary;
+    const state = performance[entry.bundle_id];
+    if (state === undefined || state.status === 'loading') {
+      pending += 1;
+      continue;
+    }
+    const summary: PerformanceSummary | undefined = state.summary;
     const tradeCount = summary?.trade_count;
     const averageR = summary?.average_r;
     if (typeof tradeCount !== 'number' || tradeCount < 1 || typeof averageR !== 'number') {
@@ -80,7 +93,7 @@ export function toFunnelPoints(
     });
   }
 
-  return { points, unplottable };
+  return { points, unplottable, pending };
 }
 
 /**

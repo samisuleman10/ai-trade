@@ -591,19 +591,24 @@ button:focus-visible {
   --funnel-tooltip-text: #e2e8f0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .s4-funnel-wrap {
-    --funnel-grid: #27354a;
-    --funnel-zero: #64748b;
-    --funnel-text: #94a3b8;
-    --funnel-band: rgba(148, 163, 184, 0.16);
-    --funnel-boundary: #94a3b8;
-    --funnel-dot: #64748b;
-    --funnel-dot-conclusive: #a78bfa;
-    --funnel-dot-unknown: #475569;
-    --funnel-tooltip-bg: #e2e8f0;
-    --funnel-tooltip-text: #0f172a;
-  }
+/* Dark values follow the SURFACE, not the operating system. The app pins
+   `color-scheme: light` on :root and renders white panels, so keying this
+   off `prefers-color-scheme` alone would paint the dark palette onto a
+   light panel for every dark-OS user -- less legible, not more. The hook
+   below is the explicit opt-in a dark surface sets, so the chart is
+   already correct the day the surrounding app gains one. */
+:root[data-theme='dark'] .s4-funnel-wrap,
+[data-theme='dark'] .s4-funnel-wrap {
+  --funnel-grid: #27354a;
+  --funnel-zero: #64748b;
+  --funnel-text: #94a3b8;
+  --funnel-band: rgba(148, 163, 184, 0.16);
+  --funnel-boundary: #94a3b8;
+  --funnel-dot: #64748b;
+  --funnel-dot-conclusive: #a78bfa;
+  --funnel-dot-unknown: #475569;
+  --funnel-tooltip-bg: #e2e8f0;
+  --funnel-tooltip-text: #0f172a;
 }
 
 .s4-funnel-svg {

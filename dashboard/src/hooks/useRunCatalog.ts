@@ -21,7 +21,7 @@ export interface PerformanceSummary {
    * as recorded by the producer. Absent on bundles published before the
    * producer began emitting it, and on runs with fewer than two trades --
    * in both cases the dashboard must say so rather than assume a value,
-   * because the measured range across this repository's runs is 0.672 to
+   * because the measured range across the published catalog is 0.539 to
    * 1.096 and any assumed constant is wrong for most of them.
    */
   result_r_sd?: number;

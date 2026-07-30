@@ -17,11 +17,13 @@ import type { FunnelPoint } from '../evidenceFunnel';
  *
  * Every quantity here is read from the producer's published summary. In
  * particular the dispersion (`result_r_sd`) is recorded per run, never
- * assumed: this chart was prototyped against an assumed SD of 1.0, and the
- * measured values range 0.672 to 1.096. The assumption happened to
- * classify every run in the current catalog the same way, which is luck,
- * not a design. A run whose bundle predates the producer change carries no
- * dispersion at all and is drawn as unknown rather than guessed at.
+ * assumed. This chart was prototyped against an assumed SD of 1.0; the
+ * measured values across the published catalog run 0.539 to 1.096, and the
+ * assumption did NOT reproduce the recorded classification -- one run
+ * (Strategy 02 v3 on DIA, 4 trades, SD 0.539) sits outside the funnel on
+ * its recorded dispersion and inside it on an assumed 1.0. A run whose
+ * bundle records no dispersion is drawn as unknown and given no verdict,
+ * rather than being judged against a number nobody measured.
  */
 
 interface EvidenceFunnelProps {
@@ -58,7 +60,7 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
   const [hovered, setHovered] = useState<FunnelPoint | null>(null);
 
   const model = useMemo(() => {
-    const { points, unplottable } = toFunnelPoints(entries, performance);
+    const { points, unplottable, pending } = toFunnelPoints(entries, performance);
     if (points.length === 0) return null;
 
     const counts = points.map((point) => point.tradeCount);
@@ -119,6 +121,7 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
     return {
       points,
       unplottable,
+      pending,
       conclusive,
       missingDispersion,
       medianSd,
@@ -158,7 +161,12 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
           The average of a few trades bounces around; the average of many settles down. The dashed
           funnel narrows at the same rate, so a run inside it has too few trades to conclude
           anything from, whatever its average R looks like. Only runs outside the funnel are
-          conclusive — and here every one of them concludes a <strong>loss</strong>, not an edge.
+          conclusive.{' '}
+          {model.conclusive.length > 0 && model.conclusive.every((point) => point.averageR < 0) && (
+            <>
+              Every one that currently qualifies concludes a <strong>loss</strong>, not an edge.{' '}
+            </>
+          )}
           Click any dot to open that run.
         </p>
       </div>
@@ -338,6 +346,9 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
               ` ${model.unplottable} run${
                 model.unplottable === 1 ? '' : 's'
               } published no trade count or average R and cannot be placed at all.`}
+            {model.pending > 0 &&
+              ` ${model.pending} run${model.pending === 1 ? ' is' : 's are'} still loading and not
+                yet plotted.`}
           </p>
         )}
       </div>
@@ -354,7 +365,10 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
           <>
             <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-600">
               These are the only runs whose result is too large to be sample noise. A negative
-              average R here is a measured losing edge, not an unlucky sample.
+              average R here is a measured losing edge, not an unlucky sample. The {SIGMA}-SD
+              boundary is a large-sample rule: a run of only a handful of trades can cross it on a
+              spread that is itself barely measured, so read the trade count alongside the verdict
+              rather than the verdict alone.
             </p>
             <div className="mt-3 overflow-x-auto">
               <table className="s4-compare-table min-w-[720px]">
