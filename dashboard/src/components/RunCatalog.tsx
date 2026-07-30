@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { CatalogEntry } from '../catalog';
-import { compareFamiliesNewestFirst, familyInfo, familyOf } from '../strategyDescriptions';
+import { compareFamiliesNewestFirst, conditionsFor, familyInfo, familyOf } from '../strategyDescriptions';
 import { useRunCatalog } from '../hooks/useRunCatalog';
 
 interface RunCatalogProps {
@@ -42,7 +42,7 @@ const ratio = (value: unknown): string => (typeof value === 'number' ? value.toF
 const count = (value: unknown): string => (typeof value === 'number' ? String(value) : em);
 
 export function RunCatalog({ onSelectRun, refreshToken }: RunCatalogProps) {
-  const { status, entries, performance: metrics, retry } = useRunCatalog(refreshToken);
+  const { status, entries, performance: metrics, conditions, retry } = useRunCatalog(refreshToken);
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
 
   const groups = useMemo(() => {
@@ -121,6 +121,7 @@ export function RunCatalog({ onSelectRun, refreshToken }: RunCatalogProps) {
               <thead>
                 <tr>
                   <th>Strategy ID / version</th>
+                  <th>Condition</th>
                   <th>Symbol</th>
                   <th>Mode</th>
                   <th>Trades</th>
@@ -157,6 +158,9 @@ export function RunCatalog({ onSelectRun, refreshToken }: RunCatalogProps) {
                       <td>
                         <div className="font-semibold text-slate-950">{entry.run.strategy_version}</div>
                         <div className="mt-0.5 text-[11px] font-normal text-slate-500">{entry.run.strategy_id}</div>
+                      </td>
+                      <td className="max-w-xs text-xs text-slate-600">
+                        {conditionsFor(entry.run.strategy_id, conditions[entry.bundle_id]) ?? em}
                       </td>
                       <td>{entry.instrument.symbol || em}</td>
                       <td>{entry.mode || em}</td>

@@ -117,7 +117,14 @@ export function familyInfo(strategyId: string): StrategyFamily {
   );
 }
 
-/** Null rather than a placeholder, so callers can omit the line entirely. */
-export function conditionsFor(strategyId: string): string | null {
-  return STRATEGY_CONDITIONS[strategyId] ?? null;
+/**
+ * Curated text wins; a run's own published `condition` is the fallback.
+ *
+ * The map is hand-written per strategy version, so a newly published version
+ * used to render a blank cell until someone remembered to add it. Falling
+ * back to what the run itself recorded means a new strategy is never blank,
+ * while the existing curated wording is preserved exactly.
+ */
+export function conditionsFor(strategyId: string, publishedCondition?: string | null): string | null {
+  return STRATEGY_CONDITIONS[strategyId] ?? publishedCondition ?? null;
 }

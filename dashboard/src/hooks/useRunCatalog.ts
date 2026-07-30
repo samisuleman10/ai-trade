@@ -75,6 +75,8 @@ export type PerformanceState = Record<
 
 export type CostModelState = Record<string, CostModel>;
 
+export type ConditionState = Record<string, string>;
+
 export interface RunCatalogState {
   /** Status of the catalog (run list) fetch, not any individual run's data. */
   status: FetchStatus;
@@ -83,6 +85,8 @@ export interface RunCatalogState {
   performance: PerformanceState;
   /** Per-bundle declared cost model, keyed by `bundle_id`. Absent until fetched. */
   costModels: CostModelState;
+  /** Per-bundle published `condition`, keyed by `bundle_id`. Absent until fetched or when the run never recorded one. */
+  conditions: ConditionState;
   /** Drop cached responses and fetch again. Backs the error states' retry control. */
   retry: () => void;
 }
@@ -103,12 +107,14 @@ export function useRunCatalog(refreshToken = 0): RunCatalogState {
   const [entries, setEntries] = useState<CatalogEntry[]>([]);
   const [performance, setPerformance] = useState<PerformanceState>({});
   const [costModels, setCostModels] = useState<CostModelState>({});
+  const [conditions, setConditions] = useState<ConditionState>({});
   const [attempt, setAttempt] = useState(0);
 
   const retry = useCallback(() => {
     clearCatalogCache();
     setPerformance({});
     setCostModels({});
+    setConditions({});
     setAttempt((value) => value + 1);
   }, []);
 
@@ -119,6 +125,7 @@ export function useRunCatalog(refreshToken = 0): RunCatalogState {
     // would otherwise keep rendering its old numbers under a stale key.
     setPerformance({});
     setCostModels({});
+    setConditions({});
     fetchRuns()
       .then((data) => {
         if (cancelled) return;
@@ -164,8 +171,13 @@ export function useRunCatalog(refreshToken = 0): RunCatalogState {
       if (entry.dataset_ids.includes(RUN_SUMMARY_DATASET_ID)) {
         fetchDataset<RunSummaryDataset>(entry.bundle_id, RUN_SUMMARY_DATASET_ID)
           .then((dataset) => {
-            if (cancelled || !dataset.cost_model) return;
-            setCostModels((prev) => ({ ...prev, [entry.bundle_id]: dataset.cost_model as CostModel }));
+            if (cancelled) return;
+            if (dataset.cost_model) {
+              setCostModels((prev) => ({ ...prev, [entry.bundle_id]: dataset.cost_model as CostModel }));
+            }
+            if (typeof dataset.condition === 'string' && dataset.condition.trim()) {
+              setConditions((prev) => ({ ...prev, [entry.bundle_id]: dataset.condition as string }));
+            }
           })
           .catch(() => undefined);
       }
@@ -176,5 +188,5 @@ export function useRunCatalog(refreshToken = 0): RunCatalogState {
     };
   }, [entries]);
 
-  return { status, entries, performance, costModels, retry };
+  return { status, entries, performance, costModels, conditions, retry };
 }

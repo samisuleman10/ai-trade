@@ -411,6 +411,21 @@ def _opt(container: Any, *keys: str) -> Any:
     return current
 
 
+def _published_condition(report: Mapping[str, Any]) -> Any:
+    """Return the run's own description of what it changed, if unambiguous.
+
+    Runners record this as ``change_from_<incumbent>`` (``change_from_v1``,
+    ``change_from_v1_1``, ...), so the key name varies by version. Exactly one
+    such key is readable; zero or several stay ``None`` rather than guessing a
+    provenance claim the report never made.
+    """
+    matches = [
+        value for key, value in report.items()
+        if key.startswith("change_from_") and isinstance(value, str) and value.strip()
+    ]
+    return matches[0] if len(matches) == 1 else None
+
+
 def build_run_summary(report: Mapping[str, Any]) -> Dataset:
     """Run metadata the dashboard would otherwise have to hardcode.
 
@@ -469,6 +484,7 @@ def build_run_summary(report: Mapping[str, Any]) -> Dataset:
             "last_timestamp": _opt(report, "data", "fifteen_minute_last"),
         },
         "variants": variants,
+        "condition": _published_condition(report),
     }
 
     return Dataset(

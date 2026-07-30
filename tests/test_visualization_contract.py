@@ -506,3 +506,30 @@ def test_run_summary_tolerates_a_report_with_nothing_useful():
     assert payload["signals"] == {"candidate": None, "eligible": None}
     assert payload["variants"] == {}
     assert payload["data"]["setup_bar_count"] is None
+
+
+def test_run_summary_condition_comes_from_a_single_change_from_key():
+    from ai_trade.visualization_contract import build_run_summary
+
+    dataset = build_run_summary({
+        "strategy_id": "strategy_04_v1_2_rejection_filters",
+        "change_from_v1_1": "Two independently switchable rejection filters.",
+    })
+    assert dataset.payload["condition"] == "Two independently switchable rejection filters."
+
+
+def test_run_summary_condition_is_none_when_absent_or_ambiguous():
+    from ai_trade.visualization_contract import build_run_summary
+
+    absent = build_run_summary({"strategy_id": "strategy_04_v1"})
+    assert absent.payload["condition"] is None
+
+    # Two change_from_* keys cannot be ordered without guessing which version
+    # the run actually changed from, so the field stays empty rather than
+    # publishing a possibly wrong provenance claim.
+    ambiguous = build_run_summary({
+        "strategy_id": "x",
+        "change_from_v1": "one",
+        "change_from_v1_1": "two",
+    })
+    assert ambiguous.payload["condition"] is None
