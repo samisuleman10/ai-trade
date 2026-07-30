@@ -108,10 +108,21 @@ const PERIOD_MISMATCH_LABEL = 'different period';
  * recorded one. Slippage and commission are what separate a realistic
  * result from an optimistic one, so two runs priced differently are not
  * ranked like for like even over the same instrument and period.
+ *
+ * Includes the bps-of-notional fields alongside the per-share ones: FX
+ * runs charge commission_bps_per_side with a min_commission_per_order
+ * floor instead of commission_per_share_per_side, so two FX runs priced
+ * differently on those fields would otherwise share a key built from
+ * per-share alone and rank as cost-comparable when they are not.
  */
 function costKeyOf(model: CostModel | undefined): string | null {
   if (!model || !model.recorded) return null;
-  return `${model.slippage_bps_per_side ?? '?'}/${model.commission_per_share_per_side ?? '?'}`;
+  return [
+    model.slippage_bps_per_side ?? '?',
+    model.commission_per_share_per_side ?? '?',
+    model.commission_bps_per_side ?? '?',
+    model.min_commission_per_order ?? '?',
+  ].join('/');
 }
 
 const COST_MISMATCH_LABEL = 'different costs';
@@ -376,7 +387,7 @@ export function StrategyComparison({ onSelectRun, refreshToken }: StrategyCompar
                           ) : costKeyOf(costModel) !== baseCost ? (
                             <span
                               className="s4-cohort-flag"
-                              title={`Group baseline is ${baseCost} (slippage bps / commission per share)`}
+                              title={`Group baseline is ${baseCost} (slippage bps / commission per share / commission bps of notional / min commission)`}
                             >
                               {COST_MISMATCH_LABEL}
                             </span>

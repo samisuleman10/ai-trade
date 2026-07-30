@@ -392,6 +392,8 @@ def test_run_summary_records_the_cost_model_when_present():
         "recorded": True,
         "slippage_bps_per_side": 1.0,
         "commission_per_share_per_side": 0.005,
+        "commission_bps_per_side": None,
+        "min_commission_per_order": None,
     }
 
 
@@ -407,6 +409,38 @@ def test_run_summary_marks_an_unrecorded_cost_model_rather_than_inventing_one():
     assert payload["cost_model"]["recorded"] is False
     assert payload["cost_model"]["slippage_bps_per_side"] is None
     assert payload["starting_equity"] is None
+
+
+def test_run_summary_records_bps_notional_commission_when_present():
+    """FX runs charge commission_bps_per_side of notional with a
+    min_commission_per_order floor, not commission_per_share_per_side. A
+    cost_model built from only the per-share field would publish
+    ``0.005/share, recorded: true`` for a run that never charged that --
+    the FX ledgers actually charged 0.20 bps of notional with a $2 minimum,
+    about 200x lower per unit than the misreported figure.
+    """
+
+    report = _report()
+    report["backtest_configuration"]["commission_bps_per_side"] = 0.20
+    report["backtest_configuration"]["min_commission_per_order"] = 2.0
+    payload = build_run_summary(report).payload
+    assert payload["cost_model"] == {
+        "recorded": True,
+        "slippage_bps_per_side": 1.0,
+        "commission_per_share_per_side": 0.005,
+        "commission_bps_per_side": 0.20,
+        "min_commission_per_order": 2.0,
+    }
+
+
+def test_run_summary_leaves_bps_commission_fields_null_when_absent():
+    """A per-share run must not have bps fields invented as zero -- null
+    means "no bps commission was charged", distinct from a stated zero.
+    """
+
+    payload = build_run_summary(_report()).payload
+    assert payload["cost_model"]["commission_bps_per_side"] is None
+    assert payload["cost_model"]["min_commission_per_order"] is None
 
 
 def test_run_summary_keeps_per_variant_details():

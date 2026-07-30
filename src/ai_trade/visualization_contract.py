@@ -421,6 +421,17 @@ def build_run_summary(report: Mapping[str, Any]) -> Dataset:
             "commission_per_share_per_side": (
                 _opt(config, "commission_per_share_per_side") if has_config else None
             ),
+            # FX runs charge commission_bps_per_side of notional with a
+            # min_commission_per_order floor instead of a per-share fee --
+            # roughly 200x lower per unit than commission_per_share_per_side
+            # would suggest on its own. Both stay None when the config never
+            # recorded them, same as the per-share field above.
+            "commission_bps_per_side": (
+                _opt(config, "commission_bps_per_side") if has_config else None
+            ),
+            "min_commission_per_order": (
+                _opt(config, "min_commission_per_order") if has_config else None
+            ),
         },
         "data": {
             "setup_bar_count": _opt(report, "data", "one_hour_bar_count"),

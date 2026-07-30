@@ -46,6 +46,10 @@ export interface CostModel {
   recorded: boolean;
   slippage_bps_per_side: number | null;
   commission_per_share_per_side: number | null;
+  /** Notional-based commission (FX runs); null when the run charged per share instead. */
+  commission_bps_per_side: number | null;
+  /** Floor applied under commission_bps_per_side; null when not recorded. */
+  min_commission_per_order: number | null;
 }
 
 interface RunSummaryDataset {
