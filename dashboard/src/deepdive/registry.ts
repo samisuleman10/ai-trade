@@ -1,3 +1,6 @@
+import type { DeepDiveConfig } from './strategy04Config';
+import { strategy04Config } from './strategy04Config';
+
 /**
  * Which strategies have a deep-dive screen, newest first.
  *
@@ -16,6 +19,8 @@ export interface DeepDiveEntry {
   familyId: string;
   /** Footer provenance line shown while this tab is open. */
   footerLabel: string;
+  /** Everything the shared deep-dive screen needs to render this strategy. */
+  config: DeepDiveConfig;
 }
 
 export const DEEP_DIVES: DeepDiveEntry[] = [
@@ -24,5 +29,6 @@ export const DEEP_DIVES: DeepDiveEntry[] = [
     label: 'Strategy 04',
     familyId: 'strategy_04',
     footerLabel: 'strategy_04 deep dive',
+    config: strategy04Config,
   },
 ];

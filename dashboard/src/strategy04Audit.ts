@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { fetchDataset, fetchRuns } from './catalog';
 import { familyOf } from './strategyDescriptions';
 import type { Bar, ExitReason, TradeSide } from './types';
-import type { Strategy04Asset, Strategy04Variant, Strategy04Version } from './strategy04Data';
 import type { AuditCheck } from './ledgerAudit';
 
 /**
@@ -138,9 +137,10 @@ export type AuditStatus = 'loading' | 'loaded' | 'absent' | 'error';
  * as a strategy that never traded.
  */
 export function useStrategy04Audit(
-  version: Strategy04Version,
-  asset: Strategy04Asset,
-  variant: Strategy04Variant,
+  version: string,
+  asset: string,
+  variant: string,
+  familyId: string,
 ): { status: AuditStatus; trades: AuditedTrade[] } {
   const [state, setState] = useState<{ status: AuditStatus; trades: AuditedTrade[] }>({
     status: 'loading',
@@ -168,7 +168,7 @@ export function useStrategy04Audit(
       // published.
       const runs = await fetchRuns({ strategy_version: version, symbol: asset });
       const entry = runs.find((run) => {
-        if (familyOf(run.run.strategy_id) !== 'strategy_04') return false;
+        if (familyOf(run.run.strategy_id) !== familyId) return false;
         if (!run.dataset_ids.includes('trade_audit')) return false;
         if (!run.dataset_ids.includes('zones') || !run.dataset_ids.includes('audit_windows')) {
           return false;
@@ -200,7 +200,7 @@ export function useStrategy04Audit(
     return () => {
       cancelled = true;
     };
-  }, [version, asset, variant]);
+  }, [version, asset, variant, familyId]);
 
   return state;
 }

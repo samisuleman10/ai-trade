@@ -11,24 +11,14 @@ import {
   Scale,
   TrendingUp,
 } from 'lucide-react';
-import { useStrategy04Audit } from './strategy04Audit';
-import { STRATEGY_04_ASSETS, useStrategy04Results } from './strategy04Summary';
-import {
-  STRATEGY_04_SPECS,
-  STRATEGY_04_VARIANTS,
-  STRATEGY_04_VERSIONS,
-} from './strategy04Data';
-import type {
-  PerformanceMetrics,
-  Strategy04Asset,
-  Strategy04Result,
-  Strategy04Variant,
-  Strategy04Version,
-} from './strategy04Data';
-import { AssetComparison } from './components/AssetComparison';
-import { AuditedTradeList } from './components/AuditedTradeList';
-import { TradeSetupChart } from './components/TradeSetupChart';
-import { TradeExecutionChart } from './components/TradeExecutionChart';
+import { useStrategy04Audit } from '../strategy04Audit';
+import { useStrategy04Results } from '../strategy04Summary';
+import type { PerformanceMetrics, Strategy04Asset, Strategy04Result, Strategy04Version } from '../strategy04Data';
+import { AssetComparison } from '../components/AssetComparison';
+import { AuditedTradeList } from '../components/AuditedTradeList';
+import { TradeSetupChart } from '../components/TradeSetupChart';
+import { TradeExecutionChart } from '../components/TradeExecutionChart';
+import type { DeepDiveConfig } from './strategy04Config';
 
 type View = 'performance' | 'comparison' | 'rules' | 'chart';
 
@@ -263,14 +253,14 @@ function PerformanceOverview({ result }: { result: Strategy04Result }) {
   );
 }
 
-const CHANGE_FROM_LABEL: Record<Strategy04Version, string> = {
+const CHANGE_FROM_LABEL: Record<string, string> = {
   v1: 'Change from v1.0:',
   v1_1: 'Change from v1.0:',
   v1_2: 'Change from v1.1:',
 };
 
-function RulesView({ version }: { version: Strategy04Version }) {
-  const spec = STRATEGY_04_SPECS[version];
+function RulesView({ version, config }: { version: string; config: DeepDiveConfig }) {
+  const spec = config.specs[version];
 
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -356,28 +346,39 @@ function RulesView({ version }: { version: Strategy04Version }) {
 }
 
 /**
- * Strategy 04 deep dive: version/asset switchers, the S04 stat tiles, and
- * the Performance / Compare assets / Rules / Chart & trades tabs. This
- * used to be the whole dashboard (header, top-level nav and all); it is
+ * Shared deep-dive screen: version/asset switchers, the S04 stat tiles, and
+ * the Performance / Compare assets / Rules / Chart & trades tabs. This used
+ * to be Strategy 04's own dashboard (header, top-level nav and all); it is
  * now mounted as one section inside `App`, which owns the shell chrome
- * (header, cross-strategy top-level nav, footer) instead.
+ * (header, cross-strategy top-level nav, footer) instead, and takes its
+ * versions, assets, specs and labels from `config` rather than importing
+ * one strategy's data module directly.
  */
-export default function Strategy04Dashboard() {
-  const [version, setVersion] = useState<Strategy04Version>('v1_1');
-  const [asset, setAsset] = useState<Strategy04Asset>('SPY');
-  const [variant, setVariant] = useState<Strategy04Variant>('base');
+export default function StrategyDeepDive({ config }: { config: DeepDiveConfig }) {
+  const [version, setVersion] = useState(config.versions[0].id);
+  const [asset, setAsset] = useState(config.assets[0]);
+  const [variant, setVariant] = useState(
+    config.variantsByVersion[config.versions[0].id]?.[0]?.id ?? 'base',
+  );
   const [view, setView] = useState<View>('performance');
-  const { status: summaryStatus, results } = useStrategy04Results(version, variant);
-  const result = results[asset];
-  const { status: auditStatus, trades: auditedTrades } = useStrategy04Audit(version, asset, variant);
+  const { status: summaryStatus, results } = useStrategy04Results(version, variant, config.familyId);
+  const result = (results as Record<string, Strategy04Result | undefined>)[asset];
+  const { status: auditStatus, trades: auditedTrades } = useStrategy04Audit(
+    version,
+    asset,
+    variant,
+    config.familyId,
+  );
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const selectedTrade = useMemo(
     () => auditedTrades.find((trade) => trade.trade_id === selectedTradeId) ?? auditedTrades[0] ?? null,
     [auditedTrades, selectedTradeId],
   );
+  const variantsForVersion = config.variantsByVersion[version] ?? [];
+  const hasVariants = variantsForVersion.length > 0;
 
   if (!result) {
-    const label = version === 'v1_2' ? `${version} (${variant})` : version;
+    const label = hasVariants ? `${version} (${variant})` : version;
     return (
       <section className="s4-panel p-8 text-center">
         <div className="text-sm font-semibold text-slate-900">
@@ -404,8 +405,8 @@ export default function Strategy04Dashboard() {
         <div className="flex min-w-0 items-center gap-3">
           <div className="s4-strategy-code">S4</div>
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-slate-950">Strategy 04</div>
-            <div className="truncate text-xs text-slate-500">Causal 1H zones · 15M reaction entries</div>
+            <div className="truncate text-sm font-semibold text-slate-950">{config.title}</div>
+            <div className="truncate text-xs text-slate-500">{config.subtitle}</div>
           </div>
         </div>
 
@@ -414,7 +415,7 @@ export default function Strategy04Dashboard() {
         <div>
           <div className="s4-control-label">Version</div>
           <div className="s4-segment mt-1.5">
-            {STRATEGY_04_VERSIONS.map((item) => (
+            {config.versions.map((item) => (
               <button
                 key={item.id}
                 type="button"
@@ -429,11 +430,11 @@ export default function Strategy04Dashboard() {
           </div>
         </div>
 
-        {version === 'v1_2' && (
+        {hasVariants && (
           <div>
             <div className="s4-control-label">Variant</div>
             <div className="s4-segment mt-1.5">
-              {STRATEGY_04_VARIANTS.map((item) => (
+              {variantsForVersion.map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -452,7 +453,7 @@ export default function Strategy04Dashboard() {
         <div>
           <div className="s4-control-label">Asset</div>
           <div className="s4-segment mt-1.5">
-            {STRATEGY_04_ASSETS.map((item) => (
+            {config.assets.map((item) => (
               <button
                 key={item}
                 type="button"
@@ -536,22 +537,22 @@ export default function Strategy04Dashboard() {
         {view === 'performance' && <PerformanceOverview result={result} />}
         {view === 'comparison' && (
           <AssetComparison
-            version={version}
+            version={version as Strategy04Version}
             results={results}
-            selectedAsset={asset}
+            selectedAsset={asset as Strategy04Asset}
             onSelectAsset={(nextAsset) => {
               setAsset(nextAsset);
               setView('performance');
             }}
           />
         )}
-        {view === 'rules' && <RulesView version={version} />}
+        {view === 'rules' && <RulesView version={version} config={config} />}
         {view === 'chart' && (
           <div className="space-y-5">
             {auditStatus === 'loading' ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
-                  Loading the {asset} {version === 'v1_2' ? `${version} (${variant})` : version} audit…
+                  Loading the {asset} {hasVariants ? `${version} (${variant})` : version} audit…
                 </div>
                 <p className="mt-2 text-xs text-slate-500">
                   Each audit carries a bar window per trade, so it is fetched on demand
@@ -569,7 +570,7 @@ export default function Strategy04Dashboard() {
             ) : auditedTrades.length === 0 ? (
               <section className="s4-panel p-8 text-center">
                 <div className="text-sm font-semibold text-slate-900">
-                  No published audit for {asset} {version === 'v1_2' ? `${version} (${variant})` : version}
+                  No published audit for {asset} {hasVariants ? `${version} (${variant})` : version}
                 </div>
                 <p className="mt-2 text-xs text-slate-500">
                   Run <code>python -m ai_trade.backfill_visualization_bundles</code> to publish

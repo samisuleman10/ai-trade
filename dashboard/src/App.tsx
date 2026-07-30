@@ -3,7 +3,7 @@ import { BarChart3, Database, Layers3, RefreshCw } from 'lucide-react';
 import { StrategyComparison } from './components/StrategyComparison';
 import { RunCatalog } from './components/RunCatalog';
 import { RunDetail } from './components/RunDetail';
-import Strategy04Dashboard from './Strategy04Dashboard';
+import StrategyDeepDive from './deepdive/StrategyDeepDive';
 import { clearCatalogCache, fetchHealth } from './catalog';
 import type { CatalogEntry, HealthReport } from './catalog';
 import { DEEP_DIVES } from './deepdive/registry';
@@ -153,7 +153,7 @@ export default function App() {
             ) : (
               <RunCatalog onSelectRun={setSelectedRun} refreshToken={refreshToken} />
             ))}
-          {deepDiveEntry && <Strategy04Dashboard />}
+          {deepDiveEntry && <StrategyDeepDive config={deepDiveEntry.config} />}
         </div>
 
         <footer className="mt-8 flex flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
