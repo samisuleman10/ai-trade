@@ -1,5 +1,13 @@
 export type Strategy04Version = 'v1' | 'v1_1' | 'v1_2';
-export type Strategy04Asset = 'SPY' | 'QQQ' | 'DIA' | 'EURUSD' | 'GBPUSD';
+export type Strategy04Asset =
+  | 'SPY'
+  | 'QQQ'
+  | 'DIA'
+  | 'IWM'
+  | 'GLD'
+  | 'SLV'
+  | 'EURUSD'
+  | 'GBPUSD';
 export type Strategy04Timeframe = '15m' | '1h';
 export type Strategy04Variant = 'base' | 'a' | 'b' | 'ab';
 

@@ -1,0 +1,394 @@
+{
+  "dataset_id": "performance_fixed",
+  "kind": "performance",
+  "points": [
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 99999.99999999997,
+      "peak_equity": 99999.99999999997,
+      "timestamp": "2021-03-17T15:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100146.32753926553,
+      "peak_equity": 100146.32753926553,
+      "timestamp": "2021-03-17T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100287.6791098138,
+      "peak_equity": 100287.6791098138,
+      "timestamp": "2021-04-06T15:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100431.44878306528,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2021-06-01T14:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 154.5440398391802,
+      "drawdown_percent": 0.0015388012590856835,
+      "equity": 100276.9047432261,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2021-08-10T13:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 14.59622191748349,
+      "drawdown_percent": 0.0001453351723423978,
+      "equity": 100416.8525611478,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2021-09-07T18:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 168.73536379884172,
+      "drawdown_percent": 0.0016801048460758023,
+      "equity": 100262.71341926644,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2022-03-10T20:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 21.494535942430957,
+      "drawdown_percent": 0.00021402196426400014,
+      "equity": 100409.95424712285,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2022-03-16T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 175.6864315175626,
+      "drawdown_percent": 0.0017493169086612518,
+      "equity": 100255.76235154772,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2022-04-11T16:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 28.78101652159239,
+      "drawdown_percent": 0.0002865737462750357,
+      "equity": 100402.66776654369,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2022-05-23T17:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 182.3612915216072,
+      "drawdown_percent": 0.0018157787598535261,
+      "equity": 100249.08749154367,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2022-05-26T16:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 35.289820110658184,
+      "drawdown_percent": 0.00035138216702305247,
+      "equity": 100396.15896295462,
+      "peak_equity": 100431.44878306528,
+      "timestamp": "2022-06-23T16:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100542.6648969063,
+      "peak_equity": 100542.6648969063,
+      "timestamp": "2022-09-08T16:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100689.94542787844,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2022-09-29T15:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 155.18465466008638,
+      "drawdown_percent": 0.001541213017850338,
+      "equity": 100534.76077321835,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2022-11-16T17:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 9.22053725857404,
+      "drawdown_percent": 9.15735649611457e-05,
+      "equity": 100680.72489061987,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2022-11-22T14:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 167.56419459261815,
+      "drawdown_percent": 0.0016641601490651316,
+      "equity": 100522.38123328582,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2022-12-27T19:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 322.36876840169134,
+      "drawdown_percent": 0.0032015984022217554,
+      "equity": 100367.57665947675,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-01-30T19:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 176.93714450957486,
+      "drawdown_percent": 0.0017572473970234722,
+      "equity": 100513.00828336886,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-02-28T20:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 333.14745579754526,
+      "drawdown_percent": 0.0033086467013349412,
+      "equity": 100356.7979720809,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-04-05T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 492.8838988558273,
+      "drawdown_percent": 0.004895065706524462,
+      "equity": 100197.06152902261,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-05-18T17:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 348.4700177614868,
+      "drawdown_percent": 0.0034608223917559546,
+      "equity": 100341.47541011695,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-05-31T17:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 204.30907457468857,
+      "drawdown_percent": 0.0020290911243072405,
+      "equity": 100485.63635330375,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-07-05T19:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 361.7546744518768,
+      "drawdown_percent": 0.0035927586703380643,
+      "equity": 100328.19075342656,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2023-11-14T14:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 516.7778107632912,
+      "drawdown_percent": 0.00513236757222642,
+      "equity": 100173.16761711515,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2024-01-03T17:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 371.7950119916786,
+      "drawdown_percent": 0.003692474063937055,
+      "equity": 100318.15041588676,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2024-03-12T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 227.20015956084535,
+      "drawdown_percent": 0.0022564334362817073,
+      "equity": 100462.7452683176,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2024-03-20T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 386.07263597442943,
+      "drawdown_percent": 0.0038342719755565177,
+      "equity": 100303.87279190401,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2024-04-30T19:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 241.42089641939674,
+      "drawdown_percent": 0.0023976663746661793,
+      "equity": 100448.52453145904,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2024-05-09T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 95.75264903418429,
+      "drawdown_percent": 0.0009509653483998498,
+      "equity": 100594.19277884426,
+      "peak_equity": 100689.94542787844,
+      "timestamp": "2024-10-03T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100739.11444559794,
+      "peak_equity": 100739.11444559794,
+      "timestamp": "2024-12-04T20:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 155.314220109678,
+      "drawdown_percent": 0.0015417469268458996,
+      "equity": 100583.80022548826,
+      "peak_equity": 100739.11444559794,
+      "timestamp": "2025-01-14T18:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 10.209977745311335,
+      "drawdown_percent": 0.00010135067993698734,
+      "equity": 100728.90446785263,
+      "peak_equity": 100739.11444559794,
+      "timestamp": "2025-01-23T16:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 0.0,
+      "drawdown_percent": 0.0,
+      "equity": 100875.4289747296,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-02-06T19:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 158.1072607001115,
+      "drawdown_percent": 0.0015673515573323522,
+      "equity": 100717.32171402949,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-02-12T14:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 313.697659923404,
+      "drawdown_percent": 0.0031097529211200547,
+      "equity": 100561.7313148062,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-06-11T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 169.73551280050015,
+      "drawdown_percent": 0.0016826249417290782,
+      "equity": 100705.6934619291,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-07-29T15:15:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 333.19091139636294,
+      "drawdown_percent": 0.0033029937496457233,
+      "equity": 100542.23806333324,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-08-12T17:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 186.82400993732153,
+      "drawdown_percent": 0.0018520269191035907,
+      "equity": 100688.60496479228,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-10-21T13:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 343.9911475466506,
+      "drawdown_percent": 0.003410058832392417,
+      "equity": 100531.43782718295,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2025-12-10T19:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 496.54984072399384,
+      "drawdown_percent": 0.004922406236789189,
+      "equity": 100378.8791340056,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2026-02-04T17:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 651.9385383351473,
+      "drawdown_percent": 0.006462808088761289,
+      "equity": 100223.49043639445,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2026-02-19T18:00:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 805.9213015365967,
+      "drawdown_percent": 0.00798927260808466,
+      "equity": 100069.507673193,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2026-03-25T18:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 661.406586607729,
+      "drawdown_percent": 0.006556666904221231,
+      "equity": 100214.02238812187,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2026-06-11T16:45:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 816.1342052999389,
+      "drawdown_percent": 0.008090515337529712,
+      "equity": 100059.29476942966,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2026-07-16T13:30:00Z",
+      "trade_id": null
+    },
+    {
+      "drawdown": 971.1193040008511,
+      "drawdown_percent": 0.009626916225993222,
+      "equity": 99904.30967072875,
+      "peak_equity": 100875.4289747296,
+      "timestamp": "2026-07-24T13:30:00Z",
+      "trade_id": null
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "average_r": -0.013277476707542452,
+    "ending_equity": 99904.30967072875,
+    "exit_reasons": {
+      "stop": 22,
+      "target": 23
+    },
+    "long_trades": 21,
+    "losses": 22,
+    "max_drawdown": 971.1193040008511,
+    "net_pnl": -95.69032927121992,
+    "profit_factor": 0.9721291939570011,
+    "result_r_sd": 1.0136322377433133,
+    "short_trades": 24,
+    "trade_count": 45,
+    "win_rate": 0.5111111111111111,
+    "wins": 23
+  },
+  "variant": "fixed"
+}

@@ -12,12 +12,15 @@ interface AssetComparisonProps {
   results: Partial<Record<Strategy04Asset, Strategy04Result>>;
 }
 
-const assets: Strategy04Asset[] = ['SPY', 'QQQ', 'DIA', 'EURUSD', 'GBPUSD'];
+const assets: Strategy04Asset[] = ['SPY', 'QQQ', 'DIA', 'IWM', 'GLD', 'SLV', 'EURUSD', 'GBPUSD'];
 
 const labels: Record<Strategy04Asset, string> = {
   SPY: 'SPY / US500 proxy',
   QQQ: 'QQQ / US100 proxy',
   DIA: 'DIA / US30 proxy',
+  IWM: 'IWM / US2000 proxy',
+  GLD: 'GLD / gold ETF',
+  SLV: 'SLV / silver ETF',
   EURUSD: 'EURUSD spot FX',
   GBPUSD: 'GBPUSD spot FX',
 };

@@ -47,6 +47,9 @@ _EQUITY_DATA = {
     "SPY": ("data/market_data/ibkr/SPY/v4_2y/spy_15m.csv", "data/market_data/ibkr/SPY/v4_2y/spy_1h.csv"),
     "QQQ": ("data/market_data/ibkr/QQQ/v5_5y/qqq_15m.csv", "data/market_data/ibkr/QQQ/v5_5y/qqq_1h.csv"),
     "DIA": ("data/market_data/ibkr/US30_DIA/v5_5y/dia_15m.csv", "data/market_data/ibkr/US30_DIA/v5_5y/dia_1h.csv"),
+    "IWM": ("data/market_data/ibkr/IWM/v5_5y/iwm_15m.csv", "data/market_data/ibkr/IWM/v5_5y/iwm_1h.csv"),
+    "GLD": ("data/market_data/ibkr/GLD/v5_5y/gld_15m.csv", "data/market_data/ibkr/GLD/v5_5y/gld_1h.csv"),
+    "SLV": ("data/market_data/ibkr/SLV/v5_5y/slv_15m.csv", "data/market_data/ibkr/SLV/v5_5y/slv_1h.csv"),
 }
 _FX_DATA = {
     "EURUSD": ("data/market_data/ibkr/EURUSD/v1_5y/eurusd_15m.csv", "data/market_data/ibkr/EURUSD/v1_5y/eurusd_1h.csv"),
@@ -82,7 +85,11 @@ def symbol_run_inputs(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Backtest one Strategy 04 v1.2 ablation variant.")
-    parser.add_argument("--symbol", required=True, choices=("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD"))
+    parser.add_argument(
+        "--symbol",
+        required=True,
+        choices=("SPY", "QQQ", "DIA", "IWM", "GLD", "SLV", "EURUSD", "GBPUSD"),
+    )
     parser.add_argument("--variant", required=True, choices=tuple(VARIANTS))
     parser.add_argument("--max-risk-zone-ratio", type=float, default=2.5)
     parser.add_argument("--fifteen-minute", type=Path, default=None)

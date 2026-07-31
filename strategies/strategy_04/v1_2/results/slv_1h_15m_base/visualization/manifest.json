@@ -1,0 +1,87 @@
+{
+  "bundle_id": "strategies_strategy_04_v1_2_results_slv_1h_15m_base",
+  "capabilities": {
+    "has_signal_audit": false,
+    "has_trade_audit": true,
+    "sizing_variants": [
+      "fixed",
+      "rrms"
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "trades_fixed",
+      "first_timestamp": "2021-05-24T16:45:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-05-05T16:15:00Z",
+      "path": "data/trades-fixed.json",
+      "record_count": 34,
+      "sha256": "19f1b1559b0611cba28b6bd9fc1bce11025593b8bef4c69efe46970bd636c3e8"
+    },
+    {
+      "dataset_id": "performance_fixed",
+      "first_timestamp": "2021-05-24T16:45:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-05-05T16:30:00Z",
+      "path": "data/performance-fixed.json",
+      "record_count": 35,
+      "sha256": "af7909e8c3ca8896bac6b24d7ea196b176ba20f7c89f311a4c127928117d08b4"
+    },
+    {
+      "dataset_id": "trades_rrms",
+      "first_timestamp": "2021-05-24T16:45:00Z",
+      "kind": "trades",
+      "last_timestamp": "2026-05-05T16:15:00Z",
+      "path": "data/trades-rrms.json",
+      "record_count": 34,
+      "sha256": "7aa32c4a1ef2bf8adcdfe3433e885f7ee5bd52e7cbdb9a706e61adc23cd7c91b"
+    },
+    {
+      "dataset_id": "performance_rrms",
+      "first_timestamp": "2021-05-24T16:45:00Z",
+      "kind": "performance",
+      "last_timestamp": "2026-05-05T16:30:00Z",
+      "path": "data/performance-rrms.json",
+      "record_count": 35,
+      "sha256": "78a8ffbd3491776ddda2d1595a286732cdc8df112a300fbe3fc89b240e2a23f7"
+    },
+    {
+      "dataset_id": "run_summary",
+      "first_timestamp": "2021-03-17T13:30:00Z",
+      "kind": "run_summary",
+      "last_timestamp": "2026-07-31T13:45:00Z",
+      "path": "data/run-summary.json",
+      "record_count": 2,
+      "sha256": "34edd08b4cdc0077d68c0eb344ab1c2cc08af18ecf5782396cae57a077c6d12a"
+    },
+    {
+      "dataset_id": "trade_audit",
+      "first_timestamp": null,
+      "kind": "trade_audit",
+      "last_timestamp": null,
+      "path": "data/trade-audit.json",
+      "record_count": 34,
+      "sha256": "1817763b79950daa4c1f1895950949dacaa562e10a6cefbb94bd4465641dab88"
+    }
+  ],
+  "execution_authority": "none",
+  "generated_at": "2026-07-31T15:21:52Z",
+  "instrument": {
+    "asset_class": null,
+    "contract_multiplier": null,
+    "currency": null,
+    "exchange": null,
+    "price_precision": null,
+    "symbol": "SLV"
+  },
+  "mode": "historical_backtest",
+  "run": {
+    "profile_id": null,
+    "run_id": "slv_1h_15m_base",
+    "strategy_id": "strategy_04_v1_2_rejection_filters",
+    "strategy_version": "v1_2"
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "warnings": []
+}

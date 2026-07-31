@@ -152,7 +152,16 @@ async function loadResult(
 
 export type SummaryStatus = 'loading' | 'loaded' | 'error';
 
-export const STRATEGY_04_ASSETS: Strategy04Asset[] = ['SPY', 'QQQ', 'DIA', 'EURUSD', 'GBPUSD'];
+export const STRATEGY_04_ASSETS: Strategy04Asset[] = [
+  'SPY',
+  'QQQ',
+  'DIA',
+  'IWM',
+  'GLD',
+  'SLV',
+  'EURUSD',
+  'GBPUSD',
+];
 
 /**
  * Every asset's result for one version, keyed by symbol.
