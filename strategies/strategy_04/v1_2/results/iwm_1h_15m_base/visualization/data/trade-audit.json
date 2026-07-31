@@ -44,11 +44,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2021-03-17T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2021-03-17T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2021-02-25T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2021-03-17T15:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.0816782005675188",
+          "check_id": "stop_buffer",
+          "expected": "0.0816782005675188",
+          "passed": true
+        },
+        {
+          "actual": "226.80832179943246",
+          "check_id": "stop_price",
+          "expected": "226.80832179943246",
+          "passed": true
+        },
+        {
+          "actual": "2021-03-17T15:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2021-03-17T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "228.562854",
+          "check_id": "entry_price",
+          "expected": "228.562854",
+          "passed": true
+        },
+        {
+          "actual": "230.3173862005675",
+          "check_id": "target_price",
+          "expected": "230.3173862005675",
+          "passed": true
+        },
+        {
+          "actual": "0.20000000000001336",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 11:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "230.29435446194745",
+          "check_id": "outcome",
+          "expected": "230.29435446194745",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000001",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2021-03-17T15:00:00Z"
     },
     {
       "checks": [
@@ -87,11 +153,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2021-04-06T14:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2021-04-06T14:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2021-04-05T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2021-04-06T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.07209383787037427",
+          "check_id": "stop_buffer",
+          "expected": "0.07209383787037427",
+          "passed": true
+        },
+        {
+          "actual": "226.82209383787037",
+          "check_id": "stop_price",
+          "expected": "226.82209383787037",
+          "passed": true
+        },
+        {
+          "actual": "2021-04-06T14:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2021-04-06T14:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "226.237374",
+          "check_id": "entry_price",
+          "expected": "226.237374",
+          "passed": true
+        },
+        {
+          "actual": "225.6526541621296",
+          "check_id": "target_price",
+          "expected": "225.6526541621296",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Tue 10:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "225.6752194275458",
+          "check_id": "outcome",
+          "expected": "225.6752194275458",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000002",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2021-04-06T14:30:00Z"
     },
     {
       "checks": [
@@ -130,11 +262,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2021-09-07T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2021-09-07T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2021-09-03T19:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2021-09-07T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.045804961139370805",
+          "check_id": "stop_buffer",
+          "expected": "0.045804961139370805",
+          "passed": true
+        },
+        {
+          "actual": "227.60580496113937",
+          "check_id": "stop_price",
+          "expected": "227.60580496113937",
+          "passed": true
+        },
+        {
+          "actual": "2021-09-07T17:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2021-09-07T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "227.11728599999998",
+          "check_id": "entry_price",
+          "expected": "227.11728599999998",
+          "passed": true
+        },
+        {
+          "actual": "226.6287670388606",
+          "check_id": "target_price",
+          "expected": "226.6287670388606",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Tue 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "226.65142991556448",
+          "check_id": "outcome",
+          "expected": "226.65142991556448",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000003",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2021-09-07T17:00:00Z"
     },
     {
       "checks": [
@@ -173,11 +371,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2021-10-13T14:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2021-10-13T14:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2021-10-12T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2021-10-13T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.05956644803718637",
+          "check_id": "stop_buffer",
+          "expected": "0.05956644803718637",
+          "passed": true
+        },
+        {
+          "actual": "220.1104335519628",
+          "check_id": "stop_price",
+          "expected": "220.1104335519628",
+          "passed": true
+        },
+        {
+          "actual": "2021-10-13T14:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2021-10-13T14:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "221.582156",
+          "check_id": "entry_price",
+          "expected": "221.582156",
+          "passed": true
+        },
+        {
+          "actual": "223.05387844803718",
+          "check_id": "target_price",
+          "expected": "223.05387844803718",
+          "passed": true
+        },
+        {
+          "actual": "0.09090909090913202",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 10:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "223.0315730601924",
+          "check_id": "outcome",
+          "expected": "223.0315730601924",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000004",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2021-10-13T14:30:00Z"
     },
     {
       "checks": [
@@ -216,11 +480,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-03-08T18:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-03-08T18:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-03-07T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-03-08T18:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.09960424023076368",
+          "check_id": "stop_buffer",
+          "expected": "0.09960424023076368",
+          "passed": true
+        },
+        {
+          "actual": "199.84960424023078",
+          "check_id": "stop_price",
+          "expected": "199.84960424023078",
+          "passed": true
+        },
+        {
+          "actual": "2022-03-08T18:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-03-08T18:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "197.770221",
+          "check_id": "entry_price",
+          "expected": "197.770221",
+          "passed": true
+        },
+        {
+          "actual": "195.6908377597692",
+          "check_id": "target_price",
+          "expected": "195.6908377597692",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Tue 13:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "195.71040684354517",
+          "check_id": "outcome",
+          "expected": "195.71040684354517",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000005",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-03-08T18:15:00Z"
     },
     {
       "checks": [
@@ -259,11 +589,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-03-16T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-03-16T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-03-10T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-03-16T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.08543532277524746",
+          "check_id": "stop_buffer",
+          "expected": "0.08543532277524746",
+          "passed": true
+        },
+        {
+          "actual": "201.08543532277525",
+          "check_id": "stop_price",
+          "expected": "201.08543532277525",
+          "passed": true
+        },
+        {
+          "actual": "2022-03-16T17:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-03-16T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "199.260072",
+          "check_id": "entry_price",
+          "expected": "199.260072",
+          "passed": true
+        },
+        {
+          "actual": "197.43470867722476",
+          "check_id": "target_price",
+          "expected": "197.43470867722476",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Wed 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "197.45445214809249",
+          "check_id": "outcome",
+          "expected": "197.45445214809249",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000006",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-03-16T17:00:00Z"
     },
     {
       "checks": [
@@ -302,11 +698,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2022-04-11T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-04-11T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-04-07T20:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-04-11T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.07469588356579869",
+          "check_id": "stop_buffer",
+          "expected": "0.07469588356579869",
+          "passed": true
+        },
+        {
+          "actual": "196.4853041164342",
+          "check_id": "stop_price",
+          "expected": "196.4853041164342",
+          "passed": true
+        },
+        {
+          "actual": "2022-04-11T15:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-04-11T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "197.669765",
+          "check_id": "entry_price",
+          "expected": "197.669765",
+          "passed": true
+        },
+        {
+          "actual": "198.85422588356582",
+          "check_id": "target_price",
+          "expected": "198.85422588356582",
+          "passed": true
+        },
+        {
+          "actual": "0.028985507246391738",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Mon 11:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "196.46565558602256",
+          "check_id": "outcome",
+          "expected": "196.46565558602256",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000007",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-04-11T15:30:00Z"
     },
     {
       "checks": [
@@ -345,11 +807,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-05-23T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-05-23T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-05-20T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-05-23T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.1051212412436352",
+          "check_id": "stop_buffer",
+          "expected": "0.1051212412436352",
+          "passed": true
+        },
+        {
+          "actual": "179.51512124124363",
+          "check_id": "stop_price",
+          "expected": "179.51512124124363",
+          "passed": true
+        },
+        {
+          "actual": "2022-05-23T16:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-05-23T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "178.31216700000002",
+          "check_id": "entry_price",
+          "expected": "178.31216700000002",
+          "passed": true
+        },
+        {
+          "actual": "177.1092127587564",
+          "check_id": "target_price",
+          "expected": "177.1092127587564",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Mon 12:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "177.12692368003226",
+          "check_id": "outcome",
+          "expected": "177.12692368003226",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000008",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-05-23T16:15:00Z"
     },
     {
       "checks": [
@@ -388,11 +916,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-05-26T14:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-05-26T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-05-18T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-05-26T14:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.09695123669465035",
+          "check_id": "stop_buffer",
+          "expected": "0.09695123669465035",
+          "passed": true
+        },
+        {
+          "actual": "183.23695123669464",
+          "check_id": "stop_price",
+          "expected": "183.23695123669464",
+          "passed": true
+        },
+        {
+          "actual": "2022-05-26T14:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-05-26T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "182.101788",
+          "check_id": "entry_price",
+          "expected": "182.101788",
+          "passed": true
+        },
+        {
+          "actual": "180.96662476330536",
+          "check_id": "target_price",
+          "expected": "180.96662476330536",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Thu 10:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "183.2552749318183",
+          "check_id": "outcome",
+          "expected": "183.2552749318183",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000009",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-05-26T14:15:00Z"
     },
     {
       "checks": [
@@ -431,11 +1025,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-06-23T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-06-23T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-06-21T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-06-23T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.08687531253192057",
+          "check_id": "stop_buffer",
+          "expected": "0.08687531253192057",
+          "passed": true
+        },
+        {
+          "actual": "170.16687531253194",
+          "check_id": "stop_price",
+          "expected": "170.16687531253194",
+          "passed": true
+        },
+        {
+          "actual": "2022-06-23T15:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-06-23T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "168.80311799999998",
+          "check_id": "entry_price",
+          "expected": "168.80311799999998",
+          "passed": true
+        },
+        {
+          "actual": "167.43936068746802",
+          "check_id": "target_price",
+          "expected": "167.43936068746802",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Thu 11:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "167.45610462353676",
+          "check_id": "outcome",
+          "expected": "167.45610462353676",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000010",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-06-23T15:15:00Z"
     },
     {
       "checks": [
@@ -474,11 +1134,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-09-08T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-09-08T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-09-02T20:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-09-08T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.07262458349467521",
+          "check_id": "stop_buffer",
+          "expected": "0.07262458349467521",
+          "passed": true
+        },
+        {
+          "actual": "184.25262458349468",
+          "check_id": "stop_price",
+          "expected": "184.25262458349468",
+          "passed": true
+        },
+        {
+          "actual": "2022-09-08T15:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-09-08T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "183.06169200000002",
+          "check_id": "entry_price",
+          "expected": "183.06169200000002",
+          "passed": true
+        },
+        {
+          "actual": "181.87075941650536",
+          "check_id": "target_price",
+          "expected": "181.87075941650536",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Thu 11:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "181.88894649244702",
+          "check_id": "outcome",
+          "expected": "181.88894649244702",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000011",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-09-08T15:30:00Z"
     },
     {
       "checks": [
@@ -517,11 +1243,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2022-09-29T14:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-09-29T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-09-28T14:30:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-09-29T14:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.09133695655022572",
+          "check_id": "stop_buffer",
+          "expected": "0.09133695655022572",
+          "passed": true
+        },
+        {
+          "actual": "163.18866304344976",
+          "check_id": "stop_price",
+          "expected": "163.18866304344976",
+          "passed": true
+        },
+        {
+          "actual": "2022-09-29T14:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-09-29T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "164.56645500000002",
+          "check_id": "entry_price",
+          "expected": "164.56645500000002",
+          "passed": true
+        },
+        {
+          "actual": "165.94424695655027",
+          "check_id": "target_price",
+          "expected": "165.94424695655027",
+          "passed": true
+        },
+        {
+          "actual": "0.08771929824558516",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Thu 10:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "165.92765253185462",
+          "check_id": "outcome",
+          "expected": "165.92765253185462",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000012",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-09-29T14:15:00Z"
     },
     {
       "checks": [
@@ -560,11 +1352,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2022-11-16T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-11-16T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-11-15T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-11-16T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.09004412079077721",
+          "check_id": "stop_buffer",
+          "expected": "0.09004412079077721",
+          "passed": true
+        },
+        {
+          "actual": "185.31004412079076",
+          "check_id": "stop_price",
+          "expected": "185.31004412079076",
+          "passed": true
+        },
+        {
+          "actual": "2022-11-16T16:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-11-16T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "184.441554",
+          "check_id": "entry_price",
+          "expected": "184.441554",
+          "passed": true
+        },
+        {
+          "actual": "183.57306387920923",
+          "check_id": "target_price",
+          "expected": "183.57306387920923",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Wed 11:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "185.32857512520283",
+          "check_id": "outcome",
+          "expected": "185.32857512520283",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000013",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-11-16T16:30:00Z"
     },
     {
       "checks": [
@@ -603,11 +1461,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2022-11-21T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-11-21T17:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-11-08T20:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-11-21T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.06590400819405773",
+          "check_id": "stop_buffer",
+          "expected": "0.06590400819405773",
+          "passed": true
+        },
+        {
+          "actual": "181.36409599180595",
+          "check_id": "stop_price",
+          "expected": "181.36409599180595",
+          "passed": true
+        },
+        {
+          "actual": "2022-11-21T17:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-11-21T17:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "182.498248",
+          "check_id": "entry_price",
+          "expected": "182.498248",
+          "passed": true
+        },
+        {
+          "actual": "183.63240000819403",
+          "check_id": "target_price",
+          "expected": "183.63240000819403",
+          "passed": true
+        },
+        {
+          "actual": "0.0",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Mon 12:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "183.61403676819322",
+          "check_id": "outcome",
+          "expected": "183.61403676819322",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000014",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-11-21T17:30:00Z"
     },
     {
       "checks": [
@@ -646,11 +1570,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2022-12-27T19:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2022-12-27T19:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2022-12-27T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2022-12-27T19:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.05500600180178694",
+          "check_id": "stop_buffer",
+          "expected": "0.05500600180178694",
+          "passed": true
+        },
+        {
+          "actual": "172.6149939981982",
+          "check_id": "stop_price",
+          "expected": "172.6149939981982",
+          "passed": true
+        },
+        {
+          "actual": "2022-12-27T19:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2022-12-27T19:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "173.15731399999999",
+          "check_id": "entry_price",
+          "expected": "173.15731399999999",
+          "passed": true
+        },
+        {
+          "actual": "173.69963400180177",
+          "check_id": "target_price",
+          "expected": "173.69963400180177",
+          "passed": true
+        },
+        {
+          "actual": "0.07692307692307693",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Tue 14:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "172.5977324987984",
+          "check_id": "outcome",
+          "expected": "172.5977324987984",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000015",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2022-12-27T19:00:00Z"
     },
     {
       "checks": [
@@ -689,11 +1679,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2023-01-30T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-01-30T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-01-25T15:30:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-01-30T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.057990588003701764",
+          "check_id": "stop_buffer",
+          "expected": "0.057990588003701764",
+          "passed": true
+        },
+        {
+          "actual": "187.5120094119963",
+          "check_id": "stop_price",
+          "expected": "187.5120094119963",
+          "passed": true
+        },
+        {
+          "actual": "2023-01-30T16:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-01-30T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "188.438842",
+          "check_id": "entry_price",
+          "expected": "188.438842",
+          "passed": true
+        },
+        {
+          "actual": "189.36567458800369",
+          "check_id": "target_price",
+          "expected": "189.36567458800369",
+          "passed": true
+        },
+        {
+          "actual": "0.10909090909091097",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Mon 11:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "187.4932582110551",
+          "check_id": "outcome",
+          "expected": "187.4932582110551",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000016",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-01-30T16:15:00Z"
     },
     {
       "checks": [
@@ -732,11 +1788,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2023-02-28T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-02-28T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-02-23T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-02-28T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.0604336581252036",
+          "check_id": "stop_buffer",
+          "expected": "0.0604336581252036",
+          "passed": true
+        },
+        {
+          "actual": "190.3604336581252",
+          "check_id": "stop_price",
+          "expected": "190.3604336581252",
+          "passed": true
+        },
+        {
+          "actual": "2023-02-28T16:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-02-28T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "189.38106000000002",
+          "check_id": "entry_price",
+          "expected": "189.38106000000002",
+          "passed": true
+        },
+        {
+          "actual": "188.40168634187484",
+          "check_id": "target_price",
+          "expected": "188.40168634187484",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Tue 11:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "188.42052651050903",
+          "check_id": "outcome",
+          "expected": "188.42052651050903",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000017",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-02-28T16:30:00Z"
     },
     {
       "checks": [
@@ -775,11 +1897,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2023-04-04T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-04-04T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-03-31T14:30:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-04-04T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.06002644127710857",
+          "check_id": "stop_buffer",
+          "expected": "0.06002644127710857",
+          "passed": true
+        },
+        {
+          "actual": "174.3799735587229",
+          "check_id": "stop_price",
+          "expected": "174.3799735587229",
+          "passed": true
+        },
+        {
+          "actual": "2023-04-04T16:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-04-04T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "175.13751200000002",
+          "check_id": "entry_price",
+          "expected": "175.13751200000002",
+          "passed": true
+        },
+        {
+          "actual": "175.89505044127714",
+          "check_id": "target_price",
+          "expected": "175.89505044127714",
+          "passed": true
+        },
+        {
+          "actual": "0.047619047619070175",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Tue 12:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "174.36253556136703",
+          "check_id": "outcome",
+          "expected": "174.36253556136703",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000018",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-04-04T16:30:00Z"
     },
     {
       "checks": [
@@ -818,11 +2006,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2023-05-18T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-05-18T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-05-10T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-05-18T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.0487925007448331",
+          "check_id": "stop_buffer",
+          "expected": "0.0487925007448331",
+          "passed": true
+        },
+        {
+          "actual": "176.22879250074485",
+          "check_id": "stop_price",
+          "expected": "176.22879250074485",
+          "passed": true
+        },
+        {
+          "actual": "2023-05-18T17:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-05-18T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "175.78242",
+          "check_id": "entry_price",
+          "expected": "175.78242",
+          "passed": true
+        },
+        {
+          "actual": "175.33604749925516",
+          "check_id": "target_price",
+          "expected": "175.33604749925516",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Thu 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "176.24641537999491",
+          "check_id": "outcome",
+          "expected": "176.24641537999491",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000019",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-05-18T17:00:00Z"
     },
     {
       "checks": [
@@ -861,11 +2115,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2023-05-31T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-05-31T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-05-17T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-05-31T16:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.054903165183554696",
+          "check_id": "stop_buffer",
+          "expected": "0.054903165183554696",
+          "passed": true
+        },
+        {
+          "actual": "172.05509683481645",
+          "check_id": "stop_price",
+          "expected": "172.05509683481645",
+          "passed": true
+        },
+        {
+          "actual": "2023-05-31T16:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-05-31T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "172.757274",
+          "check_id": "entry_price",
+          "expected": "172.757274",
+          "passed": true
+        },
+        {
+          "actual": "173.45945116518354",
+          "check_id": "target_price",
+          "expected": "173.45945116518354",
+          "passed": true
+        },
+        {
+          "actual": "0.13636363636364224",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 12:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "173.44210522006702",
+          "check_id": "outcome",
+          "expected": "173.44210522006702",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000020",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-05-31T16:00:00Z"
     },
     {
       "checks": [
@@ -904,11 +2224,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2023-07-05T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-07-05T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-07-03T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-07-05T16:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.052242006520625994",
+          "check_id": "stop_buffer",
+          "expected": "0.052242006520625994",
+          "passed": true
+        },
+        {
+          "actual": "187.13224200652064",
+          "check_id": "stop_price",
+          "expected": "187.13224200652064",
+          "passed": true
+        },
+        {
+          "actual": "2023-07-05T16:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-07-05T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "186.451353",
+          "check_id": "entry_price",
+          "expected": "186.451353",
+          "passed": true
+        },
+        {
+          "actual": "185.77046399347938",
+          "check_id": "target_price",
+          "expected": "185.77046399347938",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Wed 12:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "185.78904103987873",
+          "check_id": "outcome",
+          "expected": "185.78904103987873",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000021",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-07-05T16:00:00Z"
     },
     {
       "checks": [
@@ -947,11 +2333,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2023-11-13T18:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2023-11-13T18:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-11-13T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2023-11-13T18:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.048420781942302135",
+          "check_id": "stop_buffer",
+          "expected": "0.048420781942302135",
+          "passed": true
+        },
+        {
+          "actual": "169.7584207819423",
+          "check_id": "stop_price",
+          "expected": "169.7584207819423",
+          "passed": true
+        },
+        {
+          "actual": "2023-11-13T18:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2023-11-13T18:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "169.163082",
+          "check_id": "entry_price",
+          "expected": "169.163082",
+          "passed": true
+        },
+        {
+          "actual": "168.5677432180577",
+          "check_id": "target_price",
+          "expected": "168.5677432180577",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Mon 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "169.7753966240205",
+          "check_id": "outcome",
+          "expected": "169.7753966240205",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000022",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2023-11-13T18:00:00Z"
     },
     {
       "checks": [
@@ -990,11 +2442,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2024-01-03T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-01-03T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2023-12-21T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-01-03T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.06766570676463507",
+          "check_id": "stop_buffer",
+          "expected": "0.06766570676463507",
+          "passed": true
+        },
+        {
+          "actual": "195.88233429323535",
+          "check_id": "stop_price",
+          "expected": "195.88233429323535",
+          "passed": true
+        },
+        {
+          "actual": "2024-01-03T16:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-01-03T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "196.809679",
+          "check_id": "entry_price",
+          "expected": "196.809679",
+          "passed": true
+        },
+        {
+          "actual": "197.73702370676463",
+          "check_id": "target_price",
+          "expected": "197.73702370676463",
+          "passed": true
+        },
+        {
+          "actual": "0.0653168099833668",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 11:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "195.86274605980603",
+          "check_id": "outcome",
+          "expected": "195.86274605980603",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000023",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-01-03T16:30:00Z"
     },
     {
       "checks": [
@@ -1033,11 +2551,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2024-03-11T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-03-11T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-03-06T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-03-11T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.06134750171999093",
+          "check_id": "stop_buffer",
+          "expected": "0.06134750171999093",
+          "passed": true
+        },
+        {
+          "actual": "206.39134750172",
+          "check_id": "stop_price",
+          "expected": "206.39134750172",
+          "passed": true
+        },
+        {
+          "actual": "2024-03-11T17:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-03-11T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "205.419456",
+          "check_id": "entry_price",
+          "expected": "205.419456",
+          "passed": true
+        },
+        {
+          "actual": "204.44756449828",
+          "check_id": "target_price",
+          "expected": "204.44756449828",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Mon 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "204.46800925472982",
+          "check_id": "outcome",
+          "expected": "204.46800925472982",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000024",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-03-11T17:00:00Z"
     },
     {
       "checks": [
@@ -1076,11 +2660,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2024-03-20T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-03-20T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-02-29T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-03-20T15:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.05110670157977873",
+          "check_id": "stop_buffer",
+          "expected": "0.05110670157977873",
+          "passed": true
+        },
+        {
+          "actual": "201.81889329842022",
+          "check_id": "stop_price",
+          "expected": "201.81889329842022",
+          "passed": true
+        },
+        {
+          "actual": "2024-03-20T15:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-03-20T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "202.610259",
+          "check_id": "entry_price",
+          "expected": "202.610259",
+          "passed": true
+        },
+        {
+          "actual": "203.4016247015798",
+          "check_id": "target_price",
+          "expected": "203.4016247015798",
+          "passed": true
+        },
+        {
+          "actual": "0.2105263157894842",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 11:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "203.38128453910966",
+          "check_id": "outcome",
+          "expected": "203.38128453910966",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000025",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-03-20T15:00:00Z"
     },
     {
       "checks": [
@@ -1119,11 +2769,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2024-04-08T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-04-08T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-03-27T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-04-08T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.057983299248024325",
+          "check_id": "stop_buffer",
+          "expected": "0.057983299248024325",
+          "passed": true
+        },
+        {
+          "actual": "204.93201670075197",
+          "check_id": "stop_price",
+          "expected": "204.93201670075197",
+          "passed": true
+        },
+        {
+          "actual": "2024-04-08T16:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-04-08T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "205.580556",
+          "check_id": "entry_price",
+          "expected": "205.580556",
+          "passed": true
+        },
+        {
+          "actual": "206.22909529924803",
+          "check_id": "target_price",
+          "expected": "206.22909529924803",
+          "passed": true
+        },
+        {
+          "actual": "0.11739675142128773",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Mon 12:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "206.2084723897181",
+          "check_id": "outcome",
+          "expected": "206.2084723897181",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000026",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-04-08T16:15:00Z"
     },
     {
       "checks": [
@@ -1162,11 +2878,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2024-04-30T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-04-30T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-04-24T20:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-04-30T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.053624407294576376",
+          "check_id": "stop_buffer",
+          "expected": "0.053624407294576376",
+          "passed": true
+        },
+        {
+          "actual": "196.39710182822517",
+          "check_id": "stop_price",
+          "expected": "196.39710182822517",
+          "passed": true
+        },
+        {
+          "actual": "2024-04-30T17:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-04-30T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "196.909689",
+          "check_id": "entry_price",
+          "expected": "196.909689",
+          "passed": true
+        },
+        {
+          "actual": "197.4222761717748",
+          "check_id": "target_price",
+          "expected": "197.4222761717748",
+          "passed": true
+        },
+        {
+          "actual": "0.10742147604102124",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Tue 13:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "196.37746211804236",
+          "check_id": "outcome",
+          "expected": "196.37746211804236",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000027",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-04-30T17:15:00Z"
     },
     {
       "checks": [
@@ -1205,11 +2987,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2024-05-08T14:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-05-08T14:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-04-05T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-05-08T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.04950616938627032",
+          "check_id": "stop_buffer",
+          "expected": "0.04950616938627032",
+          "passed": true
+        },
+        {
+          "actual": "202.83049383061373",
+          "check_id": "stop_price",
+          "expected": "202.83049383061373",
+          "passed": true
+        },
+        {
+          "actual": "2024-05-08T14:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-05-08T14:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "203.63036100000002",
+          "check_id": "entry_price",
+          "expected": "203.63036100000002",
+          "passed": true
+        },
+        {
+          "actual": "204.4302281693863",
+          "check_id": "target_price",
+          "expected": "204.4302281693863",
+          "passed": true
+        },
+        {
+          "actual": "0.020004896516112338",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 10:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "204.40978514656936",
+          "check_id": "outcome",
+          "expected": "204.40978514656936",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000028",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-05-08T14:30:00Z"
     },
     {
       "checks": [
@@ -1248,11 +3096,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2024-10-02T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2024-10-02T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-09-18T20:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2024-10-02T15:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.07316021250299302",
+          "check_id": "stop_buffer",
+          "expected": "0.07316021250299302",
+          "passed": true
+        },
+        {
+          "actual": "218.58316021250297",
+          "check_id": "stop_price",
+          "expected": "218.58316021250297",
+          "passed": true
+        },
+        {
+          "actual": "2024-10-02T15:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2024-10-02T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "217.488249",
+          "check_id": "entry_price",
+          "expected": "217.488249",
+          "passed": true
+        },
+        {
+          "actual": "216.39333778749702",
+          "check_id": "target_price",
+          "expected": "216.39333778749702",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Wed 11:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "216.41497712127577",
+          "check_id": "outcome",
+          "expected": "216.41497712127577",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000029",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2024-10-02T15:00:00Z"
     },
     {
       "checks": [
@@ -1291,11 +3205,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2025-01-14T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-01-14T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2024-12-30T19:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-01-14T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.0829985797608297",
+          "check_id": "stop_buffer",
+          "expected": "0.0829985797608297",
+          "passed": true
+        },
+        {
+          "actual": "218.68299857976083",
+          "check_id": "stop_price",
+          "expected": "218.68299857976083",
+          "passed": true
+        },
+        {
+          "actual": "2025-01-14T17:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-01-14T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "217.538244",
+          "check_id": "entry_price",
+          "expected": "217.538244",
+          "passed": true
+        },
+        {
+          "actual": "216.39348942023915",
+          "check_id": "target_price",
+          "expected": "216.39348942023915",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Tue 12:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "218.7048668796188",
+          "check_id": "outcome",
+          "expected": "218.7048668796188",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000030",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-01-14T17:15:00Z"
     },
     {
       "checks": [
@@ -1334,11 +3314,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2025-01-23T15:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-01-23T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2025-01-17T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-01-23T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.05420441651814676",
+          "check_id": "stop_buffer",
+          "expected": "0.05420441651814676",
+          "passed": true
+        },
+        {
+          "actual": "226.71635471702254",
+          "check_id": "stop_price",
+          "expected": "226.71635471702254",
+          "passed": true
+        },
+        {
+          "actual": "2025-01-23T15:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-01-23T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "227.60275800000002",
+          "check_id": "entry_price",
+          "expected": "227.60275800000002",
+          "passed": true
+        },
+        {
+          "actual": "228.4891612829775",
+          "check_id": "target_price",
+          "expected": "228.4891612829775",
+          "passed": true
+        },
+        {
+          "actual": "0.17524496334209702",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Thu 10:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "228.46631236684922",
+          "check_id": "outcome",
+          "expected": "228.46631236684922",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000031",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-01-23T15:30:00Z"
     },
     {
       "checks": [
@@ -1377,11 +3423,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2025-02-06T15:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-02-06T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2025-01-31T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-02-06T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.061660038559747915",
+          "check_id": "stop_buffer",
+          "expected": "0.061660038559747915",
+          "passed": true
+        },
+        {
+          "actual": "230.29166003855974",
+          "check_id": "stop_price",
+          "expected": "230.29166003855974",
+          "passed": true
+        },
+        {
+          "actual": "2025-02-06T15:45:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-02-06T15:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "229.197078",
+          "check_id": "entry_price",
+          "expected": "229.197078",
+          "passed": true
+        },
+        {
+          "actual": "228.10249596144027",
+          "check_id": "target_price",
+          "expected": "228.10249596144027",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Thu 10:45",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "228.12530621103642",
+          "check_id": "outcome",
+          "expected": "228.12530621103642",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000032",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-02-06T15:30:00Z"
     },
     {
       "checks": [
@@ -1420,11 +3532,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2025-02-11T18:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-02-11T18:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2025-02-11T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-02-11T18:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.053614249443906414",
+          "check_id": "stop_buffer",
+          "expected": "0.053614249443906414",
+          "passed": true
+        },
+        {
+          "actual": "224.61638575055608",
+          "check_id": "stop_price",
+          "expected": "224.61638575055608",
+          "passed": true
+        },
+        {
+          "actual": "2025-02-11T18:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-02-11T18:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "225.31252899999998",
+          "check_id": "entry_price",
+          "expected": "225.31252899999998",
+          "passed": true
+        },
+        {
+          "actual": "226.0086722494439",
+          "check_id": "target_price",
+          "expected": "226.0086722494439",
+          "passed": true
+        },
+        {
+          "actual": "0.07894736842105066",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Tue 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "224.593924111981",
+          "check_id": "outcome",
+          "expected": "224.593924111981",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000033",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-02-11T18:00:00Z"
     },
     {
       "checks": [
@@ -1463,11 +3641,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2025-06-11T16:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-06-11T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2025-06-11T15:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-06-11T16:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.04843432467090733",
+          "check_id": "stop_buffer",
+          "expected": "0.04843432467090733",
+          "passed": true
+        },
+        {
+          "actual": "213.7615656753291",
+          "check_id": "stop_price",
+          "expected": "213.7615656753291",
+          "passed": true
+        },
+        {
+          "actual": "2025-06-11T16:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-06-11T16:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "214.781476",
+          "check_id": "entry_price",
+          "expected": "214.781476",
+          "passed": true
+        },
+        {
+          "actual": "215.8013863246709",
+          "check_id": "target_price",
+          "expected": "215.8013863246709",
+          "passed": true
+        },
+        {
+          "actual": "0.0465116279069998",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 12:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "213.74018951876158",
+          "check_id": "outcome",
+          "expected": "213.74018951876158",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000034",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-06-11T16:15:00Z"
     },
     {
       "checks": [
@@ -1506,11 +3750,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2025-06-23T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-06-23T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2025-06-05T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-06-23T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.06103961709185553",
+          "check_id": "stop_buffer",
+          "expected": "0.06103961709185553",
+          "passed": true
+        },
+        {
+          "actual": "206.86121057339312",
+          "check_id": "stop_price",
+          "expected": "206.86121057339312",
+          "passed": true
+        },
+        {
+          "actual": "2025-06-23T17:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-06-23T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "208.650863",
+          "check_id": "entry_price",
+          "expected": "208.650863",
+          "passed": true
+        },
+        {
+          "actual": "210.44051542660685",
+          "check_id": "target_price",
+          "expected": "210.44051542660685",
+          "passed": true
+        },
+        {
+          "actual": "0.08551580179469731",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Mon 13:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "210.4194713750642",
+          "check_id": "outcome",
+          "expected": "210.4194713750642",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000035",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-06-23T17:00:00Z"
     },
     {
       "checks": [
@@ -1549,11 +3859,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2025-12-10T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2025-12-10T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2025-12-08T18:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2025-12-10T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.05550786202938605",
+          "check_id": "stop_buffer",
+          "expected": "0.05550786202938605",
+          "passed": true
+        },
+        {
+          "actual": "252.82550786202938",
+          "check_id": "stop_price",
+          "expected": "252.82550786202938",
+          "passed": true
+        },
+        {
+          "actual": "2025-12-10T17:15:00Z",
+          "check_id": "entry_timing",
+          "expected": "2025-12-10T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "252.024795",
+          "check_id": "entry_price",
+          "expected": "252.024795",
+          "passed": true
+        },
+        {
+          "actual": "251.22408213797064",
+          "check_id": "target_price",
+          "expected": "251.22408213797064",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Wed 12:15",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "252.85079041281557",
+          "check_id": "outcome",
+          "expected": "252.85079041281557",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000036",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2025-12-10T17:00:00Z"
     },
     {
       "checks": [
@@ -1592,11 +3968,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2026-02-04T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2026-02-04T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2026-02-04T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2026-02-04T16:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.10526134424746732",
+          "check_id": "stop_buffer",
+          "expected": "0.10526134424746732",
+          "passed": true
+        },
+        {
+          "actual": "257.8347386557525",
+          "check_id": "stop_price",
+          "expected": "257.8347386557525",
+          "passed": true
+        },
+        {
+          "actual": "2026-02-04T17:00:00Z",
+          "check_id": "entry_timing",
+          "expected": "2026-02-04T17:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "260.146012",
+          "check_id": "entry_price",
+          "expected": "260.146012",
+          "passed": true
+        },
+        {
+          "actual": "262.45728534424745",
+          "check_id": "target_price",
+          "expected": "262.45728534424745",
+          "passed": true
+        },
+        {
+          "actual": "0.10101010101012305",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 12:00",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "257.808955181887",
+          "check_id": "outcome",
+          "expected": "257.808955181887",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000037",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2026-02-04T16:45:00Z"
     },
     {
       "checks": [
@@ -1635,11 +4077,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2026-03-23T15:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2026-03-23T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2026-03-17T17:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2026-03-23T15:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.1172375389585731",
+          "check_id": "stop_buffer",
+          "expected": "0.1172375389585731",
+          "passed": true
+        },
+        {
+          "actual": "251.82723753895857",
+          "check_id": "stop_price",
+          "expected": "251.82723753895857",
+          "passed": true
+        },
+        {
+          "actual": "2026-03-23T15:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2026-03-23T15:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "250.47495",
+          "check_id": "entry_price",
+          "expected": "250.47495",
+          "passed": true
+        },
+        {
+          "actual": "249.12266246104144",
+          "check_id": "target_price",
+          "expected": "249.12266246104144",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Mon 11:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "249.14757472728755",
+          "check_id": "outcome",
+          "expected": "249.14757472728755",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000038",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2026-03-23T15:15:00Z"
     },
     {
       "checks": [
@@ -1678,11 +4186,77 @@
           "check_id": "level_sides",
           "expected": "stop < entry < target",
           "passed": true
+        },
+        {
+          "actual": "2026-07-15T18:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2026-07-15T18:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2026-06-25T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2026-07-15T17:45:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.0663251863638721",
+          "check_id": "stop_buffer",
+          "expected": "0.0663251863638721",
+          "passed": true
+        },
+        {
+          "actual": "295.0236748136361",
+          "check_id": "stop_price",
+          "expected": "295.0236748136361",
+          "passed": true
+        },
+        {
+          "actual": "2026-07-15T18:00:00Z",
+          "check_id": "entry_timing",
+          "expected": "2026-07-15T18:00:00Z",
+          "passed": true
+        },
+        {
+          "actual": "296.32963",
+          "check_id": "entry_price",
+          "expected": "296.32963",
+          "passed": true
+        },
+        {
+          "actual": "297.6355851863639",
+          "check_id": "target_price",
+          "expected": "297.6355851863639",
+          "passed": true
+        },
+        {
+          "actual": "0.1758241758241985",
+          "check_id": "penetration",
+          "expected": "at most 0.25",
+          "passed": true
+        },
+        {
+          "actual": "Wed 14:00",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "294.9941724461547",
+          "check_id": "outcome",
+          "expected": "294.9941724461547",
+          "passed": true
+        },
+        {
+          "actual": "demand",
+          "check_id": "side_match",
+          "expected": "demand",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000039",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2026-07-15T17:45:00Z"
     },
     {
       "checks": [
@@ -1721,11 +4295,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2026-07-23T17:00:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2026-07-23T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2026-07-21T16:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2026-07-23T17:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.06588728718227216",
+          "check_id": "stop_buffer",
+          "expected": "0.06588728718227216",
+          "passed": true
+        },
+        {
+          "actual": "292.4231564562785",
+          "check_id": "stop_price",
+          "expected": "292.4231564562785",
+          "passed": true
+        },
+        {
+          "actual": "2026-07-23T17:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2026-07-23T17:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "291.40085700000003",
+          "check_id": "entry_price",
+          "expected": "291.40085700000003",
+          "passed": true
+        },
+        {
+          "actual": "290.37855754372157",
+          "check_id": "target_price",
+          "expected": "290.37855754372157",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Thu 13:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "292.4523987719241",
+          "check_id": "outcome",
+          "expected": "292.4523987719241",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000040",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2026-07-23T17:15:00Z"
     },
     {
       "checks": [
@@ -1764,11 +4404,77 @@
           "check_id": "level_sides",
           "expected": "target < entry < stop",
           "passed": true
+        },
+        {
+          "actual": "2026-07-27T14:30:00Z",
+          "check_id": "causality_atr",
+          "expected": "atr bar at or before 2026-07-27T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "2026-07-24T20:00:00Z",
+          "check_id": "causality_zone",
+          "expected": "qualified at or before 2026-07-27T14:15:00Z",
+          "passed": true
+        },
+        {
+          "actual": "0.08001858727738206",
+          "check_id": "stop_buffer",
+          "expected": "0.08001858727738206",
+          "passed": true
+        },
+        {
+          "actual": "294.1780392899559",
+          "check_id": "stop_price",
+          "expected": "294.1780392899559",
+          "passed": true
+        },
+        {
+          "actual": "2026-07-27T14:30:00Z",
+          "check_id": "entry_timing",
+          "expected": "2026-07-27T14:30:00Z",
+          "passed": true
+        },
+        {
+          "actual": "292.190778",
+          "check_id": "entry_price",
+          "expected": "292.190778",
+          "passed": true
+        },
+        {
+          "actual": "290.20351671004414",
+          "check_id": "target_price",
+          "expected": "290.20351671004414",
+          "passed": true
+        },
+        {
+          "actual": "short",
+          "check_id": "penetration",
+          "expected": "not applicable to shorts",
+          "passed": true
+        },
+        {
+          "actual": "Mon 10:30",
+          "check_id": "session",
+          "expected": "monday-thursday, 10:30 to 15:00 new york",
+          "passed": true
+        },
+        {
+          "actual": "290.23253706171516",
+          "check_id": "outcome",
+          "expected": "290.23253706171516",
+          "passed": true
+        },
+        {
+          "actual": "supply",
+          "check_id": "side_match",
+          "expected": "supply",
+          "passed": true
         }
       ],
       "passed": true,
       "trade_id": "iwm_1h_15m_base:fixed:000041",
-      "trigger_timestamp": ""
+      "trigger_timestamp": "2026-07-27T14:15:00Z"
     }
   ]
 }

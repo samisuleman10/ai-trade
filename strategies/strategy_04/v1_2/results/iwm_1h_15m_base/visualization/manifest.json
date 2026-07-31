@@ -1,7 +1,7 @@
 {
   "bundle_id": "strategies_strategy_04_v1_2_results_iwm_1h_15m_base",
   "capabilities": {
-    "has_signal_audit": false,
+    "has_signal_audit": true,
     "has_trade_audit": true,
     "sizing_variants": [
       "fixed",
@@ -55,17 +55,35 @@
       "sha256": "0a78b6954e08ba670b9ab971599cdd8dac8ae80ab5889a554e64b4ab3b614c9b"
     },
     {
+      "dataset_id": "zones",
+      "first_timestamp": null,
+      "kind": "zones",
+      "last_timestamp": null,
+      "path": "data/zones.json",
+      "record_count": 41,
+      "sha256": "df14737a920cfb1c8247ab31eeb2d741d803f170db33d0c593eb838c8b5adc24"
+    },
+    {
       "dataset_id": "trade_audit",
       "first_timestamp": null,
       "kind": "trade_audit",
       "last_timestamp": null,
       "path": "data/trade-audit.json",
       "record_count": 41,
-      "sha256": "66cc541a9035c2c11bb581405f9b0e4240a9f89d883151e0475f739eb56dd1d5"
+      "sha256": "112ad76532dfa10aee1778c101ff0665025966a78ec398ee70483aee2d702d75"
+    },
+    {
+      "dataset_id": "audit_windows",
+      "first_timestamp": "2021-02-17T20:00:00Z",
+      "kind": "candles",
+      "last_timestamp": "2026-07-30T17:00:00Z",
+      "path": "data/audit-windows.json",
+      "record_count": 41,
+      "sha256": "7e86b175a5c4f257c2187f4a363b42b7cb6e07c3fc18383b18c4133193cd0344"
     }
   ],
   "execution_authority": "none",
-  "generated_at": "2026-07-31T15:20:51Z",
+  "generated_at": "2026-07-31T15:53:32Z",
   "instrument": {
     "asset_class": null,
     "contract_multiplier": null,
