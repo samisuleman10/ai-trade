@@ -1,4 +1,7 @@
-"""Resumable read-only IBKR intraday cache for QQQ and DIA (US30 proxy)."""
+"""Resumable read-only IBKR intraday cache for equity-index and commodity ETFs.
+
+Covers QQQ, DIA (US30 proxy), IWM (US2000 proxy), GLD (gold) and SLV (silver).
+"""
 
 from __future__ import annotations
 
@@ -32,6 +35,14 @@ def _as_utc(value: str) -> datetime:
 def _asset(asset: str):
     if asset == "qqq":
         return us_etf_contract("QQQ", "NASDAQ"), "QQQ", Path("data/market_data/ibkr/QQQ/v5_5y")
+    if asset == "iwm":
+        # IWM is the directly tradable ETF proxy for the Russell 2000 / US2000.
+        return us_etf_contract("IWM", "ARCA"), "IWM", Path("data/market_data/ibkr/IWM/v5_5y")
+    if asset == "gld":
+        # GLD is the directly tradable gold ETF; unlike MGC (CONTFUT) it backfills 15m cleanly.
+        return us_etf_contract("GLD", "ARCA"), "GLD", Path("data/market_data/ibkr/GLD/v5_5y")
+    if asset == "slv":
+        return us_etf_contract("SLV", "ARCA"), "SLV", Path("data/market_data/ibkr/SLV/v5_5y")
     # DIA is the directly tradable ETF proxy for the Dow Jones Industrial Average / US30.
     return us_etf_contract("DIA", "ARCA"), "DIA", Path("data/market_data/ibkr/US30_DIA/v5_5y")
 
@@ -59,8 +70,8 @@ def _backfill(asset: str, timeframe: str, target: datetime, port: int, client_id
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Backfill QQQ/DIA Strategy 02 data from the IBKR read-only API.")
-    parser.add_argument("--assets", nargs="+", choices=("qqq", "dia"), default=("qqq", "dia"))
+    parser = argparse.ArgumentParser(description="Backfill equity-index/commodity ETF data from the IBKR read-only API.")
+    parser.add_argument("--assets", nargs="+", choices=("qqq", "dia", "iwm", "gld", "slv"), default=("qqq", "dia"))
     parser.add_argument("--timeframes", nargs="+", choices=("5m", "15m", "1h"), default=("5m", "15m", "1h"))
     parser.add_argument("--target-start", default="2021-04-14")
     parser.add_argument("--port", type=int, default=4001)

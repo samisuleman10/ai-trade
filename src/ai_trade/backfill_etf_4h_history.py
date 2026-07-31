@@ -34,6 +34,14 @@ def _asset(asset: str):
         return us_etf_contract("SPY", "ARCA"), "SPY", Path("data/market_data/ibkr/SPY/v4_2y")
     if asset == "qqq":
         return us_etf_contract("QQQ", "NASDAQ"), "QQQ", Path("data/market_data/ibkr/QQQ/v5_5y")
+    if asset == "iwm":
+        # IWM is the directly tradable ETF proxy for the Russell 2000 / US2000.
+        return us_etf_contract("IWM", "ARCA"), "IWM", Path("data/market_data/ibkr/IWM/v5_5y")
+    if asset == "gld":
+        # GLD is the directly tradable gold ETF; unlike MGC (CONTFUT) it backfills cleanly.
+        return us_etf_contract("GLD", "ARCA"), "GLD", Path("data/market_data/ibkr/GLD/v5_5y")
+    if asset == "slv":
+        return us_etf_contract("SLV", "ARCA"), "SLV", Path("data/market_data/ibkr/SLV/v5_5y")
     return us_etf_contract("DIA", "ARCA"), "DIA", Path("data/market_data/ibkr/US30_DIA/v5_5y")
 
 
@@ -59,8 +67,8 @@ def _backfill(asset: str, target: datetime, port: int, client_id: int, pause: fl
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Backfill 4-hour SPY/QQQ/DIA history from IBKR read-only API.")
-    parser.add_argument("--assets", nargs="+", choices=("spy", "qqq", "dia"), default=("spy", "qqq", "dia"))
+    parser = argparse.ArgumentParser(description="Backfill 4-hour equity-index/commodity ETF history from IBKR read-only API.")
+    parser.add_argument("--assets", nargs="+", choices=("spy", "qqq", "dia", "iwm", "gld", "slv"), default=("spy", "qqq", "dia"))
     parser.add_argument("--target-start", default="2021-04-14")
     parser.add_argument("--port", type=int, default=4001)
     parser.add_argument("--client-id", type=int, default=1100)
