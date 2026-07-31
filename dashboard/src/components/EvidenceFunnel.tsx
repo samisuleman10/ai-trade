@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { CatalogEntry } from '../catalog';
 import type { PerformanceState } from '../hooks/useRunCatalog';
-import { criticalT, medianRecordedSd, toFunnelPoints } from '../evidenceFunnel';
+import { criticalT, medianRecordedSd, toFunnelPoints, variantLabel } from '../evidenceFunnel';
 import type { FunnelPoint } from '../evidenceFunnel';
 
 /**
@@ -291,15 +291,36 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
               {hovered.entry.run.run_id}
               {hovered.entry.instrument.symbol ? ` · ${hovered.entry.instrument.symbol}` : ''}
             </div>
+            {/* The ablation variant lives only in the run id's suffix, which
+                nobody should have to decode from the spec to read a chart. */}
+            {variantLabel(hovered.entry.run.strategy_id, hovered.entry.run.run_id) && (
+              <div className="s4-funnel-tooltip-variant">
+                {variantLabel(hovered.entry.run.strategy_id, hovered.entry.run.run_id)}
+              </div>
+            )}
             <dl className="s4-funnel-tooltip-grid">
               <dt>Trades</dt>
               <dd>{hovered.tradeCount.toLocaleString('en-US')}</dd>
-              <dt>Avg R</dt>
+              <dt>
+                Avg R <span>profit per trade, in units of risk</span>
+              </dt>
               <dd>{formatR(hovered.averageR)}</dd>
-              <dt>SD of R</dt>
+              <dt>
+                SD of R <span>how much single trades vary</span>
+              </dt>
               <dd>{formatSd(hovered.resultRSd)}</dd>
-              <dt>t</dt>
-              <dd>{formatT(hovered.t)}</dd>
+              <dt>
+                t <span>avg ÷ its own uncertainty</span>
+              </dt>
+              <dd>
+                {formatT(hovered.t)}
+                {hovered.t !== null && (
+                  <span className="s4-funnel-tooltip-bar">
+                    {' '}
+                    vs {criticalT(hovered.tradeCount - 1).toFixed(2)} needed
+                  </span>
+                )}
+              </dd>
             </dl>
             <div className="s4-funnel-tooltip-verdict">
               {hovered.resultRSd === null
@@ -352,6 +373,53 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
                 yet plotted.`}
           </p>
         )}
+      </div>
+
+      {/* Every term on this chart is jargon until it is spelled out once.
+          Placed below the plot so it is available without being in the way. */}
+      <div className="s4-funnel-legend-note border-t border-slate-200 px-5 py-4">
+        <h3 className="text-sm font-semibold text-slate-950">Reading this chart</h3>
+        <dl className="mt-2 grid max-w-4xl gap-x-6 gap-y-2 text-xs leading-5 text-slate-600 sm:grid-cols-2">
+          <div>
+            <dt className="font-semibold text-slate-800">Avg R</dt>
+            <dd>
+              Average profit per trade, measured in units of risk. +0.20R means each trade earned
+              a fifth of what it put at risk. Below zero is losing.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-slate-800">SD of R</dt>
+            <dd>
+              How much individual trades vary around that average — consistency, not profit. These
+              strategies target 1R and stop near 1R, so most trades land close to +1 or −1 and the
+              spread sits near 1.0.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-slate-800">t</dt>
+            <dd>
+              The average divided by its own uncertainty: <em>avg R ÷ (SD ÷ √trades)</em>. It asks
+              how far from zero the result sits once you account for how noisy the trades were. A
+              large average from few trades scores low; a small average from many trades scores
+              high.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-slate-800">The funnel</dt>
+            <dd>
+              The t a run would need to be called conclusive. It widens to the left because fewer
+              trades demand a bigger result — at 4 trades the bar is 3.18, at 800 it is 1.96.
+              Inside the funnel means the result is consistent with pure luck.
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-3 max-w-4xl text-xs leading-5 text-slate-600">
+          <strong>The practical upshot:</strong> a run can have the best average on the chart and
+          still prove nothing. Strategy 04 v1.2 Filter A + B on DIA averages +0.357R — the highest
+          here — but on 27 trades it scores t = 1.99 against a bar of 2.06, so it sits inside the
+          funnel. Ranking by average R would put it first; asking whether it is real puts it
+          nowhere.
+        </p>
       </div>
 
       <div className="border-t border-slate-200 px-5 py-4">

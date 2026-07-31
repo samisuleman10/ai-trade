@@ -144,3 +144,19 @@ export function medianRecordedSd(points: FunnelPoint[]): number | null {
     ? recorded[middle]
     : (recorded[middle - 1] + recorded[middle]) / 2;
 }
+
+/**
+ * Human name for a Strategy 04 v1.2 ablation variant.
+ *
+ * The variant lives only in the run id's suffix (`..._ab`), which readers
+ * have to decode from the spec. Guarded on the strategy id so a run from
+ * another strategy that happens to end in `_a` is never mislabelled.
+ */
+export function variantLabel(strategyId: string, runId: string): string | null {
+  if (!strategyId.includes('v1_2')) return null;
+  if (runId.endsWith('_ab')) return 'Filter A + B';
+  if (runId.endsWith('_a')) return 'Filter A only';
+  if (runId.endsWith('_b')) return 'Filter B only';
+  if (runId.endsWith('_base')) return 'No filters (v1.1 baseline)';
+  return null;
+}
