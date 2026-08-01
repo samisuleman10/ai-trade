@@ -60,16 +60,26 @@ BANDS: dict[str, dict] = {
             ("gbpusd_15m", "GBPUSD/v1_5y/gbpusd_15m.csv", "GBPUSD/v1_5y/gbpusd_1h.csv"),
         ],
     },
-    # v3 — 4h confirmation over a 1h entry. Only three instruments have a 1h
-    # ledger, and SPY's 4h cache is two years against a five-year ledger.
+    # v3 — 4h confirmation over a 1h entry, all eight instruments.
+    #
+    # The 4h bars come from `scripts/resample_1h_to_4h.py` rather than the raw
+    # cache: SPY's real 4h cache covers two years against a five-year ledger,
+    # and spot FX has none at all. That script validates the rule against the
+    # instruments where a real 4h cache exists (QQQ and DIA reproduce exactly).
+    # Using derived bars everywhere keeps one convention across the band.
     "1h": {
         "entry_minutes": 60,
         "trend_minutes": 240,
         "versions": "v3",
         "instruments": [
-            ("spy_1h", "SPY/v4_2y/spy_1h.csv", "SPY/spy_4h.csv"),
-            ("qqq_1h", "QQQ/v5_5y/qqq_1h.csv", "QQQ/v5_5y/qqq_4h.csv"),
-            ("us30_dia_1h", "US30_DIA/v5_5y/dia_1h.csv", "US30_DIA/v5_5y/dia_4h.csv"),
+            ("spy_1h", "SPY/v4_2y/spy_1h.csv", "derived:spy_4h.csv"),
+            ("qqq_1h", "QQQ/v5_5y/qqq_1h.csv", "derived:qqq_4h.csv"),
+            ("us30_dia_1h", "US30_DIA/v5_5y/dia_1h.csv", "derived:dia_4h.csv"),
+            ("iwm_1h", "IWM/v5_5y/iwm_1h.csv", "derived:iwm_4h.csv"),
+            ("gld_1h", "GLD/v5_5y/gld_1h.csv", "derived:gld_4h.csv"),
+            ("slv_1h", "SLV/v5_5y/slv_1h.csv", "derived:slv_4h.csv"),
+            ("eurusd_1h", "EURUSD/v1_5y/eurusd_1h.csv", "derived:eurusd_4h.csv"),
+            ("gbpusd_1h", "GBPUSD/v1_5y/gbpusd_1h.csv", "derived:gbpusd_4h.csv"),
         ],
     },
 }
@@ -172,7 +182,16 @@ def label_trades(ledger: Path, entry_csv: Path, trend_csv: Path, *,
     return rows, unmatched
 
 
-def run_band(band: str, data_root: Path) -> None:
+def resolve(rel: str, data_root: Path, derived_root: Path | None) -> Path | None:
+    """Paths prefixed "derived:" come from the resampler, not the raw cache."""
+    if rel.startswith("derived:"):
+        if derived_root is None:
+            return None
+        return derived_root / rel.split(":", 1)[1]
+    return data_root / rel
+
+
+def run_band(band: str, data_root: Path, derived_root: Path | None = None) -> None:
     config = BANDS[band]
     print(f"\n{'#' * 78}")
     print(f"# Band {band}  (Strategy 01 {config['versions']}) — "
@@ -191,9 +210,10 @@ def run_band(band: str, data_root: Path) -> None:
 
         for ledger_dir, rel_entry, rel_trend in config["instruments"]:
             ledger = LEDGER_ROOT / ledger_dir / "fixed_trades.csv"
-            entry_csv = data_root / rel_entry
-            trend_csv = data_root / rel_trend
-            if not ledger.exists() or not entry_csv.exists() or not trend_csv.exists():
+            entry_csv = resolve(rel_entry, data_root, derived_root)
+            trend_csv = resolve(rel_trend, data_root, derived_root)
+            if (entry_csv is None or trend_csv is None or not ledger.exists()
+                    or not entry_csv.exists() or not trend_csv.exists()):
                 print(f"{ledger_dir:<14}  SKIPPED (missing ledger or bars)")
                 continue
 
@@ -228,12 +248,14 @@ def run_band(band: str, data_root: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-root", required=True, type=Path)
+    parser.add_argument("--derived-root", type=Path,
+                        help="Directory of 4h bars built by scripts/resample_1h_to_4h.py")
     parser.add_argument("--band", default="both", choices=["15m", "1h", "both"])
     args = parser.parse_args()
 
     bands = ["15m", "1h"] if args.band == "both" else [args.band]
     for band in bands:
-        run_band(band, args.data_root)
+        run_band(band, args.data_root, args.derived_root)
     return 0
 
 
