@@ -70,12 +70,18 @@ Reversing a −0.10R system does **not** give +0.10R.
 Testing the mechanism on already-recorded trades is what closed the HTF idea
 for the price of one script, and it is the right first move again.
 
-1. **How much of the −0.1033R is the collision assumption?** Count trades that
-   exited at stop on a bar whose range also contained the target. A few percent
-   means the loss is real; a large share means the strongest result in the
-   repository is partly an artifact — which would also bear on Strategy 04's
-   conclusions. **This is the higher priority: it is a check on a finding
-   already relied upon.**
+1. ~~**How much of the −0.1033R is the collision assumption?**~~ **Run
+   2026-08-01: mostly not.** Collisions are 1.1–2.5% of trades and zero on FX.
+   Pricing every one as a target fill moves the pooled result from −0.1033R
+   (t = −8.23) to −0.0743R (t = −5.90) — decisive either way. But the
+   per-instrument claim is assumption-sensitive: only four of eight still fire
+   under the optimistic bound, and QQQ falls from t = −2.54 to −0.58. Strategy
+   04 is unaffected (2 collisions in 760 trades). See
+   `scripts/analyze_bracket_collisions.py`.
+
+   **The reversal arithmetic changes accordingly.** Fading a −0.0743R signal,
+   not a −0.1033R one, and after costs subtract in both directions the
+   reversed edge is smaller again — plausibly near zero.
 2. **Does mean reversion exist in this data at all?** Per instrument, bucket
    forward returns by how far price closed from a moving average in ATR units.
    No gradient means no amount of rule-craft will find one.

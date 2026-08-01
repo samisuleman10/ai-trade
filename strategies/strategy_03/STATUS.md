@@ -25,8 +25,38 @@ Fixed 0.15% risk, 1:1 target, the v1 rules unchanged. Scored with
 | **Pooled** | **5,602** | **−0.1033** | **−8.23** | **abandon** |
 
 **Seven of eight instruments fire the abandon rule independently**, across US
-equity indices, small caps, precious metals and spot FX. This does not rest on
-pooling, and it does not rest on any one venue or asset class.
+equity indices, small caps, precious metals and spot FX.
+
+### How much of this is the intrabar collision assumption
+
+The engine resolves a bar touching both stop and target by taking the stop.
+With this strategy's tight bracket (Jaw ± 0.10 ATR) that could matter, so it
+was measured: `python scripts/analyze_bracket_collisions.py`.
+
+Collisions are rare — 1.1% to 2.5% of trades, 2.3% to 5.1% of stop exits, and
+**zero on both FX pairs**. Re-pricing every one of them as a target fill gives
+an optimistic bound:
+
+| | Pooled avg R | t | Rule |
+| --- | ---: | ---: | --- |
+| As committed (stop first) | −0.1033 | −8.23 | **abandon** |
+| Optimistic bound (target first) | −0.0743 | −5.90 | **abandon** |
+
+**The pooled conclusion does not rest on the assumption.** The true value lies
+between these and nearer the pessimistic end, and both ends are decisive.
+
+**The per-instrument claim is weaker than it looks, though.** Under the
+optimistic bound only four instruments still fire — SLV (−4.37), IWM (−2.77),
+EURUSD (−2.49) and GLD (−2.23). The three US equity indices drop below the bar:
+SPY −1.90, DIA −1.57, and QQQ falls all the way from −2.54 to **−0.58**, having
+had 20 collisions in 805 trades. So "seven of eight independently" holds under
+the committed model but not under the alternative; "four of eight, plus a
+decisive pooled result" is the claim that survives either way.
+
+Strategy 04 v1.2's base runs were checked the same way and have essentially no
+collisions (2 in 760 trades, both GBPUSD), so nothing in
+`strategies/strategy_04/STATUS.md` depends on this. Its stops sit at zone
+boundaries rather than a fraction of ATR, so its brackets are far wider.
 
 At 1h and 4h the same signal is inconclusive rather than negative (n = 253–318
 and 73–76), which is a statement about those samples' size, not a reprieve.
