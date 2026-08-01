@@ -94,4 +94,14 @@ reading was reasonable and the SPY/QQQ result initially supported it — but
 because the prediction it makes is testable and the test came back negative on
 data it had never seen.
 
+**One clause was never tested.** The rule had a second half — *otherwise wait
+for a proper bullish or bearish flag* — and only the first half was measured.
+The analysis conditioned the existing mouth-opening entry on HTF mouth age; it
+never operationalised the flag. That clause describes a structurally different
+entry (impulse, then consolidation, then break in the impulse direction) rather
+than a trend-continuation entry on a mouth-open, so it is untested rather than
+falsified. If it is ever pursued it needs its own signal and its own recorded
+trades — not another condition bolted onto this entry, which the result above
+closes.
+
 Where the search went next: `next_strategy_direction.md`.
