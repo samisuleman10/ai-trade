@@ -1,0 +1,35 @@
+{
+  "comment": "Generated file -- do not edit by hand. Regenerate with: python -m ai_trade.export_strategy_registry",
+  "strategies": [
+    {
+      "strategy_id": "strategy_01",
+      "title": "Strategy 01",
+      "subtitle": "Bill Williams Alligator with Heikin Ashi confirmation",
+      "spec_document": "strategies/strategy_01/v5/strategy.md",
+      "version_ids": []
+    },
+    {
+      "strategy_id": "strategy_02",
+      "title": "Strategy 02",
+      "subtitle": "One-hour Heikin Ashi Jaw-cross reversal with 15m confirmation",
+      "spec_document": "strategies/strategy_02/v3/strategy.md",
+      "version_ids": []
+    },
+    {
+      "strategy_id": "strategy_03",
+      "title": "Strategy 03",
+      "subtitle": "Alligator mouth opening alone, no confirmation filters",
+      "spec_document": "strategies/strategy_03/v1/strategy.md",
+      "version_ids": []
+    },
+    {
+      "strategy_id": "strategy_04",
+      "title": "Strategy 04",
+      "subtitle": "Causal 1H zones, 15m reaction entries",
+      "spec_document": "strategies/strategy_04/v1_2/strategy.md",
+      "version_ids": [
+        "strategy_04_v1_2"
+      ]
+    }
+  ]
+}

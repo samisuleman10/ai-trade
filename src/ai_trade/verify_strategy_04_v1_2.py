@@ -1,5 +1,12 @@
 """Verify Strategy 04 v1.2 outputs from recorded evidence.
 
+Thin wrapper: the generic scaffolding (row iteration, causality check,
+reference-bar fidelity, parity diffing, vacuous-pass guards, report writing)
+lives in ``verify_version``; the v1.2-specific filter rules live in
+``audit_rules_v1_2``, hand-written against the spec and importing no strategy
+code. This module keeps the historical CLI and the exports the tests import
+(``audit_columns``, ``parity_against_v1_1``, ``main``).
+
 Two independent checks, both required by the v1.2 spec:
 
 1. Column audit (every variant): recompute ``risk_zone_ratio`` from the
@@ -16,49 +23,30 @@ Two independent checks, both required by the v1.2 spec:
    the spec, if parity fails the harness is wrong and no other v1.2 result
    may be read.
 
-Both checks are vacuously satisfiable by an empty ``candidate_signals.csv``
-(zero rows trivially pass every per-row check, and empty-vs-empty parity
-trivially matches). ``main()`` closes that hole: it requires at least one
-audited row, and when a v1.1 comparison is requested, at least one v1.1
-signal too.
+Both checks are vacuously satisfiable by an empty ``candidate_signals.csv``;
+``verify_version.finalize_report`` closes that hole (zero audited rows fail,
+and an empty v1.1 incumbent fails when parity is requested).
 """
 
 from __future__ import annotations
 
 import argparse
-import csv
-import json
-import math
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
-from ai_trade.strategy_01 import load_ohlcv_csv
+from ai_trade import verify_version
+from ai_trade.audit_rules_v1_2 import AUDIT_COLUMNS, VARIANT_FILTERS, audit_row
 
-NEW_COLUMNS = ("risk_zone_ratio", "one_hour_reference_open", "one_hour_reference_close")
-_UTC = "%Y-%m-%dT%H:%M:%SZ"
-_RELATIVE_TOLERANCE = 1e-9
+# Historical export name for the three v1.2 audit columns.
+NEW_COLUMNS = AUDIT_COLUMNS
 
-VARIANT_FILTERS: dict[str, frozenset[str]] = {
-    "base": frozenset(),
-    "a": frozenset({"a"}),
-    "b": frozenset({"b"}),
-    "ab": frozenset({"a", "b"}),
-}
-
-
-def _read_rows(path: Path) -> list[dict[str, str]]:
-    text = path.read_text(encoding="utf-8")
-    if not text.strip():
-        return []
-    with path.open("r", newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
+__all__ = ["NEW_COLUMNS", "VARIANT_FILTERS", "audit_columns", "parity_against_v1_1", "main"]
 
 
 def audit_columns(
     results_dir: Path,
     one_hour_csv: Path,
-    enabled_filters: Optional[set[str]] = None,
+    enabled_filters: Optional[set] = None,
     max_risk_zone_ratio: Optional[float] = None,
 ) -> dict:
     """Recompute the three v1.2 audit columns from recorded evidence.
@@ -69,103 +57,34 @@ def audit_columns(
     ``one_hour_reference_open`` / ``one_hour_reference_close`` values (not a
     recomputation -- those are already audited above).
     """
-    rows = _read_rows(Path(results_dir) / "candidate_signals.csv")
-    bars_by_timestamp = {bar.timestamp: bar for bar in load_ohlcv_csv(Path(one_hour_csv))}
-    enabled_filters = enabled_filters or set()
-    failures: list[str] = []
-    for number, row in enumerate(rows, start=1):
-        width = float(row["zone_upper"]) - float(row["zone_lower"])
-        expected_ratio = (
-            math.inf
-            if width <= 0
-            else abs(float(row["trigger_close"]) - float(row["stop_reference"])) / width
-        )
-        recorded_ratio = float(row["risk_zone_ratio"])
-        if not math.isclose(recorded_ratio, expected_ratio, rel_tol=_RELATIVE_TOLERANCE):
-            failures.append(
-                f"row {number}: risk_zone_ratio recorded {recorded_ratio} != recomputed {expected_ratio}"
-            )
-        # one_hour_atr_timestamp is the reference bar's CLOSE time; the bar
-        # itself is stamped one hour earlier.
-        decision_time = datetime.strptime(row["decision_timestamp"], _UTC).replace(
-            tzinfo=timezone.utc
-        )
-        close_time = datetime.strptime(row["one_hour_atr_timestamp"], _UTC).replace(
-            tzinfo=timezone.utc
-        )
-        if close_time > decision_time:
-            failures.append(
-                f"row {number}: not causal -- reference bar close "
-                f"{row['one_hour_atr_timestamp']} is after decision_timestamp "
-                f"{row['decision_timestamp']}"
-            )
-        bar_stamp = (close_time - timedelta(hours=1)).strftime(_UTC)
-        bar = bars_by_timestamp.get(bar_stamp)
-        if bar is None:
-            failures.append(f"row {number}: no one-hour bar at {bar_stamp} for the recorded reference")
-            continue
-        if not (
-            math.isclose(float(row["one_hour_reference_open"]), bar.open, rel_tol=_RELATIVE_TOLERANCE)
-            and math.isclose(float(row["one_hour_reference_close"]), bar.close, rel_tol=_RELATIVE_TOLERANCE)
-        ):
-            failures.append(
-                f"row {number}: recorded reference open/close "
-                f"({row['one_hour_reference_open']}, {row['one_hour_reference_close']}) "
-                f"!= bar at {bar_stamp} ({bar.open}, {bar.close})"
-            )
-        if "a" in enabled_filters and max_risk_zone_ratio is not None:
-            if recorded_ratio > max_risk_zone_ratio:
-                failures.append(
-                    f"row {number}: filter A violated -- risk_zone_ratio {recorded_ratio} "
-                    f"> max_risk_zone_ratio {max_risk_zone_ratio}"
-                )
-        if "b" in enabled_filters:
-            reference_open = float(row["one_hour_reference_open"])
-            reference_close = float(row["one_hour_reference_close"])
-            side = row["side"]
-            agrees = (
-                reference_close >= reference_open
-                if side == "long"
-                else reference_close <= reference_open
-            )
-            if not agrees:
-                failures.append(
-                    f"row {number}: filter B violated -- {side} side direction disagrees with "
-                    f"reference bar (open {reference_open}, close {reference_close})"
-                )
-    return {"rows": len(rows), "failures": failures}
+    return verify_version.audit_recorded_rows(
+        results_dir,
+        one_hour_csv,
+        audit_row=audit_row,
+        enabled_filters=enabled_filters,
+        parameters={"max_risk_zone_ratio": max_risk_zone_ratio},
+    )
 
 
 def parity_against_v1_1(results_dir: Path, v1_1_dir: Path) -> dict:
     """Diff v1.2-base outputs against the committed v1.1 run."""
-    v12_signals = _read_rows(Path(results_dir) / "candidate_signals.csv")
-    v11_signals = _read_rows(Path(v1_1_dir) / "candidate_signals.csv")
-    stripped = [
-        {key: value for key, value in row.items() if key not in NEW_COLUMNS}
-        for row in v12_signals
-    ]
-    signals_match = stripped == v11_signals
-    trades_match = (
-        (Path(results_dir) / "fixed_trades.csv").read_bytes()
-        == (Path(v1_1_dir) / "fixed_trades.csv").read_bytes()
+    return verify_version.parity_against_incumbent(
+        results_dir,
+        v1_1_dir,
+        NEW_COLUMNS,
+        candidate_label="v1_2",
+        incumbent_label="v1_1",
     )
-    return {
-        "v1_2_signal_count": len(v12_signals),
-        "v1_1_signal_count": len(v11_signals),
-        "signals_match": signals_match,
-        "trades_match": trades_match,
-        # Empty-vs-empty trivially matches; that must not be treated as
-        # parity confirmation, so callers gate on this too.
-        "non_empty": len(v11_signals) > 0,
-    }
 
 
 def main() -> int:
+    # The parser stays here, not in the generic shell, so this CLI's surface
+    # (flags, choices, defaults) is exactly what it was before the split.
     parser = argparse.ArgumentParser(description="Verify Strategy 04 v1.2 recorded evidence.")
     parser.add_argument("--results", required=True, type=Path)
     parser.add_argument("--one-hour", required=True, type=Path)
     parser.add_argument("--v1-1", type=Path, default=None)
-    parser.add_argument("--variant", choices=("base", "a", "b", "ab"), default=None)
+    parser.add_argument("--variant", choices=tuple(VARIANT_FILTERS), default=None)
     parser.add_argument("--max-risk-zone-ratio", type=float, default=2.5)
     args = parser.parse_args()
 
@@ -175,22 +94,10 @@ def main() -> int:
         enabled_filters=enabled_filters,
         max_risk_zone_ratio=args.max_risk_zone_ratio,
     )
-    report: dict = {"results_dir": str(args.results), "column_audit": column_audit}
-    ok = column_audit["rows"] > 0 and not column_audit["failures"]
-    if args.v1_1 is not None:
-        report["parity"] = parity_against_v1_1(args.results, args.v1_1)
-        ok = (
-            ok
-            and report["parity"]["signals_match"]
-            and report["parity"]["trades_match"]
-            and report["parity"]["non_empty"]
-        )
-    report["passed"] = ok
-    (args.results / "verification_report.json").write_text(
-        json.dumps(report, indent=2) + "\n", encoding="utf-8"
+    parity = (
+        parity_against_v1_1(args.results, args.v1_1) if args.v1_1 is not None else None
     )
-    print(json.dumps(report, indent=2))
-    return 0 if ok else 1
+    return verify_version.finalize_report(args.results, column_audit, parity)
 
 
 if __name__ == "__main__":

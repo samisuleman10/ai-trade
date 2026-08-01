@@ -46,6 +46,14 @@ displayMode = input.string("Clean", "Display mode", options = ["Clean", "Audit"]
 cleanDistanceAtr = input.float(2.0, "Clean-mode distance (ATR)", minval = 0.25, step = 0.25, group = groupDisplay)
 cleanHistoryBars = input.int(80, "Clean-mode history (bars)", minval = 10, maxval = 240, group = groupDisplay)
 cleanZonesPerSide = input.int(1, "Nearest zones per side", minval = 1, maxval = 3, group = groupDisplay)
+// Clean mode used to clamp a box's left edge to the recent-history window,
+// which makes an old zone look younger than it is: the visible left edge is a
+// cosmetic truncation, not the bar the zone became knowable. Reaction can only
+// be judged forward from the qualification bar, so anchoring is now its own
+// switch rather than a side effect of the display mode.
+anchorAtCreation = input.bool(true, "Anchor zones at their creation bar", group = groupDisplay)
+showZoneAge = input.bool(true, "Show bars since creation in status", group = groupDisplay)
+showCreationMarker = input.bool(true, "Mark the bar each zone qualified", group = groupDisplay)
 showEventMarkers = input.bool(true, "Show lifecycle event markers", group = groupDisplay)
 showVolumeInClean = input.bool(false, "Show session volume lines in Clean mode", group = groupDisplay)
 
@@ -80,6 +88,12 @@ type Zone
     int endIndex
     box drawing
     label statusDrawing
+    // The creation marker is held here rather than discarded at draw time.
+    // A bare label.new() handle cannot be hidden or deleted, so the marker
+    // outlived the zone it described: an evicted or filtered-out zone left a
+    // qualification tag floating with no box, which reads as if a visible
+    // zone were born there.
+    label createdDrawing
 
 f_score(Zone zone) =>
     (zone.hasPivot ? 1 : 0) +
@@ -106,7 +120,14 @@ f_box_text(Zone zone) =>
 
 f_status_text(Zone zone) =>
     string prefix = zone.side == "demand" ? "D" : "S"
-    prefix + " Q" + str.tostring(f_qualified_score(zone)) + "/C" + str.tostring(f_score(zone)) + " " + zone.state
+    // Age is measured from the qualification bar, so the label answers both
+    // questions at once: what the zone is doing now, and how long ago it
+    // became actionable. A zone that has been sitting unreacted for 200 bars
+    // is a different proposition from one qualified three bars ago.
+    string age = showZoneAge and zone.qualifiedIndex >= 0
+         ? " · " + str.tostring(bar_index - zone.qualifiedIndex) + "b"
+         : ""
+    prefix + " Q" + str.tostring(f_qualified_score(zone)) + "/C" + str.tostring(f_score(zone)) + " " + zone.state + age
 
 f_mark_event(Zone zone, string code, color markerColor) =>
     if showEventMarkers and displayMode == "Audit" and zone.qualifiedIndex >= 0
@@ -126,6 +147,17 @@ f_ensure_drawing(Zone zone) =>
         zone.drawing := box.new(left = bar_index, top = zone.upper, right = bar_index + 1, bottom = zone.lower,
              border_color = zoneColor, bgcolor = color.new(zoneColor, 82), xloc = xloc.bar_index,
              text = f_box_text(zone), text_color = zoneColor, text_size = size.tiny)
+        // A permanent mark on the qualification bar. The box's left edge can be
+        // clamped for readability, and a zone can be hidden entirely by the
+        // Clean-mode filters, but this stays put -- so the bar the zone became
+        // knowable is always recoverable from the chart. Price action to its
+        // right is the forward reaction; anything to its left is hindsight.
+        if showCreationMarker
+            zone.createdDrawing := label.new(bar_index, zone.side == "demand" ? zone.lower : zone.upper,
+                 text = "▲",
+                 style = zone.side == "demand" ? label.style_label_up : label.style_label_down,
+                 color = color.new(zoneColor, 35), textcolor = color.white, size = size.tiny,
+                 tooltip = f_box_text(zone) + " qualified " + str.format_time(time, "yyyy-MM-dd HH:mm"))
         if showTags and displayMode == "Audit"
             label.new(bar_index, zone.side == "demand" ? zone.lower : zone.upper,
                  text = (zone.side == "demand" ? "D" : "S") + " Q" + str.tostring(score),
@@ -141,7 +173,7 @@ f_refresh_drawing(Zone zone, float currentAtr, bool nearestForSide) =>
         bool visible = displayMode == "Audit" or (actionableState and nearPrice and nearestForSide)
         int hiddenTransparency = 100
         int drawingRight = zone.endIndex >= 0 ? zone.endIndex : bar_index
-        box.set_left(zone.drawing, displayMode == "Audit" ? zone.qualifiedIndex : math.max(zone.qualifiedIndex, drawingRight - cleanHistoryBars))
+        box.set_left(zone.drawing, anchorAtCreation or displayMode == "Audit" ? zone.qualifiedIndex : math.max(zone.qualifiedIndex, drawingRight - cleanHistoryBars))
         box.set_right(zone.drawing, drawingRight)
         box.set_top(zone.drawing, zone.upper)
         box.set_bottom(zone.drawing, zone.lower)
@@ -149,6 +181,11 @@ f_refresh_drawing(Zone zone, float currentAtr, bool nearestForSide) =>
         box.set_bgcolor(zone.drawing, visible ? color.new(zoneColor, zone.state == "broken" ? 92 : 82) : color.new(zoneColor, hiddenTransparency))
         box.set_text(zone.drawing, f_box_text(zone))
         box.set_text_color(zone.drawing, visible ? zoneColor : color.new(zoneColor, hiddenTransparency))
+        // The marker tracks its box's visibility, so a zone hidden by the
+        // Clean-mode filters cannot leave its qualification tag behind.
+        if not na(zone.createdDrawing)
+            label.set_color(zone.createdDrawing, visible ? color.new(zoneColor, 35) : color.new(zoneColor, hiddenTransparency))
+            label.set_textcolor(zone.createdDrawing, visible ? color.white : color.new(zoneColor, hiddenTransparency))
         if visible and zone.endIndex < 0
             float statusY = zone.side == "demand" ? zone.lower : zone.upper
             if na(zone.statusDrawing)
@@ -442,6 +479,8 @@ if barstate.isconfirmed
             box.delete(removed.drawing)
         if not na(removed.statusDrawing)
             label.delete(removed.statusDrawing)
+        if not na(removed.createdDrawing)
+            label.delete(removed.createdDrawing)
 
 bool displayVolumeReferences = showVolumeReferences and (displayMode == "Audit" or showVolumeInClean)
 plot(displayVolumeReferences ? priorPoc : na, "Prior session POC", color = color.orange, linewidth = 2, style = plot.style_linebr)

@@ -1,3 +1,4 @@
+import ast
 import csv
 import json
 import sys
@@ -318,6 +319,48 @@ def test_main_variant_maps_to_enabled_filters(tmp_path, monkeypatch):
     assert exit_code == 1
     report = json.loads((results / "verification_report.json").read_text(encoding="utf-8"))
     assert any("risk_zone_ratio" in failure for failure in report["column_audit"]["failures"])
+
+
+# --- The independence property, enforced mechanically ---------------------
+#
+# The audit's entire value is that it re-derives filter decisions from
+# recorded CSV columns without asking the implementation. A comment saying
+# "keep this independent" is not enforcement; parsing the module's imports is.
+
+
+def test_audit_rules_import_no_strategy_code():
+    import ai_trade.audit_rules_v1_2 as audit_rules
+
+    source = Path(audit_rules.__file__).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    imported_modules = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported_modules.extend(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            # A relative import ("from . import x") could smuggle in strategy
+            # code without naming ai_trade, so it is banned outright.
+            assert node.level == 0, "audit_rules_v1_2 must not use relative imports"
+            imported_modules.append(node.module or "")
+    forbidden = (
+        "strategy_04_v1_2",
+        "strategy_04_causal_loop",
+        "strategy_04_v1_1",
+        "strategy_registry",
+    )
+    for module_name in imported_modules:
+        for banned in forbidden:
+            assert banned not in module_name, (
+                f"audit_rules_v1_2 imports {module_name!r}: an audit that asks "
+                f"the implementation whether the implementation was right "
+                f"proves nothing"
+            )
+        # Stronger than the named ban: the audit needs only the standard
+        # library, so any ai_trade import at all is a red flag.
+        assert not module_name.startswith("ai_trade"), (
+            f"audit_rules_v1_2 imports {module_name!r}; it must stay "
+            f"stdlib-only to remain independent of the code it audits"
+        )
 
 
 def test_main_base_variant_ignores_filter_thresholds(tmp_path, monkeypatch):

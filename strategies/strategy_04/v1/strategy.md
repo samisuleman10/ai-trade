@@ -7,6 +7,8 @@ created: 2026-07-28
 
 # Strategy 04 v1 — 1h zones with 15m reaction entries
 
+> **Strategy 04 is closed (1 August 2026).** Its filters were falsified on instruments they were never fitted to, and the equity samples cannot resolve effects of the size claimed. Read [`../STATUS.md`](../STATUS.md) before acting on anything below. This document is kept as the historical record of what was specified, not as a live proposal.
+
 ## Purpose
 
 The one-hour Confluence Reaction Zones indicator determines **where** a trade

@@ -2,8 +2,19 @@ from datetime import datetime, timedelta, timezone
 
 from ai_trade.backtest_strategy_01 import BacktestConfig
 from ai_trade.market_data import OHLCVBar
+from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS
 from ai_trade.strategy_04_indicator import strategy_04_v0_3_parameters
-from ai_trade.sweep_strategy_04_v1_2_risk_ratio import sweep_symbol
+from ai_trade.sweep_strategy_04_v1_2_risk_ratio import build_parser, sweep_symbol
+
+
+def test_sweep_defaults_to_every_symbol_the_runner_supports():
+    """The threshold evidence must cover the same symbols the grid runs."""
+    assert tuple(build_parser().parse_args([]).symbols) == SUPPORTED_SYMBOLS
+
+
+def test_sweep_accepts_the_instruments_added_after_v1_2_was_written():
+    parsed = build_parser().parse_args(["--symbols", "GLD", "SLV"])
+    assert parsed.symbols == ["GLD", "SLV"]
 
 
 def _stamp(value: datetime) -> str:

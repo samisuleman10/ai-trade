@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS
+from ai_trade.strategy_registry import VERSIONS
 from ai_trade.summarize_strategy_04_v1_2_ablation import (
     SYMBOLS,
     VARIANTS,
@@ -11,6 +13,13 @@ from ai_trade.summarize_strategy_04_v1_2_ablation import (
     main,
     render_markdown,
 )
+from ai_trade.summarize_version_ablation import build_grid as generic_build_grid
+
+
+def test_summary_covers_every_symbol_the_runner_supports():
+    """A hardcoded subset here silently drops symbols from ABLATION.md."""
+    assert SYMBOLS == SUPPORTED_SYMBOLS
+    assert set(("IWM", "GLD", "SLV")) <= set(SYMBOLS)
 
 
 def _report(candidates, trade_count, win_rate, average_r, net_pnl, max_risk_zone_ratio=2.5):
@@ -39,6 +48,21 @@ def _write_reports(results_root: Path, overrides=None) -> None:
             (directory / "backtest_report.json").write_text(
                 json.dumps(report), encoding="utf-8"
             )
+
+
+def test_generic_grid_covers_every_supported_symbol(tmp_path):
+    """The generic builder's symbol list is the spec's -- all eight of them."""
+    _write_reports(tmp_path)
+    spec = VERSIONS["strategy_04_v1_2"]
+    grid = generic_build_grid(spec, tmp_path)
+    assert tuple(grid) == spec.supported_symbols
+    assert len(grid) == 8
+
+
+def test_wrapper_and_generic_grids_are_identical(tmp_path):
+    """The wrapper is delegation, not a second implementation."""
+    _write_reports(tmp_path)
+    assert build_grid(tmp_path) == generic_build_grid(VERSIONS["strategy_04_v1_2"], tmp_path)
 
 
 def test_build_grid_includes_max_risk_zone_ratio_per_symbol(tmp_path):
@@ -87,3 +111,40 @@ def test_main_regenerates_files_with_unchanged_numbers(tmp_path, monkeypatch):
         assert ablation[symbol]["variants"]["base"]["net_pnl"] == 500.0
     md = (tmp_path / "ABLATION.md").read_text(encoding="utf-8")
     assert "max_risk_zone_ratio" in md
+
+
+def test_markdown_no_longer_claims_every_number_is_in_sample(tmp_path):
+    """It said that over five symbols the rules were never fitted to."""
+    _write_reports(tmp_path)
+    markdown = render_markdown(build_grid(tmp_path))
+    assert "Every number is in-sample" not in markdown
+    assert "Not every number here is in-sample" in markdown
+
+
+def test_markdown_names_each_holdout_symbol_and_when_it_arrived(tmp_path):
+    from ai_trade.strategy_registry import VERSIONS
+
+    _write_reports(tmp_path)
+    markdown = render_markdown(build_grid(tmp_path))
+    spec = VERSIONS["strategy_04_v1_2"]
+    for symbol, arrival in spec.holdout_symbols.items():
+        assert symbol in markdown
+        assert arrival in markdown, symbol
+    assert spec.rules_fixed in markdown
+    # In-sample symbols must still be labelled as such, or the correction
+    # would overclaim in the other direction.
+    for symbol in spec.in_sample_symbols:
+        assert symbol in markdown
+
+
+def test_a_version_without_declared_provenance_keeps_the_conservative_wording():
+    """Absent evidence, "in-sample" is the claim that cannot mislead upward."""
+    import dataclasses
+
+    from ai_trade.strategy_registry import VERSIONS
+    from ai_trade.summarize_version_ablation import _provenance_lines
+
+    bare = dataclasses.replace(
+        VERSIONS["strategy_04_v1_2"], rules_fixed="", holdout_symbols={}
+    )
+    assert _provenance_lines(bare)[0] == "Every number is in-sample."
