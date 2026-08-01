@@ -1,6 +1,6 @@
 ---
 title: HTF/LTF Alligator confluence — entry timing rule
-status: proposed
+status: tested, not supported
 owner: Sami
 first_proposed: 2026-08-01
 ---
@@ -53,3 +53,43 @@ wait out the retracement rather than absorb it.
   is a hypothesis to test out-of-sample, and it adds two more fitted parameters
   to a system that per `docs/research_direction.md` already has more filters
   than statistical power to judge them.
+
+
+## Tested 1 August 2026 — the mechanism does not replicate
+
+Run before any strategy was written, against Strategy 03 v1's recorded 15m
+trades: `python scripts/analyze_htf_alligator_age.py`. The pre-stated test was
+the correlation between HTF mouth age and trade R, with the hypothesis
+predicting r < 0.
+
+On SPY and QQQ alone the gradient looked real — r = −0.113, p = 0.054, and the
+five age buckets fell monotonically from +0.024R to −0.285R. Five further
+instruments were then backtested and the same frozen analysis re-run.
+
+**It did not hold up.** Across seven instruments and 982 agreeing trades,
+r = −0.029, p = 0.36. Per instrument:
+
+| | SPY | QQQ | IWM | GLD | SLV | EURUSD | GBPUSD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| r | −0.118 | −0.108 | **+0.030** | **+0.052** | −0.064 | −0.011 | **+0.005** |
+
+Three of the five new instruments point the wrong way. The bucket gradient also
+broke: the oldest bucket (13+) came back at −0.000R, and the youngest at
+−0.026R rather than positive. On 4h, r = −0.035, p = 0.33.
+
+The SPY/QQQ gradient was noise. Two instruments agreeing in direction is not
+evidence when five more disagree.
+
+## What the same run did establish
+
+No higher-timeframe Alligator state rescues the entry. On 1h, every group loses
+significantly: agreeing −0.0715R (t = −2.51), opposing −0.1097R (t = −3.07),
+mouth closed −0.1154R (t = −6.84). The best available HTF condition is still a
+losing configuration on 982 trades.
+
+DIA was withheld throughout and never read, so it remains unspent.
+
+**This idea is closed.** Not because it was a bad observation — the discretionary
+reading was reasonable and the SPY/QQQ result initially supported it — but
+because the prediction it makes is testable and the test came back negative on
+data it had never seen.

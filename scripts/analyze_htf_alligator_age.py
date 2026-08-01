@@ -64,8 +64,38 @@ INSTRUMENTS: Dict[str, dict] = {
             "4h": ("data/market_data/ibkr/QQQ/v5_5y/qqq_4h.csv", 240),
         },
     },
-    # DIA is deliberately absent: it is reserved as a holdout for whatever this
-    # analysis motivates. Adding it here spends that reserve.
+    "IWM": {
+        "run": "strategies/strategy_03/v1/results/iwm_15m",
+        "htf": {
+            "1h": ("data/market_data/ibkr/IWM/v5_5y/iwm_1h.csv", 60),
+            "4h": ("data/market_data/ibkr/IWM/v5_5y/iwm_4h.csv", 240),
+        },
+    },
+    "GLD": {
+        "run": "strategies/strategy_03/v1/results/gld_15m",
+        "htf": {
+            "1h": ("data/market_data/ibkr/GLD/v5_5y/gld_1h.csv", 60),
+            "4h": ("data/market_data/ibkr/GLD/v5_5y/gld_4h.csv", 240),
+        },
+    },
+    "SLV": {
+        "run": "strategies/strategy_03/v1/results/slv_15m",
+        "htf": {
+            "1h": ("data/market_data/ibkr/SLV/v5_5y/slv_1h.csv", 60),
+            "4h": ("data/market_data/ibkr/SLV/v5_5y/slv_4h.csv", 240),
+        },
+    },
+    # No 4h spot-FX cache exists, so these contribute to the 1h test only.
+    "EURUSD": {
+        "run": "strategies/strategy_03/v1/results/eurusd_15m",
+        "htf": {"1h": ("data/market_data/ibkr/EURUSD/v1_5y/eurusd_1h.csv", 60)},
+    },
+    "GBPUSD": {
+        "run": "strategies/strategy_03/v1/results/gbpusd_15m",
+        "htf": {"1h": ("data/market_data/ibkr/GBPUSD/v1_5y/gbpusd_1h.csv", 60)},
+    },
+    # DIA is deliberately absent from the default set: it is reserved as a
+    # holdout for whatever this analysis motivates. Naming it spends that.
     "DIA": {
         "run": "strategies/strategy_03/v1/results/us30_dia_15m",
         "htf": {
@@ -75,7 +105,7 @@ INSTRUMENTS: Dict[str, dict] = {
     },
 }
 
-DEFAULT_SYMBOLS = ("SPY", "QQQ")
+DEFAULT_SYMBOLS = ("SPY", "QQQ", "IWM", "GLD", "SLV", "EURUSD", "GBPUSD")
 
 # Reported in HTF bars since the mouth opened. Edges are round numbers chosen
 # before seeing any result, not tuned to the data.
@@ -177,8 +207,14 @@ def analyse(symbols: Sequence[str], htf_label: str) -> dict:
     per_symbol: Dict[str, List[Tuple[float, float]]] = {}
     unusable = 0
 
+    skipped: List[str] = []
     for symbol in symbols:
         spec = INSTRUMENTS[symbol]
+        if htf_label not in spec["htf"]:
+            # No cache at this higher timeframe (spot FX has no 4h). Named in
+            # the output rather than silently absent from the sample.
+            skipped.append(symbol)
+            continue
         cache, minutes = spec["htf"][htf_label]
         series = htf_state_series(REPO_ROOT / cache, minutes)
         rows = []
@@ -215,6 +251,7 @@ def analyse(symbols: Sequence[str], htf_label: str) -> dict:
         "closed": summarize(closed),
         "per_symbol": {s: correlation([a for a, _ in v], [r for _, r in v]) for s, v in per_symbol.items()},
         "unusable": unusable,
+        "skipped": skipped,
     }
 
 
@@ -261,6 +298,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(_line("all agreeing", result["agreeing"]))
         print(_line("HTF opposing", result["opposing"]))
         print(_line("HTF mouth closed", result["closed"]))
+        if result["skipped"]:
+            print(f"  (no {htf_label} cache, excluded from this test: {', '.join(result['skipped'])})")
         if result["unusable"]:
             print(f"  ({result['unusable']} trades had no completed HTF bar yet; excluded)")
 
