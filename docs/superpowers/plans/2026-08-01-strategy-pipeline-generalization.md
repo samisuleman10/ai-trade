@@ -157,6 +157,12 @@ Document the intended path end to end: human writes the spec → agent A writes 
 
 ---
 
+> **Phase B complete, 2026-08-01.** B1+B3 `d97a335`, B4 `c4b1a48`, B2 `433eda1`.
+>
+> **Bounded on purpose in B2:** only strategy *identity* is generated from Python. Version chips, variant descriptions and spec prose stay authored in TS. Deriving the on-screen subtitle would have changed its punctuation — a visible change to a screen the task promised not to alter, and a reminder that "single source of truth" and "editorial content" are not the same problem.
+>
+> **What a new strategy costs now:** `python -m ai_trade.new_strategy --id strategy_05 --title "..."`, then write the spec, the rules module, and the audit rules — the last by a different author, from the spec alone. Everything downstream is `python -m ai_trade.ablation_grid --grid strategy_05_v1`.
+
 ## Completion checklist
 
 - [ ] `scripts/verify_v1_2_reproduction.py` passes 32/32 after every Phase A task
