@@ -1,8 +1,10 @@
 """Cross-variant ablation table for Strategy 04 v1.2.
 
-Reads the twenty committed backtest reports (5 symbols x 4 variants) and
-writes one comparison table so filter effects can be attributed per symbol,
-per the spec's required ablation. Interpretation stays with the human: the
+Reads every committed backtest report (each supported symbol x 4 variants)
+and writes one comparison table so filter effects can be attributed per
+symbol, per the spec's required ablation. The symbol list is the runner's, not
+a copy: a hardcoded copy here silently omitted IWM, GLD and SLV from this
+table after they were backtested. Interpretation stays with the human: the
 spec's promotion criteria require out-of-sample confirmation and sensitivity
 evidence that this table alone cannot provide.
 
@@ -19,7 +21,9 @@ import argparse
 import json
 from pathlib import Path
 
-SYMBOLS = ("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD")
+from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS
+
+SYMBOLS = SUPPORTED_SYMBOLS
 VARIANTS = ("base", "a", "b", "ab")
 _FX_SYMBOLS = ("EURUSD", "GBPUSD")
 
@@ -29,7 +33,7 @@ def _format_metric(value: object, spec: str) -> str:
 
 
 def build_grid(results_root: Path) -> dict[str, dict[str, object]]:
-    """Load the twenty reports into {symbol: {max_risk_zone_ratio, variants}}."""
+    """Load every symbol's reports into {symbol: {max_risk_zone_ratio, variants}}."""
     grid: dict[str, dict[str, object]] = {}
     for symbol in SYMBOLS:
         variants: dict[str, dict[str, object]] = {}

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS
 from ai_trade.summarize_strategy_04_v1_2_ablation import (
     SYMBOLS,
     VARIANTS,
@@ -11,6 +12,12 @@ from ai_trade.summarize_strategy_04_v1_2_ablation import (
     main,
     render_markdown,
 )
+
+
+def test_summary_covers_every_symbol_the_runner_supports():
+    """A hardcoded subset here silently drops symbols from ABLATION.md."""
+    assert SYMBOLS == SUPPORTED_SYMBOLS
+    assert set(("IWM", "GLD", "SLV")) <= set(SYMBOLS)
 
 
 def _report(candidates, trade_count, win_rate, average_r, net_pnl, max_risk_zone_ratio=2.5):

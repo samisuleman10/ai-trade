@@ -56,6 +56,12 @@ _FX_DATA = {
     "GBPUSD": ("data/market_data/ibkr/GBPUSD/v1_5y/gbpusd_15m.csv", "data/market_data/ibkr/GBPUSD/v1_5y/gbpusd_1h.csv"),
 }
 
+# Every symbol this version can run, derived from the caches above so the list
+# cannot drift from the data. The sweep, the ablation summary and the ablation
+# grid all read this: three hand-maintained copies is how IWM, GLD and SLV came
+# to be backtested but silently absent from the summary table.
+SUPPORTED_SYMBOLS: tuple[str, ...] = tuple(_EQUITY_DATA) + tuple(_FX_DATA)
+
 WARNING = (
     "Historical research only. Version 1.2 is an experiment, not a replacement: "
     "the max_risk_zone_ratio threshold has not been validated (the 2.5 default was "
@@ -88,7 +94,7 @@ def main() -> int:
     parser.add_argument(
         "--symbol",
         required=True,
-        choices=("SPY", "QQQ", "DIA", "IWM", "GLD", "SLV", "EURUSD", "GBPUSD"),
+        choices=SUPPORTED_SYMBOLS,
     )
     parser.add_argument("--variant", required=True, choices=tuple(VARIANTS))
     parser.add_argument("--max-risk-zone-ratio", type=float, default=2.5)

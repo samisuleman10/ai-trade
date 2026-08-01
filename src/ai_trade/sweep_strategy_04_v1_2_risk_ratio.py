@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 from ai_trade.backtest_strategy_01 import BacktestConfig, run_backtest, summarize
-from ai_trade.backtest_strategy_04_v1_2_asset import symbol_run_inputs
+from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS, symbol_run_inputs
 from ai_trade.market_data import OHLCVBar
 from ai_trade.strategy_01 import load_ohlcv_csv
 from ai_trade.strategy_04_indicator import (
@@ -67,14 +67,19 @@ def sweep_symbol(
     return rows
 
 
-def main() -> int:
+def build_parser() -> argparse.ArgumentParser:
+    """Symbols come from the runner, so the sweep covers whatever the grid runs."""
     parser = argparse.ArgumentParser(description="Sweep Filter A's max_risk_zone_ratio per symbol.")
     parser.add_argument("--symbols", nargs="+",
-                        choices=("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD"),
-                        default=("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD"))
+                        choices=SUPPORTED_SYMBOLS,
+                        default=SUPPORTED_SYMBOLS)
     parser.add_argument("--output", type=Path,
                         default=Path("strategies/strategy_04/v1_2/results/sweep"))
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> int:
+    args = build_parser().parse_args()
 
     report: dict[str, object] = {"thresholds": list(DEFAULT_THRESHOLDS), "symbols": {}}
     for symbol in args.symbols:

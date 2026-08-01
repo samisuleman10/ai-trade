@@ -16,6 +16,13 @@ def test_grid_registry_shape():
     assert spec.incumbent_results_template is not None
 
 
+def test_grid_symbols_match_the_runners_supported_symbols():
+    """Drift here is what left IWM/GLD/SLV out of the sweep and the summary."""
+    from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS
+
+    assert GRIDS["strategy_04_v1_2"].symbols == SUPPORTED_SYMBOLS
+
+
 def test_incumbent_symbols_are_a_subset_of_the_grids_symbols():
     """A parity claim about a symbol the grid never runs would be meaningless."""
     for spec in GRIDS.values():
