@@ -63,7 +63,9 @@ def signals_from_zone_events(
 
 `ReactionContext` carries `previous`, `bar`, `next_bar`, `decision_time`, `stop_buffer`, `latest_atr`, `latest_atr_timestamp`, `reference_open`, `reference_close`, and the computed `side`/`stop` for a given zone.
 
-- [ ] Write the shared loop; make v1.2's builder a wrapper supplying Filter A/B and its three extra columns.
+- [x] Write the shared loop; make v1.2's builder a wrapper supplying Filter A/B and its three extra columns. **Done** (`4c522fa`): v1.2 dropped 213 → 126 lines; all 32 runs reproduce; the bare loop with no hooks equals v1.1's output signal for signal.
+
+**Known scope limit.** The shared loop hardcodes `_reaction_matches_v1_1` as the base match predicate and exposes only `reaction_filter` and `extra_columns`. A version that *adds a rejection* is covered; a version that wants a *different base match* is not, and will need a third hook. That is a deliberate boundary, not an oversight — widening it speculatively would mean inventing a seam with no caller to shape it.
 - [ ] `python -m pytest tests/test_strategy_04_v1_2.py tests/test_strategy_04_v1_1.py -v`
 - [ ] **Gate:** `python scripts/verify_v1_2_reproduction.py` — 32/32 byte-identical.
 - [ ] Full suite, then commit.
