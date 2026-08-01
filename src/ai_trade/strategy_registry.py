@@ -16,6 +16,7 @@ its display metadata and spec document. ``VERSIONS`` is derived from
 from __future__ import annotations
 
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any, Callable, Dict, Mapping, Tuple
 
 from ai_trade.strategy_04_v1_2 import (
@@ -67,11 +68,52 @@ class VersionSpec:
     # Prose recorded under change_key; may reference {variant}.
     change_description: str
     warning: str
+    # When this version's rules were frozen, as a git-checkable timestamp with
+    # the commit that froze them. Empty means "not established".
+    rules_fixed: str = ""
+    # Symbol -> when that instrument's data first entered the repository, for
+    # symbols whose data arrived AFTER rules_fixed. Those symbols are a
+    # cross-instrument holdout: a rule cannot be fitted to data the repository
+    # did not hold. This is provenance, not opinion -- every entry is a git
+    # log away from being checked, and the reports say so.
+    #
+    # It lives here because the ablation summary was claiming "every number is
+    # in-sample" over five symbols for which that was false, and prose in one
+    # renderer is exactly the kind of hand-maintained copy this registry
+    # exists to abolish. Default empty is the conservative reading: a version
+    # that has not established provenance is reported as fully in-sample.
+    holdout_symbols: Mapping[str, str] = MappingProxyType({})
+    # Where the holdout was evaluated against a committed decision rule, if it
+    # has been. A holdout nobody scored is not evidence.
+    holdout_report: str = ""
+
+    def __post_init__(self) -> None:
+        unknown = set(self.holdout_symbols) - set(self.supported_symbols)
+        if unknown:
+            # A holdout claim about a symbol this version never runs would put
+            # an unfalsifiable sentence into every report it renders.
+            raise ValueError(
+                f"{self.version_id}: holdout_symbols names symbols this version "
+                f"does not run: {sorted(unknown)}"
+            )
+        if self.holdout_symbols and not self.rules_fixed:
+            raise ValueError(
+                f"{self.version_id}: holdout_symbols is meaningless without "
+                "rules_fixed -- 'after' needs a date to be after."
+            )
 
     @property
     def supported_symbols(self) -> Tuple[str, ...]:
         """Derived from the caches so the list cannot drift from the data."""
         return tuple(self.equity_data) + tuple(self.fx_data)
+
+    @property
+    def in_sample_symbols(self) -> Tuple[str, ...]:
+        """Everything not established as arriving after the rules were fixed."""
+        return tuple(
+            symbol for symbol in self.supported_symbols
+            if symbol not in self.holdout_symbols
+        )
 
     @property
     def change_key(self) -> str:
@@ -163,6 +205,21 @@ _STRATEGY_04_V1_2 = VersionSpec(
         "inherit every v1.1 FX caveat (TPO zones, midpoint data, modelled spread, "
         "equity-tuned bar-count parameters)."
     ),
+    # Filters A and B were specified in bffe4f2. Everything below arrived
+    # afterwards, so neither filter could have been fitted to it.
+    rules_fixed="2026-07-29 10:58 (bffe4f2, the v1.2 spec)",
+    holdout_symbols=MappingProxyType({
+        # The spot-FX downloader, 12h23m after the filters were specified.
+        "EURUSD": "2026-07-29 23:17 (6c503e4)",
+        "GBPUSD": "2026-07-29 23:17 (6c503e4)",
+        # Cached two days later, to widen coverage rather than to test
+        # anything -- which is why their holdout status went unnoticed until
+        # GLD's Filter B row looked like a finding.
+        "IWM": "2026-07-31 16:40 (55f381e)",
+        "GLD": "2026-07-31 16:40 (55f381e)",
+        "SLV": "2026-07-31 16:40 (55f381e)",
+    }),
+    holdout_report="strategies/strategy_04/v1_3/results/HOLDOUT_RESULT.md",
 )
 
 

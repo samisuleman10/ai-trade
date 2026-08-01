@@ -88,6 +88,49 @@ def build_grid(spec: VersionSpec, results_root: Path) -> dict[str, dict[str, obj
     return grid
 
 
+def _provenance_lines(spec: VersionSpec) -> list[str]:
+    """State per symbol whether its rows are in-sample or a holdout.
+
+    This table said "Every number is in-sample" over five symbols for which
+    it was false: FX and the metals both entered the repository after the
+    filters were specified, so no rule could have been fitted to them. The
+    error mattered in one direction -- it invited a large P&L delta on a
+    never-fitted instrument (GLD's Filter B row, +$1,912) to be read as an
+    in-sample curiosity when it was really an out-of-sample claim, testable
+    under the project's committed decision rule and failing it.
+
+    Which symbols are which is registry provenance, not prose written here.
+    """
+    if not spec.holdout_symbols:
+        return ["Every number is in-sample.", ""]
+
+    in_sample = ", ".join(spec.in_sample_symbols)
+    arrivals = ", ".join(
+        f"{symbol} {spec.holdout_symbols[symbol]}"
+        for symbol in spec.supported_symbols
+        if symbol in spec.holdout_symbols
+    )
+    held_out = ", ".join(
+        symbol for symbol in spec.supported_symbols if symbol in spec.holdout_symbols
+    )
+    lines = [
+        f"**Not every number here is in-sample.** {spec.version_label}'s rules were fixed at "
+        f"{spec.rules_fixed}.",
+        "",
+        f"- In-sample: {in_sample}. This data was already in the repository when the rules "
+        "were written.",
+        f"- Cross-instrument holdout: {held_out}. Each arrived afterwards ({arrivals}), so no "
+        "rule here could have been fitted to it.",
+        "",
+        "A large delta on a holdout symbol is a claim to be scored under a decision rule, not",
+        "a result. Net P&L deltas in this table are neither.",
+        "",
+    ]
+    if spec.holdout_report:
+        lines += [f"The holdout symbols are scored in `{spec.holdout_report}`.", ""]
+    return lines
+
+
 def render_markdown(spec: VersionSpec, grid: dict[str, dict[str, object]]) -> str:
     parameter = spec.sweep_parameter
     thresholds = {symbol: data[parameter] for symbol, data in grid.items()}
@@ -111,13 +154,15 @@ def render_markdown(spec: VersionSpec, grid: dict[str, dict[str, object]]) -> st
     lines = [
         f"# {strategy_title(spec)} {spec.version_label} ablation -- fixed 0.15% risk",
         "",
-        # Spec-required caveats, verbatim: every number is in-sample and the
-        # table attributes effects without approving anything.
-        "Every number is in-sample. Per the spec, a filter that helps one",
-        "symbol must not be adopted for others without its own evidence, and",
-        "promotion additionally requires out-of-sample confirmation, parameter",
-        "sensitivity, and cost stress. This table attributes effects; it does",
-        "not approve anything.",
+    ]
+    lines += _provenance_lines(spec)
+    lines += [
+        # Spec-required caveat, verbatim: the table attributes effects without
+        # approving anything.
+        "Per the spec, a filter that helps one symbol must not be adopted for",
+        "others without its own evidence, and promotion additionally requires",
+        "out-of-sample confirmation, parameter sensitivity, and cost stress.",
+        "This table attributes effects; it does not approve anything.",
         "",
         threshold_sentence,
         "",

@@ -8,6 +8,8 @@ the registry entry encodes the same run the committed results came from.
 
 from pathlib import Path
 
+import pytest
+
 from ai_trade.backtest_strategy_04_v1_2_asset import (
     SUPPORTED_SYMBOLS,
     VARIANTS,
@@ -89,3 +91,50 @@ def test_legacy_strategies_are_metadata_only():
     assert tuple(v.version_id for v in STRATEGIES["strategy_04"].versions) == (
         "strategy_04_v1_2",
     )
+
+
+def test_holdout_symbols_are_symbols_the_version_actually_runs():
+    """A holdout claim about an unrun symbol is a sentence nobody can falsify."""
+    import dataclasses
+
+    spec = VERSIONS["strategy_04_v1_2"]
+    with pytest.raises(ValueError, match="does not run"):
+        dataclasses.replace(spec, holdout_symbols={"NOPE": "2026-07-31"})
+
+
+def test_holdout_symbols_require_a_rules_fixed_date():
+    """"Arrived afterwards" needs something to be after."""
+    import dataclasses
+
+    spec = VERSIONS["strategy_04_v1_2"]
+    with pytest.raises(ValueError, match="rules_fixed"):
+        dataclasses.replace(spec, rules_fixed="", holdout_symbols={"GLD": "2026-07-31"})
+
+
+def test_every_declared_holdout_arrived_after_the_rules_were_fixed():
+    """The whole holdout property is this inequality; drift here is silent."""
+    for spec in VERSIONS.values():
+        if not spec.holdout_symbols:
+            continue
+        # Both fields lead with "YYYY-MM-DD HH:MM" and continue with the git
+        # commit that is the evidence; comparing the timestamp prefix is
+        # enough and keeps the provenance note human-readable.
+        fixed = spec.rules_fixed[:16]
+        for symbol, arrival in spec.holdout_symbols.items():
+            assert arrival[:16] > fixed, f"{spec.version_id}/{symbol}: {arrival} <= {fixed}"
+
+
+def test_in_sample_and_holdout_symbols_partition_the_supported_set():
+    for spec in VERSIONS.values():
+        assert set(spec.in_sample_symbols) | set(spec.holdout_symbols) == set(
+            spec.supported_symbols
+        )
+        assert not set(spec.in_sample_symbols) & set(spec.holdout_symbols)
+
+
+def test_v1_2_records_fx_and_the_metals_as_holdout():
+    """These five were reported as in-sample until 2026-08-01; they never were."""
+    spec = VERSIONS["strategy_04_v1_2"]
+    assert set(spec.holdout_symbols) == {"EURUSD", "GBPUSD", "IWM", "GLD", "SLV"}
+    assert spec.in_sample_symbols == ("SPY", "QQQ", "DIA")
+    assert Path(spec.holdout_report).exists(), spec.holdout_report

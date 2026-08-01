@@ -1,10 +1,19 @@
 # Strategy 04 v1.2 ablation -- fixed 0.15% risk
 
-Every number is in-sample. Per the spec, a filter that helps one
-symbol must not be adopted for others without its own evidence, and
-promotion additionally requires out-of-sample confirmation, parameter
-sensitivity, and cost stress. This table attributes effects; it does
-not approve anything.
+**Not every number here is in-sample.** v1.2's rules were fixed at 2026-07-29 10:58 (bffe4f2, the v1.2 spec).
+
+- In-sample: SPY, QQQ, DIA. This data was already in the repository when the rules were written.
+- Cross-instrument holdout: IWM, GLD, SLV, EURUSD, GBPUSD. Each arrived afterwards (IWM 2026-07-31 16:40 (55f381e), GLD 2026-07-31 16:40 (55f381e), SLV 2026-07-31 16:40 (55f381e), EURUSD 2026-07-29 23:17 (6c503e4), GBPUSD 2026-07-29 23:17 (6c503e4)), so no rule here could have been fitted to it.
+
+A large delta on a holdout symbol is a claim to be scored under a decision rule, not
+a result. Net P&L deltas in this table are neither.
+
+The holdout symbols are scored in `strategies/strategy_04/v1_3/results/HOLDOUT_RESULT.md`.
+
+Per the spec, a filter that helps one symbol must not be adopted for
+others without its own evidence, and promotion additionally requires
+out-of-sample confirmation, parameter sensitivity, and cost stress.
+This table attributes effects; it does not approve anything.
 
 Filter A rows use max_risk_zone_ratio = 2.5, an in-sample, unvalidated threshold -- see the sweep.
 
