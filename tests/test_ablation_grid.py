@@ -23,6 +23,20 @@ def test_grid_symbols_match_the_runners_supported_symbols():
     assert GRIDS["strategy_04_v1_2"].symbols == SUPPORTED_SYMBOLS
 
 
+def test_grid_reads_symbols_and_paths_from_the_registry():
+    """Derived, not restated -- so a grid cannot disagree with its own runs."""
+    from ai_trade.strategy_registry import VERSIONS
+
+    spec = GRIDS["strategy_04_v1_2"]
+    version = VERSIONS[spec.version_id]
+    assert spec.symbols is version.supported_symbols or spec.symbols == version.supported_symbols
+    assert spec.variants == tuple(version.variants)
+    assert spec.results_dir("GLD", "b") == version.results_template.format(
+        symbol="gld", variant="b"
+    )
+    assert spec.results_root == "strategies/strategy_04/v1_2/results"
+
+
 def test_incumbent_symbols_are_a_subset_of_the_grids_symbols():
     """A parity claim about a symbol the grid never runs would be meaningless."""
     for spec in GRIDS.values():

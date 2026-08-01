@@ -40,6 +40,11 @@ Two rules follow, and they bind every task below:
 
 This phase is where the byte-exact gate exists, so it is the only place a large refactor can be *proven* harmless. Phase B is mostly mechanical once these seams hold.
 
+> **Phase A complete, 2026-08-01.** A1 `4c522fa`, A2 `4cbd978`, A4 `f89d311`, A3 `ad8235d`, A5 below.
+> Final state: 418 tests pass; all 32 committed runs reproduce byte for byte; all 32 verify with 5/5 parity checks; `ABLATION.md` and `ablation.json` regenerate with no diff; the grid plan is still 64 commands in the same gate order.
+>
+> **Outstanding, deliberately not done:** `strategies/strategy_04/v1_2/results/sweep/` is still the 5-symbol sweep produced before IWM/GLD/SLV existed. Regenerating it is a real decision with a real cost (8 symbols × 11 thresholds of full backtests), and it changes published evidence, so it belongs to whoever decides the threshold — not to a refactor whose whole claim is that it changed nothing.
+
 ### Task A1: Shared causal loop
 
 **Problem:** `signals_from_zone_events_v1_2` (≈130 lines) is `signals_from_zone_events_v1_1` copied with a filter hook and three extra output columns. Each future version copies it again.
