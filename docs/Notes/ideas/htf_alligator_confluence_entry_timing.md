@@ -93,3 +93,5 @@ DIA was withheld throughout and never read, so it remains unspent.
 reading was reasonable and the SPY/QQQ result initially supported it — but
 because the prediction it makes is testable and the test came back negative on
 data it had never seen.
+
+Where the search went next: `next_strategy_direction.md`.

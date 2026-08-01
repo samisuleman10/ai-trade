@@ -19,7 +19,7 @@ Since 2026-08-01 the stages are generic and driven by one registry entry (`src/a
 | --- | --- |
 | New instrument on an existing version | one cache entry in the version's `VersionSpec` |
 | New version | rules module + audit-rules module + one `VersionSpec` |
-| New strategy | the above + one `StrategySpec`; start with `python -m ai_trade.new_strategy --id strategy_05 --title "..."` |
+| New strategy | the above + one `StrategySpec`; start with `python -m ai_trade.new_strategy --id strategy_NN --title "..."`. Take the next number only when the idea has earned a spec -- idea-stage work lives unnumbered in `docs/Notes/ideas/`. |
 
 Generic stages, none of which need a version-named copy: `run_strategy_version`, `sweep_version_parameter`, `summarize_version_ablation`, `verify_version`, and `ablation_grid`, which runs the whole gated grid in one command.
 
