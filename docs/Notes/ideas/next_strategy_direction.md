@@ -42,7 +42,11 @@ amount. That consistency is information. It argues against a third
 continuation variant, and it is why the mean-reversion direction below is
 evidence-driven rather than a guess.
 
-## Candidate direction: mean reversion
+## Candidate direction: mean reversion — **tested and empty**
+
+Measurement 2 below found no mean-reversion relationship at this definition.
+The description that follows is kept for the record, and for what it rules in
+if a *conditional* version is ever tested.
 
 Fade the stretch instead of following it. Price extends unusually far from a
 reference level (moving average, session open, VWAP, prior close), and the
@@ -84,9 +88,22 @@ for the price of one script, and it is the right first move again.
    **The reversal arithmetic changes accordingly.** Fading a −0.0743R signal,
    not a −0.1033R one, and after costs subtract in both directions the
    reversed edge is smaller again — plausibly near zero.
-2. **Does mean reversion exist in this data at all?** Per instrument, bucket
-   forward returns by how far price closed from a moving average in ATR units.
-   No gradient means no amount of rule-craft will find one.
+2. ~~**Does mean reversion exist in this data at all?**~~ **Run 2026-08-01:
+   no.** `scripts/analyze_mean_reversion.py`, seven instruments, four horizons
+   (1h to 8h), non-overlapping windows only. Every pooled correlation between
+   extension and forward return is within 0.003 of zero: −0.0006, −0.0026,
+   −0.0005, +0.0010, all p > 0.55. The bucket table has no slope in either
+   direction.
+
+   **This is a precise null, not an underpowered one.** At 107,508
+   non-overlapping observations the smallest detectable |r| is about 0.009, and
+   the measurement returned −0.0006. A built-in positive control confirms the
+   code can see a relationship when one exists: extension against the *past*
+   return is r = +0.92 (t = +109 to +210) on every instrument.
+
+   Two of 28 individual cells reach p < 0.05 (EURUSD and GBPUSD at the 1h
+   horizon, both r = −0.011). With 28 tests, ~1.4 are expected by chance, and
+   an r of 0.011 explains 0.01% of variance.
 
 ## Constraints any candidate must satisfy
 
