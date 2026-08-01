@@ -129,3 +129,109 @@ The pre-committed consequence is therefore to **stop adding filters to
 Strategy 04** and to treat any further work on it as a fundamental rethink
 rather than an extension. Per the decision rule's own third clause, this is not
 an invitation to design a sixth filter.
+
+
+---
+
+# Second holdout: IWM, GLD and SLV
+
+Added 1 August 2026. The evaluation above stands as written on 30 July; this
+section extends it to three instruments that did not exist in the repository
+when it was written.
+
+## Why these three qualify as a holdout
+
+The same provenance argument that admitted FX:
+
+| Artifact | First committed |
+| --- | --- |
+| v1.2 spec, Filters A and B | 2026-07-29 10:58 |
+| IWM/GLD/SLV backtest runs | 2026-07-31 17:29 (`fa975c3`) |
+
+No filter could have been fitted to instruments the repository did not hold.
+IWM, GLD and SLV were added to widen coverage, not to test a hypothesis, which
+is why nobody noticed at the time that they had become a second holdout.
+
+## What prompted this
+
+GLD's ablation row carries the largest single filter effect anywhere in the
+grid: Filter B turns −$1,333.52 into +$578.52, a +$1,912.04 swing, with the
+win rate going 0.417 → 0.632. Read as P&L it is the most encouraging number in
+the project. Read under the committed rule it is not a result at all.
+
+## Result, evaluated by the same rule
+
+| Configuration | Symbol | Trades | Average R | t | Bar | Detectable edge | Rule |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| base | GLD | 36 | -0.2483 | -1.52 | 2.030 | ±0.457 | neither |
+| a | GLD | 35 | -0.1561 | -0.92 | 2.032 | ±0.475 | neither |
+| base | SLV | 34 | -0.1530 | -0.88 | 2.035 | ±0.488 | neither |
+| b | SLV | 19 | -0.1611 | -0.67 | 2.101 | ±0.669 | neither |
+| ab | SLV | 19 | -0.1611 | -0.67 | 2.101 | ±0.669 | neither |
+| b | IWM | 24 | -0.1176 | -0.57 | 2.069 | ±0.582 | neither |
+| a | IWM | 45 | -0.0133 | -0.09 | 2.015 | ±0.423 | neither |
+| a | SLV | 33 | -0.0108 | -0.06 | 2.037 | ±0.494 | neither |
+| ab | IWM | 26 | +0.0419 | +0.21 | 2.060 | ±0.559 | neither |
+| base | IWM | 41 | +0.1376 | +0.88 | 2.021 | ±0.438 | neither |
+| b | GLD | 19 | +0.2037 | +0.89 | 2.101 | ±0.639 | neither |
+| ab | GLD | 19 | +0.2037 | +0.89 | 2.101 | ±0.639 | neither |
+
+`Detectable edge` is the smallest true effect that sample size could resolve at
+95% confidence and 80% power. It is reported because the v1.3 method requires
+power to be stated alongside outcome.
+
+**Zero of twelve runs fire a rule.** GLD's Filter B row — the one that motivated
+this evaluation — reaches t = +0.89 against a bar of 2.101, and its 19 trades
+could only have resolved an effect of ±0.639R, more than three times the
++0.204R observed.
+
+## What this adds
+
+- **Filter B's direction is not consistent across instruments it never saw.**
+  GLD +0.204R, SLV −0.161R, IWM −0.118R: one positive draw in three, none
+  significant. That is what noise looks like.
+- **Filter B has now been tested on five instruments no filter was fitted to.**
+  It produced two significant losses (EURUSD, GBPUSD) and three inconclusive
+  results. It has never produced a significant gain on any instrument, in
+  sample or out.
+- **The +$1,912 is mostly a bad base, not a good filter.** GLD base is
+  −0.248R, the weakest base in the equity set. Filter B discards 17 of its 36
+  trades; what remains is not distinguishable from zero.
+- **Filter A contributes nothing once B has selected.** GLD `b` and GLD `ab`
+  are the identical 19 trades, as are SLV `b` and SLV `ab`.
+
+## Power: this is not confirmable on GLD
+
+Detecting +0.204R at 95% confidence and 80% power needs roughly 186 trades.
+GLD's cached history (2021-03-18 to 2026-04-20) yields 19 filtered trades,
+about 3.7 per year. Reaching 186 would take on the order of fifty years of
+additional data. "Confirm GLD Filter B out of sample" is not a task that can
+succeed with this instrument, and should not be carried as an open lead.
+
+## Reproducing the arithmetic
+
+The July evaluation's arithmetic was never committed as code, so it could not
+be re-run when new instruments arrived. It now is:
+
+```
+python scripts/evaluate_holdout_significance.py     --results strategies/strategy_04/v1_2/results --symbols IWM GLD SLV
+```
+
+The script imports nothing from `ai_trade` and reads only `fixed_trades.csv`,
+keeping the same independence as the audit rules. Run against EURUSD and
+GBPUSD it reproduces the FX table above exactly — same trade counts, same
+average R, same t, same five abandons. Its `Bar` column is computed at each
+run's own degrees of freedom, so it reads 1.976 where the July table recorded
+1.960 from a coarser lookup; no verdict changes.
+
+## Caveats
+
+- GLD, SLV and IWM are **no longer pristine** for anything designed after
+  1 August 2026. Their results have now been examined, exactly as happened to
+  FX on 30 July. Future filters need a different holdout again.
+- GLD and SLV are both precious metals and are correlated; they are not two
+  independent confirmations.
+- IWM is a US equity index correlated with SPY, QQQ and DIA. It is a weaker
+  holdout than FX or metals, because whatever the filters learned from SPY is
+  more likely to transfer there for reasons that are not an edge.
+- A cross-instrument holdout still cannot detect time-based decay.
