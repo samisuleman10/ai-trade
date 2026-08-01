@@ -1,0 +1,84 @@
+{
+  "strategy_id": "strategy_03_v1_4h_alligator_open",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "SLV",
+    "source": "locally cached IBKR historical bars",
+    "timeframe": "4h",
+    "range": [
+      "2020-07-31T13:30:00Z",
+      "2026-07-31T13:30:00Z"
+    ]
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 1.0,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": true,
+    "block_final_hour_entries": true,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 240,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "commission_bps_per_side": null,
+    "min_commission_per_order": 0.0,
+    "session_timezone": "America/New_York",
+    "entry_window_start": null,
+    "entry_window_end": null,
+    "friday_close_time": [
+      16,
+      0
+    ],
+    "rrms_reset_after_max_tier": false,
+    "entry": "first completed 4h RTH segment transitioning into an open Alligator; next same-session segment open",
+    "stop": "Jaw plus/minus max(minimum tick, 0.10 ATR)",
+    "target": "1:1 realised entry-to-stop distance",
+    "filters": "no VIX, macro, Heikin-Ashi, support/resistance, or higher-timeframe confirmation",
+    "bar_boundary": "observed next same-session IBKR RTH segment",
+    "intrabar_collision": "stop before target"
+  },
+  "candidate_signal_count": 137,
+  "eligible_signal_count": 90,
+  "results": {
+    "fixed": {
+      "trade_count": 88,
+      "wins": 46,
+      "losses": 42,
+      "win_rate": 0.5227272727272727,
+      "net_pnl": -613.7819189458295,
+      "ending_equity": 99386.21808105413,
+      "profit_factor": 0.8651533898370213,
+      "average_r": -0.04679465164406482,
+      "max_drawdown": 1465.7718016404688,
+      "long_trades": 41,
+      "short_trades": 47,
+      "exit_reasons": {
+        "stop": 23,
+        "target": 20,
+        "weekend_close": 45
+      }
+    },
+    "rrms": {
+      "trade_count": 88,
+      "wins": 46,
+      "losses": 42,
+      "win_rate": 0.5227272727272727,
+      "net_pnl": 800.502096672785,
+      "ending_equity": 100800.50209667275,
+      "profit_factor": 1.1158748207052185,
+      "average_r": -0.04679465164406482,
+      "max_drawdown": 2196.8823722765374,
+      "long_trades": 41,
+      "short_trades": 47,
+      "exit_reasons": {
+        "stop": 23,
+        "target": 20,
+        "weekend_close": 45
+      }
+    }
+  },
+  "warning": "Historical research only; no paper or live order authorization."
+}
