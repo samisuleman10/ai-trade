@@ -6,15 +6,18 @@ exports from the registry, and the literal expectations pinned in
 the registry entry encodes the same run the committed results came from.
 """
 
+from pathlib import Path
+
 from ai_trade.backtest_strategy_04_v1_2_asset import (
     SUPPORTED_SYMBOLS,
     VARIANTS,
     _EQUITY_DATA,
     _FX_DATA,
 )
-from ai_trade.strategy_registry import VERSIONS
+from ai_trade.strategy_registry import STRATEGIES, VERSIONS
 from ai_trade.sweep_strategy_04_v1_2_risk_ratio import DEFAULT_THRESHOLDS
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
 SPEC = VERSIONS["strategy_04_v1_2"]
 
 
@@ -49,3 +52,40 @@ def test_sweep_definition_matches_the_sweep_module():
     assert SPEC.sweep_parameter == "max_risk_zone_ratio"
     assert SPEC.sweep_grid == DEFAULT_THRESHOLDS
     assert SPEC.sweep_default == 2.5
+
+
+def test_every_spec_document_exists_on_disk():
+    """A registry pointing at a missing spec is worse than no pointer."""
+    for strategy in STRATEGIES.values():
+        document = REPO_ROOT / strategy.spec_document
+        assert document.is_file(), (
+            f"{strategy.strategy_id}: spec_document {strategy.spec_document} missing"
+        )
+
+
+def test_versions_is_exactly_the_flattening_of_strategies():
+    """VERSIONS is derived from STRATEGIES — one source of truth, same objects."""
+    derived = {
+        version.version_id: version
+        for strategy in STRATEGIES.values()
+        for version in strategy.versions
+    }
+    assert set(VERSIONS) == set(derived)
+    for version_id, spec in VERSIONS.items():
+        assert spec is derived[version_id], version_id
+
+
+def test_every_version_belongs_to_the_strategy_that_registers_it():
+    for strategy in STRATEGIES.values():
+        for version in strategy.versions:
+            assert version.strategy_id == strategy.strategy_id, version.version_id
+
+
+def test_legacy_strategies_are_metadata_only():
+    # Strategies 01-03 run through bespoke runners that predate the pipeline;
+    # the registry records them without pretending it can run them.
+    for legacy in ("strategy_01", "strategy_02", "strategy_03"):
+        assert STRATEGIES[legacy].versions == (), legacy
+    assert tuple(v.version_id for v in STRATEGIES["strategy_04"].versions) == (
+        "strategy_04_v1_2",
+    )
