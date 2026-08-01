@@ -44,7 +44,9 @@ This phase is where the byte-exact gate exists, so it is the only place a large 
 
 **Problem:** `signals_from_zone_events_v1_2` (≈130 lines) is `signals_from_zone_events_v1_1` copied with a filter hook and three extra output columns. Each future version copies it again.
 
-**Files:** create `src/ai_trade/strategy_04_causal_loop.py`; rewrite `strategy_04_v1_2.py` and `strategy_04_v1_1.py` signal builders as thin wrappers. Test: `tests/test_strategy_04_causal_loop.py`.
+**Files:** create `src/ai_trade/strategy_04_causal_loop.py`; rewrite the `strategy_04_v1_2.py` signal builder as a thin wrapper. Test: `tests/test_strategy_04_causal_loop.py`.
+
+**Decision (2026-08-01): `strategy_04_v1_1.py` is left untouched.** It is a frozen, published version, and its committed results are the parity reference that v1.2-base is checked against. Refactoring it would put the reference and the thing being measured on the same code path, and it buys nothing: only future versions need the shared loop. The duplication that remains in v1.1 is the cost of keeping the yardstick independent.
 
 **Interface:**
 
@@ -61,8 +63,7 @@ def signals_from_zone_events(
 
 `ReactionContext` carries `previous`, `bar`, `next_bar`, `decision_time`, `stop_buffer`, `latest_atr`, `latest_atr_timestamp`, `reference_open`, `reference_close`, and the computed `side`/`stop` for a given zone.
 
-- [ ] Diff `strategy_04_v1_1.py` against `strategy_04_v1_2.py` first and enumerate every behavioural difference before writing code. The ATR timeline differs (v1.2 carries the source bar's open/close); the shared loop always carries them and v1.1 ignores them — confirm that changes no filtering, since the `value is not None and value > 0` predicate is unchanged.
-- [ ] Write the shared loop; make both versions wrappers.
+- [ ] Write the shared loop; make v1.2's builder a wrapper supplying Filter A/B and its three extra columns.
 - [ ] `python -m pytest tests/test_strategy_04_v1_2.py tests/test_strategy_04_v1_1.py -v`
 - [ ] **Gate:** `python scripts/verify_v1_2_reproduction.py` — 32/32 byte-identical.
 - [ ] Full suite, then commit.
