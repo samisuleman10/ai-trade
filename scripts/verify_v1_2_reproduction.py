@@ -49,11 +49,17 @@ COMPARED_FILES = (
 
 
 def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    """Hash a result file with line endings normalised to LF.
+
+    Not a weakening of the check. ``.gitattributes`` sets ``text=auto eol=lf``,
+    so a file materialised by a checkout comes back LF while one freshly
+    written by Python on Windows is CRLF. Raw byte comparison therefore
+    reports every re-checked-out run as changed, which is a property of the
+    working tree, not of the numbers. Every byte that carries evidence is
+    still compared exactly.
+    """
+    data = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(data).hexdigest()
 
 
 def _run_one(symbol: str, variant: str, destination: Path, runner: str) -> None:
