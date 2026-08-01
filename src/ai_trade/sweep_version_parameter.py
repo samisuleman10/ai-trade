@@ -101,6 +101,22 @@ def render_markdown(spec: VersionSpec, report: dict[str, object], variant: str) 
         "unconsumed, which can create additional later signals.",
         "",
     ]
+    held_out = [s for s in report["symbols"] if s in spec.holdout_symbols]
+    if held_out:
+        # The v1.3 holdout report raised exactly this hazard for FX when the
+        # sweep grew to cover it. The sweep is the one artifact that can spend
+        # a holdout without running a single new backtest: reading these rows
+        # to pick a value fits the parameter to the instruments that were
+        # supposed to test it.
+        lines += [
+            f"**{', '.join(held_out)} are holdout instruments** for "
+            f"{spec.version_label} (their data arrived after the rules were fixed at "
+            f"{spec.rules_fixed}). Selecting {spec.sweep_parameter} using their rows "
+            "would spend the holdout: the parameter would then be fitted to the very "
+            "instruments held back to test it. They are reported here for sensitivity "
+            "only.",
+            "",
+        ]
     for symbol, block in report["symbols"].items():
         lines += [
             f"## {symbol}",

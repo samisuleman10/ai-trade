@@ -43,7 +43,7 @@ This phase is where the byte-exact gate exists, so it is the only place a large 
 > **Phase A complete, 2026-08-01.** A1 `4c522fa`, A2 `4cbd978`, A4 `f89d311`, A3 `ad8235d`, A5 below.
 > Final state: 418 tests pass; all 32 committed runs reproduce byte for byte; all 32 verify with 5/5 parity checks; `ABLATION.md` and `ablation.json` regenerate with no diff; the grid plan is still 64 commands in the same gate order.
 >
-> **Outstanding, deliberately not done:** `strategies/strategy_04/v1_2/results/sweep/` is still the 5-symbol sweep produced before IWM/GLD/SLV existed. Regenerating it is a real decision with a real cost (8 symbols × 11 thresholds of full backtests), and it changes published evidence, so it belongs to whoever decides the threshold — not to a refactor whose whole claim is that it changed nothing.
+> **~~Outstanding, deliberately not done:~~ Done 2026-08-01, after the branch merged.** `strategies/strategy_04/v1_2/results/sweep/` was the 5-symbol sweep produced before IWM/GLD/SLV existed. It was regenerated across all eight symbols (88 backtests) into a scratch directory first, and **the five previously published symbols came back identical row for row** — a second, independent confirmation that the A3 sweep refactor changed nothing. The regenerated report also carries a new warning: five of the eight symbols are holdout instruments, so picking a threshold from their rows would spend the holdout.
 
 ### Task A1: Shared causal loop
 

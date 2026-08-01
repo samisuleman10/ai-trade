@@ -1,10 +1,10 @@
 """The generic sweep must reproduce the pre-refactor v1.2 sweep exactly.
 
-The committed SWEEP.md is deliberately not regenerated (it predates three
-instruments), so equivalence is proven here instead: the loop below is the
-v1.2 sweep exactly as it was written before Task A3, and both the generic
-module and the historical wrapper must return the same rows on real SPY
-data.
+The loop below is the v1.2 sweep exactly as it was written before Task A3;
+both the generic module and the historical wrapper must return the same rows
+on real SPY data. When the sweep was regenerated across all eight symbols on
+2026-08-01 the five previously published symbols came back identical row for
+row, which is the same equivalence proven from the other direction.
 """
 
 from pathlib import Path
@@ -91,3 +91,42 @@ def test_generic_and_wrapper_match_the_pre_refactor_sweep_on_spy():
 
     assert generic == expected
     assert wrapper == generic
+
+
+def test_sweep_warns_that_holdout_rows_must_not_pick_the_threshold():
+    """The sweep can spend a holdout without running a new backtest."""
+    from ai_trade.strategy_registry import VERSIONS
+    from ai_trade.sweep_version_parameter import render_markdown
+
+    spec = VERSIONS["strategy_04_v1_2"]
+    report = {
+        "thresholds": [2.5],
+        "symbols": {
+            symbol: {"market": "equity", "rows": [{
+                "threshold": 2.5, "candidate_signal_count": 1,
+                "rejected_vs_unfiltered": 0, "trade_count": 1,
+                "win_rate": 1.0, "average_r": 1.0, "net_pnl": 1.0,
+            }]}
+            for symbol in ("SPY", "GLD")
+        },
+    }
+    markdown = render_markdown(spec, report, "a")
+    assert "GLD" in markdown.split("## SPY")[0], "holdout warning must precede the tables"
+    assert "spend the holdout" in markdown
+    # SPY is in-sample and must not be named as a holdout instrument.
+    assert "SPY are holdout" not in markdown
+
+
+def test_the_committed_sweep_covers_every_symbol_the_grid_runs():
+    """Three instruments were missing from it until 2026-08-01."""
+    import json
+
+    from ai_trade.strategy_registry import VERSIONS
+
+    spec = VERSIONS["strategy_04_v1_2"]
+    sweep = json.loads(
+        (Path("strategies/strategy_04/v1_2/results/sweep/risk_ratio_sweep.json"))
+        .read_text(encoding="utf-8")
+    )
+    assert tuple(sweep["symbols"]) == spec.supported_symbols
+    assert tuple(sweep["thresholds"]) == spec.sweep_grid

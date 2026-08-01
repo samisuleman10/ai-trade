@@ -325,6 +325,318 @@
         }
       ]
     },
+    "IWM": {
+      "market": "equity",
+      "rows": [
+        {
+          "threshold": 1.5,
+          "candidate_signal_count": 52,
+          "rejected_vs_unfiltered": 48,
+          "trade_count": 30,
+          "win_rate": 0.5333333333333333,
+          "average_r": 0.025567903725858456,
+          "net_pnl": 111.80077434183042
+        },
+        {
+          "threshold": 1.75,
+          "candidate_signal_count": 74,
+          "rejected_vs_unfiltered": 26,
+          "trade_count": 38,
+          "win_rate": 0.5,
+          "average_r": -0.040160935373341866,
+          "net_pnl": -230.32505284521267
+        },
+        {
+          "threshold": 2.0,
+          "candidate_signal_count": 79,
+          "rejected_vs_unfiltered": 21,
+          "trade_count": 39,
+          "win_rate": 0.5384615384615384,
+          "average_r": 0.03825785066682013,
+          "net_pnl": 219.2621435928023
+        },
+        {
+          "threshold": 2.25,
+          "candidate_signal_count": 82,
+          "rejected_vs_unfiltered": 18,
+          "trade_count": 41,
+          "win_rate": 0.5121951219512195,
+          "average_r": -0.012834933641160989,
+          "net_pnl": -85.07628442153904
+        },
+        {
+          "threshold": 2.5,
+          "candidate_signal_count": 89,
+          "rejected_vs_unfiltered": 11,
+          "trade_count": 45,
+          "win_rate": 0.5111111111111111,
+          "average_r": -0.013277476707542452,
+          "net_pnl": -95.69032927121992
+        },
+        {
+          "threshold": 2.75,
+          "candidate_signal_count": 91,
+          "rejected_vs_unfiltered": 9,
+          "trade_count": 44,
+          "win_rate": 0.5227272727272727,
+          "average_r": 0.009813068493636086,
+          "net_pnl": 57.797060910255595
+        },
+        {
+          "threshold": 3.0,
+          "candidate_signal_count": 94,
+          "rejected_vs_unfiltered": 6,
+          "trade_count": 42,
+          "win_rate": 0.5238095238095238,
+          "average_r": 0.012283770068914256,
+          "net_pnl": 70.27315191749562
+        },
+        {
+          "threshold": 3.25,
+          "candidate_signal_count": 94,
+          "rejected_vs_unfiltered": 6,
+          "trade_count": 41,
+          "win_rate": 0.5121951219512195,
+          "average_r": -0.010873818221146346,
+          "net_pnl": -72.43600280520059
+        },
+        {
+          "threshold": 3.5,
+          "candidate_signal_count": 98,
+          "rejected_vs_unfiltered": 2,
+          "trade_count": 41,
+          "win_rate": 0.5609756097560976,
+          "average_r": 0.08854462570801645,
+          "net_pnl": 536.3615793934246
+        },
+        {
+          "threshold": 3.75,
+          "candidate_signal_count": 98,
+          "rejected_vs_unfiltered": 2,
+          "trade_count": 41,
+          "win_rate": 0.5609756097560976,
+          "average_r": 0.08854462570801645,
+          "net_pnl": 536.3615793934246
+        },
+        {
+          "threshold": 4.0,
+          "candidate_signal_count": 99,
+          "rejected_vs_unfiltered": 1,
+          "trade_count": 41,
+          "win_rate": 0.5853658536585366,
+          "average_r": 0.13758081127874508,
+          "net_pnl": 840.0707662098249
+        }
+      ]
+    },
+    "GLD": {
+      "market": "equity",
+      "rows": [
+        {
+          "threshold": 1.5,
+          "candidate_signal_count": 41,
+          "rejected_vs_unfiltered": 27,
+          "trade_count": 27,
+          "win_rate": 0.4444444444444444,
+          "average_r": -0.181228450269996,
+          "net_pnl": -732.4982740810094
+        },
+        {
+          "threshold": 1.75,
+          "candidate_signal_count": 49,
+          "rejected_vs_unfiltered": 19,
+          "trade_count": 31,
+          "win_rate": 0.4838709677419355,
+          "average_r": -0.10020374050383181,
+          "net_pnl": -464.05137113391044
+        },
+        {
+          "threshold": 2.0,
+          "candidate_signal_count": 56,
+          "rejected_vs_unfiltered": 12,
+          "trade_count": 34,
+          "win_rate": 0.4411764705882353,
+          "average_r": -0.18737527323585826,
+          "net_pnl": -952.8316999378897
+        },
+        {
+          "threshold": 2.25,
+          "candidate_signal_count": 59,
+          "rejected_vs_unfiltered": 9,
+          "trade_count": 33,
+          "win_rate": 0.42424242424242425,
+          "average_r": -0.2221597522754059,
+          "net_pnl": -1094.723991876387
+        },
+        {
+          "threshold": 2.5,
+          "candidate_signal_count": 62,
+          "rejected_vs_unfiltered": 6,
+          "trade_count": 35,
+          "win_rate": 0.45714285714285713,
+          "average_r": -0.15605375822273282,
+          "net_pnl": -816.4053665785609
+        },
+        {
+          "threshold": 2.75,
+          "candidate_signal_count": 63,
+          "rejected_vs_unfiltered": 5,
+          "trade_count": 35,
+          "win_rate": 0.4,
+          "average_r": -0.26744253863013967,
+          "net_pnl": -1393.2553352891164
+        },
+        {
+          "threshold": 3.0,
+          "candidate_signal_count": 64,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 36,
+          "win_rate": 0.3888888888888889,
+          "average_r": -0.28850116413021226,
+          "net_pnl": -1546.2183390353887
+        },
+        {
+          "threshold": 3.25,
+          "candidate_signal_count": 64,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 35,
+          "win_rate": 0.4,
+          "average_r": -0.26569369711767976,
+          "net_pnl": -1385.7435024339925
+        },
+        {
+          "threshold": 3.5,
+          "candidate_signal_count": 65,
+          "rejected_vs_unfiltered": 3,
+          "trade_count": 35,
+          "win_rate": 0.4,
+          "average_r": -0.28241986422289345,
+          "net_pnl": -1471.1881669024262
+        },
+        {
+          "threshold": 3.75,
+          "candidate_signal_count": 65,
+          "rejected_vs_unfiltered": 3,
+          "trade_count": 35,
+          "win_rate": 0.4,
+          "average_r": -0.28241986422289345,
+          "net_pnl": -1471.1881669024262
+        },
+        {
+          "threshold": 4.0,
+          "candidate_signal_count": 67,
+          "rejected_vs_unfiltered": 1,
+          "trade_count": 35,
+          "win_rate": 0.4,
+          "average_r": -0.28241986422289345,
+          "net_pnl": -1471.1881669024262
+        }
+      ]
+    },
+    "SLV": {
+      "market": "equity",
+      "rows": [
+        {
+          "threshold": 1.5,
+          "candidate_signal_count": 19,
+          "rejected_vs_unfiltered": 54,
+          "trade_count": 10,
+          "win_rate": 0.2,
+          "average_r": -0.7397806347885121,
+          "net_pnl": -1104.4949259257537
+        },
+        {
+          "threshold": 1.75,
+          "candidate_signal_count": 44,
+          "rejected_vs_unfiltered": 29,
+          "trade_count": 23,
+          "win_rate": 0.4782608695652174,
+          "average_r": -0.16593116698161345,
+          "net_pnl": -573.2655418328721
+        },
+        {
+          "threshold": 2.0,
+          "candidate_signal_count": 54,
+          "rejected_vs_unfiltered": 19,
+          "trade_count": 29,
+          "win_rate": 0.5517241379310345,
+          "average_r": -0.0059405137049973475,
+          "net_pnl": -29.12252106300545
+        },
+        {
+          "threshold": 2.25,
+          "candidate_signal_count": 61,
+          "rejected_vs_unfiltered": 12,
+          "trade_count": 32,
+          "win_rate": 0.5625,
+          "average_r": 0.019917959873014025,
+          "net_pnl": 92.26353644155066
+        },
+        {
+          "threshold": 2.5,
+          "candidate_signal_count": 64,
+          "rejected_vs_unfiltered": 9,
+          "trade_count": 33,
+          "win_rate": 0.5454545454545454,
+          "average_r": -0.010778313277738951,
+          "net_pnl": -56.90064534121143
+        },
+        {
+          "threshold": 2.75,
+          "candidate_signal_count": 66,
+          "rejected_vs_unfiltered": 7,
+          "trade_count": 32,
+          "win_rate": 0.53125,
+          "average_r": -0.03853999786957594,
+          "net_pnl": -188.06218622612045
+        },
+        {
+          "threshold": 3.0,
+          "candidate_signal_count": 69,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 33,
+          "win_rate": 0.5151515151515151,
+          "average_r": -0.07176226885726925,
+          "net_pnl": -358.33053214708906
+        },
+        {
+          "threshold": 3.25,
+          "candidate_signal_count": 69,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 33,
+          "win_rate": 0.5151515151515151,
+          "average_r": -0.07176226885726925,
+          "net_pnl": -358.33053214708906
+        },
+        {
+          "threshold": 3.5,
+          "candidate_signal_count": 69,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 33,
+          "win_rate": 0.48484848484848486,
+          "average_r": -0.12928791463817227,
+          "net_pnl": -641.5493859165797
+        },
+        {
+          "threshold": 3.75,
+          "candidate_signal_count": 69,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 33,
+          "win_rate": 0.48484848484848486,
+          "average_r": -0.1271449954236486,
+          "net_pnl": -631.2277463633668
+        },
+        {
+          "threshold": 4.0,
+          "candidate_signal_count": 69,
+          "rejected_vs_unfiltered": 4,
+          "trade_count": 33,
+          "win_rate": 0.48484848484848486,
+          "average_r": -0.1271449954236486,
+          "net_pnl": -631.2277463633668
+        }
+      ]
+    },
     "EURUSD": {
       "market": "spot_fx_midpoint",
       "rows": [
