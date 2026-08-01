@@ -88,6 +88,12 @@ type Zone
     int endIndex
     box drawing
     label statusDrawing
+    // The creation marker is held here rather than discarded at draw time.
+    // A bare label.new() handle cannot be hidden or deleted, so the marker
+    // outlived the zone it described: an evicted or filtered-out zone left a
+    // qualification tag floating with no box, which reads as if a visible
+    // zone were born there.
+    label createdDrawing
 
 f_score(Zone zone) =>
     (zone.hasPivot ? 1 : 0) +
@@ -147,7 +153,7 @@ f_ensure_drawing(Zone zone) =>
         // knowable is always recoverable from the chart. Price action to its
         // right is the forward reaction; anything to its left is hindsight.
         if showCreationMarker
-            label.new(bar_index, zone.side == "demand" ? zone.lower : zone.upper,
+            zone.createdDrawing := label.new(bar_index, zone.side == "demand" ? zone.lower : zone.upper,
                  text = "▲",
                  style = zone.side == "demand" ? label.style_label_up : label.style_label_down,
                  color = color.new(zoneColor, 35), textcolor = color.white, size = size.tiny,
@@ -175,6 +181,11 @@ f_refresh_drawing(Zone zone, float currentAtr, bool nearestForSide) =>
         box.set_bgcolor(zone.drawing, visible ? color.new(zoneColor, zone.state == "broken" ? 92 : 82) : color.new(zoneColor, hiddenTransparency))
         box.set_text(zone.drawing, f_box_text(zone))
         box.set_text_color(zone.drawing, visible ? zoneColor : color.new(zoneColor, hiddenTransparency))
+        // The marker tracks its box's visibility, so a zone hidden by the
+        // Clean-mode filters cannot leave its qualification tag behind.
+        if not na(zone.createdDrawing)
+            label.set_color(zone.createdDrawing, visible ? color.new(zoneColor, 35) : color.new(zoneColor, hiddenTransparency))
+            label.set_textcolor(zone.createdDrawing, visible ? color.white : color.new(zoneColor, hiddenTransparency))
         if visible and zone.endIndex < 0
             float statusY = zone.side == "demand" ? zone.lower : zone.upper
             if na(zone.statusDrawing)
@@ -468,6 +479,8 @@ if barstate.isconfirmed
             box.delete(removed.drawing)
         if not na(removed.statusDrawing)
             label.delete(removed.statusDrawing)
+        if not na(removed.createdDrawing)
+            label.delete(removed.createdDrawing)
 
 bool displayVolumeReferences = showVolumeReferences and (displayMode == "Audit" or showVolumeInClean)
 plot(displayVolumeReferences ? priorPoc : na, "Prior session POC", color = color.orange, linewidth = 2, style = plot.style_linebr)
