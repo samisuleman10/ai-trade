@@ -26,7 +26,9 @@ Two signal families are now closed with strong evidence.
   fitted to; equity samples too small to resolve the effects claimed; the base
   idea is −0.0968R at t = −2.16 on pooled FX.
 - **Strategy 03** — the Alligator entry fires the abandon rule on seven of
-  eight instruments *independently*. No higher-timeframe state rescues it.
+  eight instruments independently under the committed model, and on four of
+  eight under the optimistic collision bound; the pooled result is decisive
+  either way (see measurement 1 below). No higher-timeframe state rescues it.
 - **The HTF-freshness fix** (`htf_alligator_confluence_entry_timing.md`) looked
   real on SPY+QQQ (r = −0.113, p = 0.054) and vanished across seven
   instruments (r = −0.029, p = 0.36). Closed.
