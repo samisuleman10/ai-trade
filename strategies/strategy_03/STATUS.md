@@ -58,8 +58,18 @@ collisions (2 in 760 trades, both GBPUSD), so nothing in
 `strategies/strategy_04/STATUS.md` depends on this. Its stops sit at zone
 boundaries rather than a fraction of ATR, so its brackets are far wider.
 
-At 1h and 4h the same signal is inconclusive rather than negative (n = 253–318
-and 73–76), which is a statement about those samples' size, not a reprieve.
+At 1h and 4h the same signal was inconclusive rather than negative (n = 253–318
+and 73–76), which was a statement about those samples' size, not a reprieve.
+
+**Update, 1 August 2026 — the 1h band now resolves negative.** That prediction
+held. 1h ledgers were generated for the five instruments that only had 15m runs
+(IWM, GLD, SLV, EURUSD, GBPUSD), taking the 1h sample from 865 trades on three
+instruments to **2,677 on eight**. Pooled: **−0.0411R, t = −2.56**. The 1h
+entry is not a reprieve from the 15m result; it is the same result with less
+leverage, and it only looked survivable because nobody had run the other five
+instruments. 4h remains untested at scale. See
+`strategies/strategy_01/STATUS.md` for the analysis and the per-instrument
+table.
 
 ## The fix that was tested and failed
 

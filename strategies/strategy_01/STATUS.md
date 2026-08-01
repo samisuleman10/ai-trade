@@ -1,7 +1,7 @@
 # Strategy 01 — status
 
-**v1, v2, v4, v5 are closed. v3 is unresolved — measured, and the measurement
-returned nothing.** Recorded 1 August 2026.
+**All five versions are closed.** Recorded 1 August 2026, v3 resolved the same
+day once the missing data was generated.
 
 `strategies/strategy_03/STATUS.md` established that the 15-minute Alligator
 mouth-opening entry loses across eight instruments (5,602 trades, −0.1033R,
@@ -24,7 +24,7 @@ Four of the five versions are 15-minute Alligator mouth-opening entries — the
 exact signal Strategy 03 falsified. They differ from Strategy 03 only by
 requiring the 1-hour Alligator to agree and the Heikin Ashi body to sit beyond
 the Lips. v3 is not: it moves the whole structure up a band, into the region
-where Strategy 03 is inconclusive rather than falsified.
+Strategy 03 had recorded as inconclusive. Band 2 below resolves that region.
 
 ## The test
 
@@ -66,36 +66,66 @@ Every instrument except GLD stays negative, GLD's positive figure is noise at
 t = +0.58, and no gated per-instrument result is favourable and significant.
 There is no subset here that makes money.
 
-## Band 2: v3 — no information either way
+## Band 2: v3 — resolved, and it fails too
+
+The first run of this band was empty: only SPY, QQQ and DIA had a 1h ledger,
+and SPY lost 153 of 253 trades because its 4h cache was short. Both gaps have
+since been filled:
+
+- **1h ledgers generated** for IWM, GLD, SLV, EURUSD and GBPUSD with the
+  committed runner, taking the band from 865 trades to 2,681.
+- **4h bars derived** from the 1h cache by `scripts/resample_1h_to_4h.py`,
+  which recovers SPY's missing three years and gives spot FX 4h bars for the
+  first time.
 
 Signal = bar before `decision_timestamp`; 4h confirmation over a 1h entry:
 
-| Instrument | Covered n | R | t | Gated n | Gated R | Gated t | Dropped |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| SPY | 100 | −0.0347 | −0.37 | 16 | +0.0437 | +0.21 | 153 |
-| QQQ | 294 | −0.0137 | −0.27 | 51 | −0.0666 | −0.61 | 0 |
-| DIA | 317 | −0.0356 | −0.71 | 53 | +0.0210 | +0.20 | 1 |
-| **Pooled** | **711** | **−0.0264** | **−0.79** | **120** | **−0.0132** | **−0.19** | **154** |
+| Instrument | Covered n | R | t | Gated n | Gated R | Gated t |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| SPY | 253 | −0.0011 | −0.02 | 44 | −0.0195 | −0.17 |
+| QQQ | 294 | −0.0137 | −0.27 | 51 | −0.0666 | −0.61 |
+| DIA | 317 | −0.0356 | −0.71 | 53 | +0.0210 | +0.20 |
+| IWM | 309 | −0.0982 | −1.98 | 42 | **−0.3214** | **−2.83** |
+| GLD | 324 | −0.0281 | −0.58 | 49 | +0.0895 | +0.85 |
+| SLV | 313 | −0.0964 | −1.94 | 45 | −0.1761 | −1.58 |
+| EURUSD | 402 | −0.0606 | −1.78 | 84 | −0.0702 | −1.12 |
+| GBPUSD | 465 | −0.0010 | −0.03 | 102 | −0.0499 | −0.73 |
+| **Pooled** | **2,677** | **−0.0411** | **−2.56** | **470** | **−0.0663** | **−2.01** |
 
-Under the alternative convention the gated pool is 114 trades at **+0.0200R,
-t = +0.28** — the sign flips, which is what a t of ±0.2 means in practice.
+Under the alternative convention the gated pool is 431 trades at −0.0499R,
+t = −1.47. Four trades are dropped for confirmation coverage.
 
-**This does not close v3 and does not support it.** Every figure is
-indistinguishable from zero. The ungated 1h entry is −0.0264R at t = −0.79;
-the gated subset is −0.0132R at t = −0.19. Nothing here is evidence of
-anything.
+**Two findings, and the first is the larger one.**
 
-Why the measurement is empty:
+1. **The ungated 1h Alligator entry is itself negative** — −0.0411R at
+   t = −2.56 on 2,677 trades. Strategy 03 recorded the 1h band as
+   "inconclusive rather than negative … a statement about those samples' size,
+   not a reprieve." That was right. Moving up a timeframe was never an escape
+   from the 15m result; it was the same result with a smaller sample.
+2. **v3's filters do not rescue it, and appear to hurt.** The gated subset is
+   −0.0663R at t = −2.01, *worse* than the −0.0411R it filters from. The same
+   pattern as Band 1: the gate discards 82% of trades and does not turn the
+   remainder positive.
 
-- **Only three instruments have a 1h ledger** — SPY, QQQ, DIA. The five
-  instruments added on 2026-08-01 were backtested at 15m only.
-- **SPY loses 153 of 253 trades** to coverage: its 4h cache spans two years
-  against a five-year ledger. SPY contributes 16 gated trades.
-- **120 gated trades pooled**, against a power budget of ~150 *per instrument*.
-  This is roughly an eighth of the evidence the 15m band had.
+IWM's gated cell (−0.3214R, t = −2.83 on 42 trades) is the worst in either
+band, but at 42 trades it is a curiosity rather than a finding.
 
 ## Honest limits
 
+- **Both bands' gated verdicts are convention-sensitive.** Band 1 is t = −2.35
+  or −1.81; Band 2 is t = −2.01 or −1.47, depending on whether the signal bar
+  is the one before entry or the decision bar itself. Negative under every
+  convention, but only decisive under one. The *ungated* Band 2 result
+  (t = −2.56) does not depend on the convention at all.
+- **Band 2's 4h bars are derived, not cached.** `resample_1h_to_4h.py` is
+  validated against the six instruments with a real 4h cache — QQQ and DIA
+  reproduce bar for bar (3,520/3,520), and IWM, GLD, SLV and SPY differ only in
+  the final bar, where the two caches end at different points. Spot FX has no
+  cached 4h anywhere, so its derived bars use the same validated UTC grid but
+  have no direct ground truth of their own. Dropping both FX instruments leaves
+  the equity-only ungated pool at −0.0471R, t = −2.28 (1,810 trades), so the
+  Band 2 conclusion does not rest on the unvalidated FX bars. The equity-only
+  gated cell is −0.0711R at t = −1.58.
 - **Band 1's pooled verdict is convention-sensitive.** t = −2.35 clears the
   usual bar; t = −1.81 does not. The *direction* is unambiguous under both, but
   this is not the decisive −8.23 that closed Strategy 03. Read it as "the
@@ -118,12 +148,10 @@ Why the measurement is empty:
   mouth-opening entry that loses on 5,600 trades, and their distinguishing
   filters discard 83% of trades without turning it positive. Do not build
   further versions on this entry.
-- **v3 — unresolved, and cheap to resolve.** It is the one version not built on
-  the falsified 15m entry, and the only reason it is unresolved is missing
-  data, not an adverse result. Settling it needs 1h Strategy 03 ledgers for
-  IWM, GLD, SLV, EURUSD and GBPUSD, and a five-year 4h SPY cache. That is a
-  backtest run, not new research. Until then v3 is neither supported nor
-  refuted, and nothing should be built on it.
+- **v3 — closed.** Moving up a band was not an escape. The 1h Alligator entry
+  it rests on is itself negative on 2,677 trades (−0.0411R, t = −2.56), and
+  v3's filters leave the remainder at −0.0663R (t = −2.01) — worse than what
+  they filter. Strategy 01 has no surviving version.
 
 ## Reproduction
 

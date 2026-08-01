@@ -1,0 +1,89 @@
+{
+  "strategy_id": "strategy_03_v1_1h_alligator_open",
+  "mode": "historical_backtest_only",
+  "data": {
+    "symbol": "EURUSD",
+    "source": "locally cached IBKR historical bars",
+    "timeframe": "1h",
+    "range": [
+      "2020-07-29T21:15:00Z",
+      "2026-07-30T02:00:00Z"
+    ]
+  },
+  "assumptions": {
+    "starting_equity": 100000.0,
+    "fixed_risk_percent": 0.0015,
+    "slippage_bps_per_side": 0.5,
+    "commission_per_share_per_side": 0.005,
+    "allowed_direction": "both",
+    "block_opening_hour_entries": false,
+    "block_final_hour_entries": false,
+    "block_friday_entries": true,
+    "entry_interval_minutes": 60,
+    "force_friday_close": true,
+    "contract_multiplier": 1.0,
+    "commission_per_contract_per_side": null,
+    "commission_bps_per_side": 0.2,
+    "min_commission_per_order": 2.0,
+    "session_timezone": "America/New_York",
+    "entry_window_start": [
+      18,
+      0
+    ],
+    "entry_window_end": [
+      17,
+      0
+    ],
+    "friday_close_time": [
+      16,
+      45
+    ],
+    "rrms_reset_after_max_tier": false,
+    "entry": "first completed bar transitioning into bullish/bearish open Alligator; fill at next bar open",
+    "stop": "Jaw plus/minus max(minimum tick, 0.10 ATR)",
+    "target": "1:1 realised entry-to-stop distance",
+    "filters": "no VIX, macro, Heikin-Ashi, support/resistance, or higher-timeframe confirmation",
+    "intrabar_collision": "stop before target"
+  },
+  "candidate_signal_count": 2373,
+  "eligible_signal_count": 2018,
+  "results": {
+    "fixed": {
+      "trade_count": 402,
+      "wins": 185,
+      "losses": 217,
+      "win_rate": 0.4601990049751244,
+      "net_pnl": -3607.2501455957517,
+      "ending_equity": 96392.74985440428,
+      "profit_factor": 0.8087890275572017,
+      "average_r": -0.06057974166154505,
+      "max_drawdown": 4098.333267164649,
+      "long_trades": 207,
+      "short_trades": 195,
+      "exit_reasons": {
+        "stop": 78,
+        "target": 63,
+        "weekend_close": 261
+      }
+    },
+    "rrms": {
+      "trade_count": 402,
+      "wins": 187,
+      "losses": 215,
+      "win_rate": 0.4651741293532338,
+      "net_pnl": -341.8759502023819,
+      "ending_equity": 99658.1240497974,
+      "profit_factor": 0.9869418229801319,
+      "average_r": -0.055124456748176634,
+      "max_drawdown": 2429.512709839284,
+      "long_trades": 207,
+      "short_trades": 195,
+      "exit_reasons": {
+        "stop": 78,
+        "target": 63,
+        "weekend_close": 261
+      }
+    }
+  },
+  "warning": "Historical research only; no paper or live order authorization."
+}
