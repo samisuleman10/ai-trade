@@ -3,10 +3,10 @@
 The lifecycle in .claude/skills/strategy-research/SKILL.md is a fixed
 sequence: run the base variant, prove it reproduces the incumbent, only then
 run the filtered variants, verify each one's recorded evidence, sweep the
-threshold, summarise. Doing that by hand for five symbols and four variants
-is twenty commands plus twenty verifications in the right order, and the
-order is the safety property -- reading a filtered result before parity is
-proven is exactly what the spec forbids.
+threshold, summarise, publish. Doing that by hand for eight symbols and four
+variants is thirty-two runs plus twenty-nine verifications in the right
+order, and the order is the safety property -- reading a filtered result
+before parity is proven is exactly what the spec forbids.
 
 This module owns the order and nothing else. Every stage shells out to the
 CLI that already implements it, so each remains independently runnable and
@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
-STAGES: tuple[str, ...] = ("base", "parity", "variants", "audit", "sweep", "summary")
+STAGES: tuple[str, ...] = ("base", "parity", "variants", "audit", "sweep", "summary", "publish")
 
 
 @dataclass(frozen=True)
@@ -37,6 +37,7 @@ class GridSpec:
     verifier_module: str
     sweep_module: str
     summarizer_module: str
+    publisher_module: str
     inputs_module: str
     symbols: tuple[str, ...]
     variants: tuple[str, ...]
@@ -44,6 +45,7 @@ class GridSpec:
     results_dir_template: str
     incumbent_results_template: str | None
     incumbent_flag: str
+    incumbent_symbols: tuple[str, ...]
 
     @property
     def base_variant(self) -> str:
@@ -53,11 +55,21 @@ class GridSpec:
     def filtered_variants(self) -> tuple[str, ...]:
         return self.variants[1:]
 
+    @property
+    def symbols_without_incumbent(self) -> tuple[str, ...]:
+        """Symbols this version introduces, in grid order.
+
+        These get no parity gate because there is no prior run to reproduce --
+        not because the gate was waived. ``run_grid`` names them out loud so
+        that distinction survives into whoever reads the log.
+        """
+        return tuple(symbol for symbol in self.symbols if symbol not in self.incumbent_symbols)
+
     def results_dir(self, symbol: str, variant: str) -> str:
         return self.results_dir_template.format(symbol=symbol.lower(), variant=variant)
 
     def incumbent_dir(self, symbol: str) -> str | None:
-        if self.incumbent_results_template is None:
+        if self.incumbent_results_template is None or symbol not in self.incumbent_symbols:
             return None
         return self.incumbent_results_template.format(symbol=symbol.lower())
 
@@ -80,13 +92,19 @@ GRIDS: dict[str, GridSpec] = {
         verifier_module="ai_trade.verify_strategy_04_v1_2",
         sweep_module="ai_trade.sweep_strategy_04_v1_2_risk_ratio",
         summarizer_module="ai_trade.summarize_strategy_04_v1_2_ablation",
+        publisher_module="ai_trade.backfill_visualization_bundles",
         inputs_module="ai_trade.backtest_strategy_04_v1_2_asset",
-        symbols=("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD"),
+        symbols=("SPY", "QQQ", "DIA", "IWM", "GLD", "SLV", "EURUSD", "GBPUSD"),
         variants=("base", "a", "b", "ab"),
         results_root="strategies/strategy_04/v1_2/results",
         results_dir_template="strategies/strategy_04/v1_2/results/{symbol}_1h_15m_{variant}",
         incumbent_results_template="strategies/strategy_04/v1_1/results/{symbol}_1h_15m",
         incumbent_flag="--v1-1",
+        # IWM, GLD and SLV are new in v1.2; v1.1 was never run on them, so they
+        # have nothing to prove parity against. Listing the five that do is
+        # deliberate: deriving this from the filesystem would let a wrong
+        # template quietly turn the gate off for every symbol at once.
+        incumbent_symbols=("SPY", "QQQ", "DIA", "EURUSD", "GBPUSD"),
     ),
 }
 
@@ -125,7 +143,7 @@ def plan_commands(spec: GridSpec, stages: tuple[str, ...]) -> list[list[str]]:
     if "parity" in stages:
         commands.extend(
             _verify_command(spec, symbol, spec.base_variant, parity=True)
-            for symbol in spec.symbols
+            for symbol in spec.incumbent_symbols
         )
     if "variants" in stages:
         commands.extend(
@@ -145,7 +163,24 @@ def plan_commands(spec: GridSpec, stages: tuple[str, ...]) -> list[list[str]]:
         commands.append(
             [sys.executable, "-m", spec.summarizer_module, "--results-root", spec.results_root]
         )
+    if "publish" in stages:
+        # Last, so it picks up every directory the earlier stages produced.
+        # Running the grid without this step leaves the dashboard showing
+        # "No published audit" for runs that completed perfectly well.
+        commands.append(
+            [sys.executable, "-m", spec.publisher_module, "--root", spec.results_root]
+        )
     return commands
+
+
+def _missing_incumbents(spec: GridSpec, root: Path) -> list[str]:
+    """Declared incumbent directories that do not exist on disk."""
+    missing = []
+    for symbol in spec.incumbent_symbols:
+        incumbent = spec.incumbent_dir(symbol)
+        if incumbent is not None and not (root / incumbent).is_dir():
+            missing.append(f"{symbol}: {incumbent}")
+    return missing
 
 
 def run_grid(
@@ -161,6 +196,23 @@ def run_grid(
     at the first failure IS the parity gate: a failed base-parity check exits
     before any filtered variant runs.
     """
+    missing = _missing_incumbents(spec, root)
+    if missing:
+        print(
+            "STOPPED before any command: these symbols declare an incumbent that is not on disk, "
+            "so their parity gate would silently not run.\n  " + "\n  ".join(missing),
+            file=sys.stderr,
+        )
+        return 1
+
+    if spec.symbols_without_incumbent:
+        print(
+            f"NOTE: {', '.join(spec.symbols_without_incumbent)} have no incumbent in "
+            f"{spec.incumbent_results_template or 'this grid'} and therefore run with no parity "
+            "proof. Their results show what this version does, not that the harness reproduces "
+            "a known-good run."
+        )
+
     commands = plan_commands(spec, stages)
     for number, command in enumerate(commands, start=1):
         printable = " ".join(command)
