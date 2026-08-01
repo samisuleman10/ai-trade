@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 
 from ai_trade.backtest_strategy_01 import BacktestConfig, _entry_allowed, run_backtest, summarize, write_results
+from ai_trade.fx_config import fx_backtest_config
 from ai_trade.strategy_01 import load_ohlcv_csv
 from ai_trade.strategy_03_v1 import candidate_signals
 
@@ -18,15 +19,25 @@ def main() -> int:
     parser.add_argument("--bars", type=Path, required=True)
     parser.add_argument("--timeframe", choices=("15m", "1h"), required=True)
     parser.add_argument("--output", type=Path, required=True)
+    # Spot FX trades around the clock, so the US-session blocks below are
+    # meaningless there and its costs are bps-of-notional rather than
+    # per-share. The default is unchanged, so every committed equity run
+    # reproduces byte for byte.
+    parser.add_argument("--market", choices=("equity", "fx"), default="equity")
     args = parser.parse_args()
 
     bars = load_ohlcv_csv(args.bars)
     interval = 15 if args.timeframe == "15m" else 60
-    config = BacktestConfig(
-        allowed_direction="both", block_opening_hour_entries=True,
-        block_final_hour_entries=True, block_friday_entries=True,
-        entry_interval_minutes=interval, force_friday_close=True,
-    )
+    if args.market == "fx":
+        # Reuse the committed spot-FX preset rather than restating it: Strategy
+        # 04's FX runs use the same one, so the two strategies stay comparable.
+        config = replace(fx_backtest_config(args.symbol), entry_interval_minutes=interval)
+    else:
+        config = BacktestConfig(
+            allowed_direction="both", block_opening_hour_entries=True,
+            block_final_hour_entries=True, block_friday_entries=True,
+            entry_interval_minutes=interval, force_friday_close=True,
+        )
     signals = candidate_signals(bars, interval_minutes=interval)
     eligible = [signal for signal in signals if _entry_allowed(str(signal["entry_timestamp"]), str(signal["side"]), config)]
     report: dict[str, object] = {
