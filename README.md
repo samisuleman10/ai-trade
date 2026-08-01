@@ -65,6 +65,19 @@ it never modifies existing result artifacts.
 python -m pytest -q
 ```
 
+## Research status: the evidence map
+
+Every strategy and version on one page — what each one tested, the evidence that
+settled it, and the one thread still open:
+
+<https://claude.ai/code/artifact/f4c7eed3-c78b-41c3-9a72-38f27f912062>
+
+This is a snapshot compiled 1 August 2026 from the four
+`strategies/strategy_0*/STATUS.md` files and the committed `fixed_summary.json`
+ledgers. Those files remain the source of truth — re-check the dashboard against
+them after any new run rather than the other way round. The link is a private
+Claude artifact and resolves only for the account that owns it unless shared.
+
 ## Project direction
 
 This project is being built as a controlled trading lifecycle: define a
