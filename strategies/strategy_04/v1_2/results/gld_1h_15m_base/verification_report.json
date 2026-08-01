@@ -1,0 +1,8 @@
+{
+  "results_dir": "strategies\\strategy_04\\v1_2\\results\\gld_1h_15m_base",
+  "column_audit": {
+    "rows": 68,
+    "failures": []
+  },
+  "passed": true
+}

@@ -2,8 +2,31 @@ import json
 import sys
 from datetime import datetime, timedelta, timezone
 
-from ai_trade.backtest_strategy_04_v1_2_asset import VARIANTS, main, symbol_run_inputs
+from ai_trade.backtest_strategy_04_v1_2_asset import (
+    SUPPORTED_SYMBOLS,
+    VARIANTS,
+    _EQUITY_DATA,
+    _FX_DATA,
+    main,
+    symbol_run_inputs,
+)
 from ai_trade.market_data import OHLCVBar, save_bars
+
+
+def test_supported_symbols_is_derived_from_the_data_tables():
+    """One source of truth: a symbol with cached data is a symbol this runner accepts.
+
+    Every downstream stage reads this tuple, so adding a cache entry is the
+    only edit needed to widen the sweep and the ablation summary too.
+    """
+    assert SUPPORTED_SYMBOLS == tuple(_EQUITY_DATA) + tuple(_FX_DATA)
+    assert set(SUPPORTED_SYMBOLS) == set(_EQUITY_DATA) | set(_FX_DATA)
+    for symbol in SUPPORTED_SYMBOLS:
+        assert symbol_run_inputs(symbol) is not None
+
+
+def test_supported_symbols_covers_the_instruments_cached_for_v1_2():
+    assert set(("IWM", "GLD", "SLV")) <= set(SUPPORTED_SYMBOLS)
 
 
 def test_variant_flag_mapping():

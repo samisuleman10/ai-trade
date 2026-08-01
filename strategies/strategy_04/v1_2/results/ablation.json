@@ -98,6 +98,105 @@
       }
     }
   },
+  "IWM": {
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 100,
+        "trades": 41,
+        "win_rate": 0.5853658536585366,
+        "average_r": 0.13758081127874508,
+        "net_pnl": 840.0707662098249
+      },
+      "a": {
+        "candidates": 89,
+        "trades": 45,
+        "win_rate": 0.5111111111111111,
+        "average_r": -0.013277476707542452,
+        "net_pnl": -95.69032927121992
+      },
+      "b": {
+        "candidates": 61,
+        "trades": 24,
+        "win_rate": 0.4583333333333333,
+        "average_r": -0.1176074983185715,
+        "net_pnl": -421.38919433664205
+      },
+      "ab": {
+        "candidates": 55,
+        "trades": 26,
+        "win_rate": 0.5384615384615384,
+        "average_r": 0.041930980157403444,
+        "net_pnl": 158.50111529820214
+      }
+    }
+  },
+  "GLD": {
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 68,
+        "trades": 36,
+        "win_rate": 0.4166666666666667,
+        "average_r": -0.24831436181372848,
+        "net_pnl": -1333.5160997964601
+      },
+      "a": {
+        "candidates": 62,
+        "trades": 35,
+        "win_rate": 0.45714285714285713,
+        "average_r": -0.15605375822273282,
+        "net_pnl": -816.4053665785609
+      },
+      "b": {
+        "candidates": 42,
+        "trades": 19,
+        "win_rate": 0.631578947368421,
+        "average_r": 0.2037293049757349,
+        "net_pnl": 578.5208053298651
+      },
+      "ab": {
+        "candidates": 40,
+        "trades": 19,
+        "win_rate": 0.631578947368421,
+        "average_r": 0.2037293049757349,
+        "net_pnl": 578.5208053298651
+      }
+    }
+  },
+  "SLV": {
+    "max_risk_zone_ratio": 2.5,
+    "variants": {
+      "base": {
+        "candidates": 73,
+        "trades": 34,
+        "win_rate": 0.47058823529411764,
+        "average_r": -0.15304772876758885,
+        "net_pnl": -779.4933479023803
+      },
+      "a": {
+        "candidates": 64,
+        "trades": 33,
+        "win_rate": 0.5454545454545454,
+        "average_r": -0.010778313277738951,
+        "net_pnl": -56.90064534121143
+      },
+      "b": {
+        "candidates": 43,
+        "trades": 19,
+        "win_rate": 0.47368421052631576,
+        "average_r": -0.1611395027213015,
+        "net_pnl": -460.3677896406364
+      },
+      "ab": {
+        "candidates": 37,
+        "trades": 19,
+        "win_rate": 0.47368421052631576,
+        "average_r": -0.1611395027213015,
+        "net_pnl": -460.3677896406364
+      }
+    }
+  },
   "EURUSD": {
     "max_risk_zone_ratio": 2.5,
     "variants": {

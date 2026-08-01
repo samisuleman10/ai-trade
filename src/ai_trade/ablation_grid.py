@@ -17,11 +17,13 @@ future strategy version means adding one ``GridSpec`` to ``GRIDS``.
 from __future__ import annotations
 
 import argparse
-import importlib
 import subprocess
 import sys
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+
+from ai_trade.run_strategy_version import symbol_run_inputs
+from ai_trade.strategy_registry import VERSIONS
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -33,19 +35,39 @@ class GridSpec:
     """Everything needed to drive one strategy version's ablation grid."""
 
     grid_id: str
+    # The registry entry this grid runs. Symbols, variants and result paths
+    # are read from it rather than restated: a grid that disagreed with the
+    # runner about which symbols exist is what left IWM, GLD and SLV out of
+    # the ablation table while every run succeeded.
+    version_id: str
+    # CLI entry points. These stay named here because they are process
+    # boundaries, not version facts -- each stage must remain independently
+    # runnable, which is what keeps a failed stage debuggable on its own.
     runner_module: str
     verifier_module: str
     sweep_module: str
     summarizer_module: str
     publisher_module: str
-    inputs_module: str
-    symbols: tuple[str, ...]
-    variants: tuple[str, ...]
-    results_root: str
-    results_dir_template: str
     incumbent_results_template: str | None
     incumbent_flag: str
     incumbent_symbols: tuple[str, ...]
+
+    @property
+    def version(self):
+        return VERSIONS[self.version_id]
+
+    @property
+    def symbols(self) -> tuple[str, ...]:
+        return self.version.supported_symbols
+
+    @property
+    def variants(self) -> tuple[str, ...]:
+        return tuple(self.version.variants)
+
+    @property
+    def results_root(self) -> str:
+        """The directory holding every run of this version."""
+        return str(PurePosixPath(self.version.results_template).parent)
 
     @property
     def base_variant(self) -> str:
@@ -66,7 +88,7 @@ class GridSpec:
         return tuple(symbol for symbol in self.symbols if symbol not in self.incumbent_symbols)
 
     def results_dir(self, symbol: str, variant: str) -> str:
-        return self.results_dir_template.format(symbol=symbol.lower(), variant=variant)
+        return self.version.results_template.format(symbol=symbol.lower(), variant=variant)
 
     def incumbent_dir(self, symbol: str) -> str | None:
         if self.incumbent_results_template is None or symbol not in self.incumbent_symbols:
@@ -74,30 +96,25 @@ class GridSpec:
         return self.incumbent_results_template.format(symbol=symbol.lower())
 
     def one_hour_path(self, symbol: str) -> str:
-        """Resolve a symbol's one-hour cache from the runner's own mapping.
+        """Resolve a symbol's one-hour cache the same way the run itself did.
 
-        Imported rather than duplicated: a second copy of these paths could
-        drift from the runs themselves, which is the failure the parity gate
-        exists to catch.
+        Read from the registry rather than duplicated: a second copy of these
+        paths could drift from the runs themselves, which is precisely the
+        failure the parity gate exists to catch.
         """
-        module = importlib.import_module(self.inputs_module)
-        _, one_hour, _, _, _ = module.symbol_run_inputs(symbol)
+        _, one_hour, _, _, _ = symbol_run_inputs(self.version, symbol)
         return str(one_hour)
 
 
 GRIDS: dict[str, GridSpec] = {
     "strategy_04_v1_2": GridSpec(
         grid_id="strategy_04_v1_2",
+        version_id="strategy_04_v1_2",
         runner_module="ai_trade.backtest_strategy_04_v1_2_asset",
         verifier_module="ai_trade.verify_strategy_04_v1_2",
         sweep_module="ai_trade.sweep_strategy_04_v1_2_risk_ratio",
         summarizer_module="ai_trade.summarize_strategy_04_v1_2_ablation",
         publisher_module="ai_trade.backfill_visualization_bundles",
-        inputs_module="ai_trade.backtest_strategy_04_v1_2_asset",
-        symbols=("SPY", "QQQ", "DIA", "IWM", "GLD", "SLV", "EURUSD", "GBPUSD"),
-        variants=("base", "a", "b", "ab"),
-        results_root="strategies/strategy_04/v1_2/results",
-        results_dir_template="strategies/strategy_04/v1_2/results/{symbol}_1h_15m_{variant}",
         incumbent_results_template="strategies/strategy_04/v1_1/results/{symbol}_1h_15m",
         incumbent_flag="--v1-1",
         # IWM, GLD and SLV are new in v1.2; v1.1 was never run on them, so they
