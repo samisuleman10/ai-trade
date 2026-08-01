@@ -34,6 +34,8 @@ Generic stages, none of which need a version-named copy: `run_strategy_version`,
 - **Auditable columns:** every rule's decision value is recorded in `candidate_signals.csv` at decision time and recomputed by the audit rules from evidence alone (causality included: reference timestamps ≤ decision time).
 - **Thresholds are swept, never chosen by code.** Sensitivity tables per symbol; the report is evidence for a human.
 - **Per-symbol evidence only.** A filter that helps one symbol is not adopted elsewhere (v1.2's Filter B: +$1,328 QQQ, −$1,638 SPY, and +$1,912 GLD — three different verdicts from one rule).
+- **Know which rows are in-sample before you read any of them.** An instrument added for coverage becomes an unplanned holdout the moment its data arrives after the rules were fixed — five of v1.2's eight symbols did, while the table still said "every number is in-sample". Record arrival dates in the `VersionSpec` (`rules_fixed`, `holdout_symbols`); the ablation header renders from them.
+- **A P&L delta is not a result until a decision rule scores it.** `scripts/evaluate_holdout_significance.py` applies v1.3's committed accept/abandon rule to any set of runs and reports the smallest effect each sample could have resolved. GLD's +$1,912 Filter B swing is t = +0.89 against a 2.101 bar.
 - **Refactors prove they changed nothing.** Any change to shared pipeline code must leave every committed run reproducing byte for byte: `python scripts/verify_v1_2_reproduction.py`. Normalise line endings before comparing — `.gitattributes` makes a re-checked-out result LF while a fresh one is CRLF.
 
 **4. Landing on the dashboard.** Write the standard six files and publish; `ablation_grid`'s final `publish` stage does this for a whole grid, which is the step whose absence once left runs showing "No published audit". New instruments must reuse the committed baseline's exact config + indicator dispatch (`symbol_run_inputs`); config drift invalidates every comparison.
@@ -53,3 +55,6 @@ Generic stages, none of which need a version-named copy: `run_strategy_version`,
 - A hardcoded symbol list anywhere outside the registry
 - Results published whose filters can't be re-verified from the CSV
 - Adopting a filter on all symbols because it worked on one
+- A report calling every row in-sample without checking when each instrument's data arrived
+- Excitement about the largest net-P&L delta in a table, before its t and trade count are known
+- Significance arithmetic that lives in a chat transcript instead of a committed script
