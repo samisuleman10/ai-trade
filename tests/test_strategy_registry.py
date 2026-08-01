@@ -44,8 +44,8 @@ def test_results_template_matches_the_committed_layout():
 
 
 def test_sweep_definition_matches_the_sweep_module():
-    # Until Task A3 makes the sweep read the registry, both copies exist;
-    # this pins them together so neither can move alone.
+    # Since Task A3 the sweep module re-exports the registry's grid; this
+    # pins the historical export and the spec's literals together.
     assert SPEC.sweep_parameter == "max_risk_zone_ratio"
     assert SPEC.sweep_grid == DEFAULT_THRESHOLDS
     assert SPEC.sweep_default == 2.5

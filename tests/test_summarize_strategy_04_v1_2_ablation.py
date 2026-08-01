@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from ai_trade.backtest_strategy_04_v1_2_asset import SUPPORTED_SYMBOLS
+from ai_trade.strategy_registry import VERSIONS
 from ai_trade.summarize_strategy_04_v1_2_ablation import (
     SYMBOLS,
     VARIANTS,
@@ -12,6 +13,7 @@ from ai_trade.summarize_strategy_04_v1_2_ablation import (
     main,
     render_markdown,
 )
+from ai_trade.summarize_version_ablation import build_grid as generic_build_grid
 
 
 def test_summary_covers_every_symbol_the_runner_supports():
@@ -46,6 +48,21 @@ def _write_reports(results_root: Path, overrides=None) -> None:
             (directory / "backtest_report.json").write_text(
                 json.dumps(report), encoding="utf-8"
             )
+
+
+def test_generic_grid_covers_every_supported_symbol(tmp_path):
+    """The generic builder's symbol list is the spec's -- all eight of them."""
+    _write_reports(tmp_path)
+    spec = VERSIONS["strategy_04_v1_2"]
+    grid = generic_build_grid(spec, tmp_path)
+    assert tuple(grid) == spec.supported_symbols
+    assert len(grid) == 8
+
+
+def test_wrapper_and_generic_grids_are_identical(tmp_path):
+    """The wrapper is delegation, not a second implementation."""
+    _write_reports(tmp_path)
+    assert build_grid(tmp_path) == generic_build_grid(VERSIONS["strategy_04_v1_2"], tmp_path)
 
 
 def test_build_grid_includes_max_risk_zone_ratio_per_symbol(tmp_path):
