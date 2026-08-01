@@ -1,5 +1,7 @@
 # Strategy 04 — Version 1.1
 
+> **Strategy 04 is closed (1 August 2026).** Its filters were falsified on instruments they were never fitted to, and the equity samples cannot resolve effects of the size claimed. Read [`../STATUS.md`](../STATUS.md) before acting on anything below. This document is kept as the historical record of what was specified, not as a live proposal.
+
 ## Purpose
 
 Test the strongest finding from the Version 1 losing-long audit without

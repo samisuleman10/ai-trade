@@ -7,6 +7,8 @@ description: Use when starting a new trading strategy, a new version of an exist
 
 Every strategy version follows the same pipeline. The reference implementation is Strategy 04 v1.2 — when in doubt, read those files instead of inventing.
 
+**Copy its machinery, not its research.** Strategy 04 was closed on 1 August 2026 (`strategies/strategy_04/STATUS.md`): its filters were falsified on every instrument they were never fitted to, and its equity samples were never able to resolve effects the size of the ones claimed. It remains the best worked example of the pipeline, gates and evidence trail — and the best worked example of what an underpowered research programme looks like from the inside.
+
 **Core principle: a result nobody can independently verify from recorded evidence does not exist.**
 
 ## What is pipeline and what is yours to write
