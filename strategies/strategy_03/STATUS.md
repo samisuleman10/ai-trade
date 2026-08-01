@@ -67,9 +67,46 @@ held. 1h ledgers were generated for the five instruments that only had 15m runs
 instruments to **2,677 on eight**. Pooled: **−0.0411R, t = −2.56**. The 1h
 entry is not a reprieve from the 15m result; it is the same result with less
 leverage, and it only looked survivable because nobody had run the other five
-instruments. 4h remains untested at scale. See
+instruments. See
 `strategies/strategy_01/STATUS.md` for the analysis and the per-instrument
 table.
+
+**Update, 1 August 2026 — the 4h band does not resolve, and the effect shrank
+when the sample doubled.** 4h ledgers were generated for IWM, GLD and SLV from
+bars built by `scripts/resample_1h_to_4h.py`, taking the band from three
+instruments to six.
+
+| | SPY | QQQ | DIA | IWM | GLD | SLV | Pooled |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| n | 73 | 75 | 76 | 71 | 65 | 88 | **448** |
+| R | −0.1005 | −0.0977 | −0.0541 | **+0.0228** | **+0.0001** | −0.0468 | **−0.0475** |
+| t | −1.16 | −1.26 | −0.61 | +0.24 | +0.00 | −0.58 | **−1.36** |
+
+Doubling the sample made the result *weaker*, not stronger: the three original
+instruments pooled to −0.0838R at t = −1.72, and adding three more moved that
+to −0.0475R at t = −1.36. The added instruments are the least negative of the
+six. Whatever the earlier figure looked like it was approaching, the fuller
+sample does not support it.
+
+**This band cannot be closed with the data that exists.** At the observed
+effect and dispersion, |t| = 2 needs roughly **975 trades** against the 448
+available. The only remaining sources of power are more equity history, or spot
+FX — and FX cannot be run through this band, because
+`ai_trade.strategy_03_v1_4h` is an RTH-session adapter that skips signals
+crossing an Eastern-date boundary. That logic is meaningless for a 24-hour
+market, so adapting it is a separate piece of work rather than a flag.
+
+What can be said: the 4h point estimate (−0.0475R) sits between the 15m
+(−0.1033R) and 1h (−0.0411R) results and is negative, so nothing here suggests
+4h escapes the pattern. But 4h alone does not carry a verdict, and it should
+not be quoted as if it does.
+
+**Consistency check on the derived bars.** Re-running SPY, QQQ and DIA from
+derived 4h bars reproduces the committed QQQ and DIA ledgers *exactly*
+(75 and 76 trades, identical rows). SPY differs — 66 trades against 73 —
+because its committed 4h run starts 2020-07 while its 1h cache, the source for
+the derived bars, only starts 2021-04. That is a coverage difference, not a
+method difference, and the committed SPY ledger is the one used above.
 
 ## The fix that was tested and failed
 
