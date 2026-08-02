@@ -31,15 +31,18 @@ Check the API is healthy:
 curl http://127.0.0.1:8080/health
 ```
 
-Expect `{"status": "ok", "valid_bundles": 48, "invalid_bundles": 0}`.
+Expect `{"status": "ok", "valid_bundles": <count>, "invalid_bundles": 0}`.
+The count grows as runs are published — 82 as of 2 August 2026. What matters
+is that `invalid_bundles` is zero: a non-zero value means a bundle failed
+validation and is silently missing from the dashboard.
 
 ### Which tabs need the API
 
 | Tab | Needs the API |
 | --- | --- |
 | Performance, Compare assets, Rules | No |
-| Chart & trades (Strategy 04 trade audit) | No — the fixture is bundled |
-| All runs (every run, strategies 01–04) | **Yes** |
+| Chart & trades (Strategy 04 trade audit) | **Yes** — the audit is served from the run bundle |
+| All runs, Compare strategies | **Yes** |
 
 ### Adding a run
 

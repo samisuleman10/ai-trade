@@ -375,50 +375,76 @@ export function EvidenceFunnel({ entries, performance, onSelectRun }: EvidenceFu
         )}
       </div>
 
-      {/* Every term on this chart is jargon until it is spelled out once.
-          Placed below the plot so it is available without being in the way. */}
+      {/* Every term here is jargon until spelled out once. Written in money
+          rather than statistics, and ending with the comparison that is the
+          whole argument: the best-looking number is the untrustworthy one. */}
       <div className="s4-funnel-legend-note border-t border-slate-200 px-5 py-4">
         <h3 className="text-sm font-semibold text-slate-950">Reading this chart</h3>
-        <dl className="mt-2 grid max-w-4xl gap-x-6 gap-y-2 text-xs leading-5 text-slate-600 sm:grid-cols-2">
+        <dl className="mt-2 grid max-w-4xl gap-x-8 gap-y-3 text-xs leading-5 text-slate-600 sm:grid-cols-2">
           <div>
-            <dt className="font-semibold text-slate-800">Avg R</dt>
+            <dt className="font-semibold text-slate-800">Avg R — what you made per trade</dt>
             <dd>
-              Average profit per trade, measured in units of risk. +0.20R means each trade earned
-              a fifth of what it put at risk. Below zero is losing.
+              Compared to what you risked. Risk $100 and make $20 → <strong>+0.2R</strong>. Risk
+              $100 and lose it all → <strong>−1.0R</strong>. Below zero is losing.
             </dd>
           </div>
           <div>
-            <dt className="font-semibold text-slate-800">SD of R</dt>
+            <dt className="font-semibold text-slate-800">SD of R — how much trades differ</dt>
             <dd>
-              How much individual trades vary around that average — consistency, not profit. These
-              strategies target 1R and stop near 1R, so most trades land close to +1 or −1 and the
-              spread sits near 1.0.
+              These strategies aim for +1R and stop at −1R, so nearly every trade lands near +1 or
+              −1. That is why this is always around 1.0. It measures consistency, not profit.
             </dd>
           </div>
           <div>
-            <dt className="font-semibold text-slate-800">t</dt>
+            <dt className="font-semibold text-slate-800">t — can you believe the average?</dt>
             <dd>
-              The average divided by its own uncertainty: <em>avg R ÷ (SD ÷ √trades)</em>. It asks
-              how far from zero the result sits once you account for how noisy the trades were. A
-              large average from few trades scores low; a small average from many trades scores
-              high.
+              Few trades, and the average jumps around → low t. Many trades, and it settles down →
+              high t. <strong>Under 2, treat it as luck.</strong>
             </dd>
           </div>
           <div>
-            <dt className="font-semibold text-slate-800">The funnel</dt>
+            <dt className="font-semibold text-slate-800">The funnel — proven or lucky</dt>
             <dd>
-              The t a run would need to be called conclusive. It widens to the left because fewer
-              trades demand a bigger result — at 4 trades the bar is 3.18, at 800 it is 1.96.
-              Inside the funnel means the result is consistent with pure luck.
+              Wide on the left because few trades need a big result to prove anything: at 4 trades
+              you would need t = 3.18, at 800 only 1.96. <strong>Inside = not proven. Outside =
+              proven.</strong>
             </dd>
           </div>
         </dl>
-        <p className="mt-3 max-w-4xl text-xs leading-5 text-slate-600">
-          <strong>The practical upshot:</strong> a run can have the best average on the chart and
-          still prove nothing. Strategy 04 v1.2 Filter A + B on DIA averages +0.357R — the highest
-          here — but on 27 trades it scores t = 1.99 against a bar of 2.06, so it sits inside the
-          funnel. Ranking by average R would put it first; asking whether it is real puts it
-          nowhere.
+
+        <p className="mt-3 text-xs font-semibold text-slate-800">The one thing to take away</p>
+        <div className="mt-1.5 overflow-x-auto">
+          <table className="s4-compare-table min-w-[560px]">
+            <thead>
+              <tr>
+                <th>Run</th>
+                <th>Trades</th>
+                <th>Avg R</th>
+                <th>t</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="text-left font-normal">DIA · Filter A+B</td>
+                <td>27</td>
+                <td>+0.357R</td>
+                <td>1.99</td>
+                <td className="text-left font-normal">best average here — proves nothing</td>
+              </tr>
+              <tr>
+                <td className="text-left font-normal">SLV · 15m</td>
+                <td>734</td>
+                <td>−0.165R</td>
+                <td>−4.59</td>
+                <td className="text-left font-normal">worse average — but proven</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 max-w-4xl text-xs leading-5 text-slate-600">
+          The better-looking number is the one you cannot trust. Sort by Avg R and DIA wins. Ask
+          which one is real, and only SLV answers.
         </p>
       </div>
 
